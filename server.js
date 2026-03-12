@@ -44,6 +44,8 @@ const getClawboardDir = () => path.join(getOpenClawDir(), 'clawboard');
 const getConfigPath = () => path.join(getOpenClawDir(), 'openclaw.json');
 const getPresetsPath = () => path.join(getOpenClawDir(), 'clawboard-presets.json');
 const getLiteLLMConfigPath = () => path.join(getOpenClawDir(), 'litellm', 'config.yaml');
+const getCronJobsPath = () => path.join(getOpenClawDir(), 'cron', 'jobs.json');
+const getCronRunsDir = () => path.join(getOpenClawDir(), 'cron', 'runs');
 const getAuthPath = () => path.join(getClawboardDir(), 'auth.json');
 const getAvatarDir = () => path.join(getClawboardDir(), 'avatars');
 
@@ -57,6 +59,8 @@ const normalizeFallbacks = (fallbacks = []) => [
     fallbacks?.[0] || '',
     fallbacks?.[1] || ''
 ].filter(Boolean);
+
+const dedupe = (values = []) => Array.from(new Set(values.filter(Boolean)));
 
 const parseModelRef = (value = '') => {
     if (!value || !value.includes('/')) {
@@ -398,6 +402,50 @@ const writeConfig = async (config, createBackup = true) => {
     }
 };
 
+const readCronJobs = async () => {
+    try {
+        return await readJson(getCronJobsPath(), { version: 1, jobs: [] });
+    } catch (error) {
+        console.error('Error reading cron jobs:', error.message);
+        throw new Error('Failed to read cron jobs file');
+    }
+};
+
+const writeCronJobs = async (cronData) => {
+    try {
+        await writeJson(getCronJobsPath(), cronData);
+    } catch (error) {
+        console.error('Error writing cron jobs:', error.message);
+        throw new Error('Failed to write cron jobs file');
+    }
+};
+
+const getRecentCronRuns = async (jobId, limit = 6) => {
+    const runFile = path.join(getCronRunsDir(), `${jobId}.jsonl`);
+
+    try {
+        const raw = await fs.readFile(runFile, 'utf-8');
+        return raw
+            .split('\n')
+            .filter(Boolean)
+            .map((line) => {
+                try {
+                    return JSON.parse(line);
+                } catch {
+                    return null;
+                }
+            })
+            .filter(Boolean)
+            .slice(-limit)
+            .reverse();
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return [];
+        }
+        throw error;
+    }
+};
+
 const readLiteLLMModelNames = async () => {
     try {
         const raw = await fs.readFile(getLiteLLMConfigPath(), 'utf-8');
@@ -547,6 +595,187 @@ const buildModelCatalog = async (config, presets = {}) => {
         options,
         providers: providersList,
         litellmOnly
+    };
+};
+
+const buildReferences = (config, presets = {}, cronJobs = []) => {
+    const refs = new Map();
+
+    const ensureRef = (modelRef) => {
+        if (!modelRef || typeof modelRef !== 'string') {
+            return null;
+        }
+
+        if (!refs.has(modelRef)) {
+            refs.set(modelRef, {
+                defaults: [],
+                agents: [],
+                presets: [],
+                cron: []
+            });
+        }
+
+        return refs.get(modelRef);
+    };
+
+    const addRef = (modelRef, scope, value) => {
+        const ref = ensureRef(modelRef);
+        if (!ref) {
+            return;
+        }
+        ref[scope].push(value);
+    };
+
+    const defaults = config.agents?.defaults || {};
+    const defaultRefs = [
+        { label: 'Primary default', value: defaults.model?.primary },
+        { label: 'Default fallback 1', value: defaults.model?.fallbacks?.[0] },
+        { label: 'Default fallback 2', value: defaults.model?.fallbacks?.[1] },
+        { label: 'Image primary', value: defaults.imageModel?.primary },
+        { label: 'Image fallback 1', value: defaults.imageModel?.fallbacks?.[0] },
+        { label: 'Image fallback 2', value: defaults.imageModel?.fallbacks?.[1] },
+        { label: 'Heartbeat', value: defaults.heartbeat?.model }
+    ];
+    defaultRefs.forEach((entry) => addRef(entry.value, 'defaults', entry.label));
+
+    (config.agents?.list || []).forEach((agent) => {
+        addRef(agent.model?.primary, 'agents', agent.id);
+        normalizeFallbacks(agent.model?.fallbacks || []).forEach((fallback, index) => {
+            addRef(fallback, 'agents', `${agent.id} fallback ${index + 1}`);
+        });
+    });
+
+    Object.entries(presets).forEach(([presetName, preset]) => {
+        addRef(preset.defaults?.model?.primary, 'presets', presetName);
+        normalizeFallbacks(preset.defaults?.model?.fallbacks || []).forEach((fallback) => addRef(fallback, 'presets', presetName));
+        addRef(preset.defaults?.imageModel?.primary, 'presets', presetName);
+        normalizeFallbacks(preset.defaults?.imageModel?.fallbacks || []).forEach((fallback) => addRef(fallback, 'presets', presetName));
+        addRef(preset.defaults?.heartbeatModel, 'presets', presetName);
+        Object.values(preset.agents || {}).forEach((agentConfig) => {
+            addRef(agentConfig?.primary, 'presets', presetName);
+            normalizeFallbacks(agentConfig?.fallbacks || []).forEach((fallback) => addRef(fallback, 'presets', presetName));
+        });
+    });
+
+    cronJobs.forEach((job) => addRef(job.payload?.model || '', 'cron', job.name || job.id));
+
+    return refs;
+};
+
+const buildPresetSummary = (presetName, preset, config, references) => {
+    const defaults = config.agents?.defaults || {};
+    const impactedDefaults = [];
+    const impactedAgents = [];
+    const modelRefs = new Set();
+
+    const compareChain = (label, currentValue, presetValue) => {
+        if ((currentValue || '') !== (presetValue || '')) {
+            impactedDefaults.push(label);
+        }
+        if (presetValue) {
+            modelRefs.add(presetValue);
+        }
+    };
+
+    compareChain('Primary default', defaults.model?.primary, preset.defaults?.model?.primary);
+    compareChain('Default fallback 1', defaults.model?.fallbacks?.[0], preset.defaults?.model?.fallbacks?.[0]);
+    compareChain('Default fallback 2', defaults.model?.fallbacks?.[1], preset.defaults?.model?.fallbacks?.[1]);
+    compareChain('Image primary', defaults.imageModel?.primary, preset.defaults?.imageModel?.primary);
+    compareChain('Image fallback 1', defaults.imageModel?.fallbacks?.[0], preset.defaults?.imageModel?.fallbacks?.[0]);
+    compareChain('Image fallback 2', defaults.imageModel?.fallbacks?.[1], preset.defaults?.imageModel?.fallbacks?.[1]);
+    compareChain('Heartbeat', defaults.heartbeat?.model, preset.defaults?.heartbeatModel);
+
+    const diffAgents = [];
+    (config.agents?.list || []).forEach((agent) => {
+        const currentPrimary = agent.model?.primary || '';
+        const currentFallbacks = normalizeFallbacks(agent.model?.fallbacks || []);
+        const presetAgent = preset.agents?.[agent.id] || {};
+        const presetPrimary = presetAgent.primary || '';
+        const presetFallbacks = normalizeFallbacks(presetAgent.fallbacks || []);
+
+        if (currentPrimary !== presetPrimary || currentFallbacks.join('|') !== presetFallbacks.join('|')) {
+            diffAgents.push(agent.id);
+            impactedAgents.push(agent.id);
+        }
+
+        if (presetPrimary) {
+            modelRefs.add(presetPrimary);
+        }
+        presetFallbacks.forEach((entry) => modelRefs.add(entry));
+    });
+
+    const liveDiffSummary = dedupe([
+        ...impactedDefaults.map((label) => `${label} changes`),
+        diffAgents.length ? `${diffAgents.length} agent ${diffAgents.length === 1 ? 'route' : 'routes'} change` : ''
+    ]);
+
+    return {
+        name: preset.name || presetName,
+        description: preset.description || '',
+        createdAt: preset.createdAt || null,
+        liveDiffSummary,
+        impactedDefaults: dedupe(impactedDefaults),
+        impactedAgents: dedupe(impactedAgents),
+        models: Array.from(modelRefs).map((modelRef) => ({
+            ref: modelRef,
+            usage: references.get(modelRef) || { defaults: [], agents: [], presets: [], cron: [] }
+        }))
+    };
+};
+
+const scheduleSummary = (schedule = {}) => {
+    if (schedule.kind === 'cron') {
+        return `${schedule.expr || 'custom'}${schedule.tz ? ` (${schedule.tz})` : ''}`;
+    }
+    if (schedule.kind === 'every') {
+        const everyMs = Number(schedule.everyMs) || 0;
+        const hours = everyMs ? Math.round((everyMs / 3600000) * 10) / 10 : 0;
+        return `Every ${hours || everyMs} ${hours ? 'hours' : 'ms'}`;
+    }
+    return schedule.kind || 'custom';
+};
+
+const formatCronJob = async (job) => {
+    const recentRuns = await getRecentCronRuns(job.id, 5);
+    const latestRun = recentRuns[0] || null;
+    return {
+        id: job.id,
+        name: job.name,
+        agentId: job.agentId || '',
+        enabled: Boolean(job.enabled),
+        schedule: job.schedule?.expr || '',
+        scheduleLabel: scheduleSummary(job.schedule),
+        scheduleDetail: job.schedule || {},
+        nextRun: job.state?.nextRunAtMs ? new Date(job.state.nextRunAtMs).toISOString() : null,
+        lastRun: job.state?.lastRunAtMs ? new Date(job.state.lastRunAtMs).toISOString() : null,
+        nextRunAtMs: job.state?.nextRunAtMs || null,
+        lastRunAtMs: job.state?.lastRunAtMs || null,
+        status: job.state?.lastStatus || 'idle',
+        target: job.sessionTarget || '',
+        model: job.payload?.model || '',
+        delivery: job.delivery || {},
+        payloadSummary: {
+            kind: job.payload?.kind || '',
+            timeoutSeconds: job.payload?.timeoutSeconds || null,
+            thinking: job.payload?.thinking || null,
+            promptPreview: (job.payload?.message || job.payload?.text || '').slice(0, 280)
+        },
+        lastDurationMs: job.state?.lastDurationMs || null,
+        deliverySummary: {
+            mode: job.delivery?.mode || 'none',
+            channel: job.delivery?.channel || '',
+            to: job.delivery?.to || '',
+            lastDeliveryStatus: job.state?.lastDeliveryStatus || 'unknown'
+        },
+        recentRuns: recentRuns.map((run) => ({
+            ts: run.ts || run.runAtMs || null,
+            status: run.status || run.action || 'unknown',
+            durationMs: run.durationMs || null,
+            deliveryStatus: run.deliveryStatus || null,
+            summary: run.summary || '',
+            error: run.error || null
+        })),
+        recentErrorSummary: recentRuns.find((run) => run.error)?.error || latestRun?.error || ''
     };
 };
 
@@ -901,6 +1130,45 @@ app.post('/api/presets', async (req, res) => {
     }
 });
 
+app.patch('/api/presets/:name', async (req, res) => {
+    try {
+        const { name } = req.params;
+        const { newName, description } = req.body || {};
+        const presets = await readPresets();
+        const preset = presets[name];
+
+        if (!preset) {
+            return res.status(404).json({ error: 'Preset not found' });
+        }
+
+        const targetName = (newName || name).trim();
+        if (!targetName) {
+            return res.status(400).json({ error: 'Preset name is required' });
+        }
+
+        if (targetName !== name && presets[targetName]) {
+            return res.status(409).json({ error: 'A preset with that name already exists' });
+        }
+
+        const nextPreset = {
+            ...preset,
+            name: targetName,
+            description: typeof description === 'string' ? description : (preset.description || ''),
+            updatedAt: new Date().toISOString()
+        };
+
+        if (targetName !== name) {
+            delete presets[name];
+        }
+        presets[targetName] = nextPreset;
+
+        await writePresets(presets);
+        res.json({ success: true, message: `Preset "${targetName}" updated.` });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.delete('/api/presets/:name', async (req, res) => {
     try {
         const { name } = req.params;
@@ -984,31 +1252,132 @@ app.post('/api/presets/:name/apply', async (req, res) => {
 
 app.get('/api/cron', async (req, res) => {
     try {
-        const cronJobsPath = path.join(getOpenClawDir(), 'cron', 'jobs.json');
-        const data = await fs.readFile(cronJobsPath, 'utf-8');
-        const cronData = JSON.parse(data);
-
-        const jobs = (cronData.jobs || []).map((job) => ({
-            id: job.id,
-            name: job.name,
-            agentId: job.agentId,
-            enabled: job.enabled,
-            schedule: job.schedule?.expr || '',
-            nextRun: job.state?.nextRunAtMs ? new Date(job.state.nextRunAtMs).toISOString() : null,
-            lastRun: job.state?.lastRunAtMs ? new Date(job.state.lastRunAtMs).toISOString() : null,
-            next: job.state?.nextRunAtMs ? new Date(job.state.nextRunAtMs).toISOString() : null,
-            last: job.state?.lastRunAtMs ? new Date(job.state.lastRunAtMs).toISOString() : null,
-            nextRunAtMs: job.state?.nextRunAtMs || null,
-            lastRunAtMs: job.state?.lastRunAtMs || null,
-            status: job.state?.lastStatus || 'idle',
-            target: job.sessionTarget || '',
-            model: job.payload?.model || ''
-        }));
+        const cronData = await readCronJobs();
+        const jobs = await Promise.all((cronData.jobs || []).map((job) => formatCronJob(job)));
 
         res.json({ jobs });
     } catch (error) {
         console.error('Error reading cron jobs:', error.message);
         res.status(500).json({ error: error.message, jobs: [] });
+    }
+});
+
+app.post('/api/cron/:jobId/toggle', async (req, res) => {
+    try {
+        const cronData = await readCronJobs();
+        const job = (cronData.jobs || []).find((entry) => entry.id === req.params.jobId);
+        if (!job) {
+            return res.status(404).json({ error: 'Cron job not found' });
+        }
+
+        job.enabled = !job.enabled;
+        job.updatedAtMs = Date.now();
+        await writeCronJobs(cronData);
+
+        res.json({
+            success: true,
+            enabled: job.enabled,
+            message: job.enabled ? 'Cron job enabled.' : 'Cron job disabled.'
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/cron/:jobId/run', async (req, res) => {
+    try {
+        const cronData = await readCronJobs();
+        const job = (cronData.jobs || []).find((entry) => entry.id === req.params.jobId);
+        if (!job) {
+            return res.status(404).json({ error: 'Cron job not found' });
+        }
+
+        job.enabled = true;
+        job.updatedAtMs = Date.now();
+        job.state = job.state || {};
+        job.state.nextRunAtMs = Date.now();
+        await writeCronJobs(cronData);
+
+        res.json({
+            success: true,
+            message: 'Run requested by moving the next run to now. Execution timing still depends on the OpenClaw scheduler.'
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/dashboard', async (req, res) => {
+    try {
+        const [config, presets, cronData] = await Promise.all([readConfig(), readPresets(), readCronJobs()]);
+        const catalog = await buildModelCatalog(config, presets);
+        const cronJobs = cronData.jobs || [];
+        const references = buildReferences(config, presets, cronJobs);
+
+        const models = catalog.options.map((option) => {
+            const usage = references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] };
+            const usageCount = usage.defaults.length + usage.agents.length + usage.presets.length + usage.cron.length;
+            return {
+                provider: option.provider,
+                modelId: option.modelId,
+                modelName: option.modelName,
+                access: option.access,
+                upstream: option.upstream,
+                docsUrl: option.docsUrl,
+                contextWindow: option.contextWindow,
+                maxTokens: option.maxTokens,
+                reasoning: option.reasoning,
+                sourceStatus: option.sources.includes('litellm') ? 'openclaw+litellm' : 'openclaw-only',
+                usage: {
+                    ...usage,
+                    usageCount
+                }
+            };
+        });
+
+        const enrichedCronJobs = await Promise.all(cronJobs.map((job) => formatCronJob(job)));
+        const healthyCron = enrichedCronJobs.filter((job) => job.status === 'ok').length;
+        const errorCron = enrichedCronJobs.filter((job) => job.status === 'error').length;
+
+        res.json({
+            overview: {
+                presets: {
+                    total: Object.keys(presets).length,
+                    recentlyUpdated: Object.values(presets)
+                        .sort((left, right) => Date.parse(right.updatedAt || right.createdAt || 0) - Date.parse(left.updatedAt || left.createdAt || 0))
+                        .slice(0, 3)
+                        .map((preset) => preset.name || '')
+                        .filter(Boolean)
+                },
+                models: {
+                    total: models.length,
+                    inUse: models.filter((model) => model.usage.usageCount > 0).length,
+                    orphans: models.filter((model) => model.usage.usageCount === 0).length,
+                    topUsed: models
+                        .filter((model) => model.usage.usageCount > 0)
+                        .sort((left, right) => right.usage.usageCount - left.usage.usageCount)
+                        .slice(0, 3)
+                        .map((model) => `${model.provider}/${model.modelId}`)
+                },
+                cron: {
+                    total: enrichedCronJobs.length,
+                    enabled: enrichedCronJobs.filter((job) => job.enabled).length,
+                    healthy: healthyCron,
+                    attention: errorCron
+                }
+            },
+            defaults: {
+                model: config.agents?.defaults?.model || { primary: '', fallbacks: [] },
+                imageModel: config.agents?.defaults?.imageModel || { primary: '', fallbacks: [] },
+                heartbeatModel: config.agents?.defaults?.heartbeat?.model || '',
+                thinkingDefault: config.agents?.defaults?.thinkingDefault || 'adaptive'
+            },
+            presets: Object.entries(presets).map(([name, preset]) => buildPresetSummary(name, preset, config, references)),
+            models,
+            cron: enrichedCronJobs
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -1026,8 +1395,9 @@ app.get('/api/skills', async (req, res) => {
 
 app.get('/api/models', async (req, res) => {
     try {
-        const [config, presets] = await Promise.all([readConfig(), readPresets()]);
+        const [config, presets, cronData] = await Promise.all([readConfig(), readPresets(), readCronJobs()]);
         const catalog = await buildModelCatalog(config, presets);
+        const references = buildReferences(config, presets, cronData.jobs || []);
 
         const models = catalog.options.map((option) => ({
             provider: option.provider,
@@ -1039,7 +1409,12 @@ app.get('/api/models', async (req, res) => {
             contextWindow: option.contextWindow,
             maxTokens: option.maxTokens,
             reasoning: option.reasoning,
-            sourceStatus: option.sources.includes('litellm') ? 'openclaw+litellm' : 'openclaw-only'
+            sourceStatus: option.sources.includes('litellm') ? 'openclaw+litellm' : 'openclaw-only',
+            usage: {
+                ...(references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] }),
+                usageCount: Object.values(references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] })
+                    .reduce((sum, entries) => sum + entries.length, 0)
+            }
         }));
 
         res.json({

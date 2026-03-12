@@ -10,36 +10,44 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         :root {
-            --md-sys-color-primary: #1554ff;
-            --md-sys-color-on-primary: #ffffff;
-            --md-sys-color-primary-container: #dfe8ff;
-            --md-sys-color-on-primary-container: #0c2468;
-            --md-sys-color-background: #f4f7fb;
-            --md-sys-color-surface: rgba(255, 255, 255, 0.84);
-            --md-sys-color-on-surface: #162033;
-            --md-sys-color-surface-container-low: #f8faff;
-            --md-sys-color-surface-container: #e8eef9;
-            --md-sys-color-outline: #7e8aa3;
-            --md-sys-color-error: #ba1a1a;
-            --md-sys-color-warning: #a86000;
-            --md-sys-color-warning-container: #fff0d8;
-            --md-sys-color-success: #16794c;
-            --md-sys-color-success-container: #daf6e7;
-            --card-border: rgba(102, 125, 170, 0.18);
-            --glass-highlight: rgba(255, 255, 255, 0.7);
-            --md-elevation-1: 0 10px 30px rgba(36, 61, 102, 0.08);
-            --md-elevation-2: 0 18px 48px rgba(36, 61, 102, 0.14);
+            --bg: #f3f7fb;
+            --bg-soft: #eef4fb;
+            --surface: rgba(255, 255, 255, 0.82);
+            --surface-strong: rgba(255, 255, 255, 0.94);
+            --surface-muted: rgba(235, 241, 249, 0.9);
+            --line: rgba(97, 116, 150, 0.18);
+            --line-strong: rgba(70, 92, 130, 0.3);
+            --text: #172133;
+            --text-muted: #66758f;
+            --text-soft: #8694ad;
+            --brand: #0f5ef7;
+            --brand-soft: #dfeaff;
+            --success: #117a4f;
+            --success-soft: #daf4e7;
+            --warning: #a86200;
+            --warning-soft: #fff0da;
+            --danger: #b73232;
+            --danger-soft: #fde7e7;
+            --shadow: 0 18px 50px rgba(27, 57, 97, 0.12);
+            --radius-xl: 24px;
+            --radius-lg: 18px;
+            --radius-md: 14px;
+            --mono: 'IBM Plex Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Manrope', sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(21, 84, 255, 0.12), transparent 28%),
-                radial-gradient(circle at top right, rgba(64, 192, 255, 0.12), transparent 24%),
-                linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
-            color: var(--md-sys-color-on-surface);
             margin: 0;
             min-height: 100vh;
+            color: var(--text);
+            font-family: 'Manrope', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(15, 94, 247, 0.14), transparent 32%),
+                radial-gradient(circle at 85% 10%, rgba(0, 163, 255, 0.1), transparent 26%),
+                linear-gradient(180deg, #f7fbff 0%, var(--bg) 100%);
         }
 
         body::before {
@@ -47,9 +55,18 @@
             position: fixed;
             inset: 0;
             pointer-events: none;
-            background-image: linear-gradient(rgba(92, 117, 172, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(92, 117, 172, 0.05) 1px, transparent 1px);
-            background-size: 28px 28px;
-            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 72%);
+            background-image:
+                linear-gradient(rgba(99, 122, 159, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 122, 159, 0.04) 1px, transparent 1px);
+            background-size: 30px 30px;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 72%);
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
         }
 
         .hidden {
@@ -57,95 +74,151 @@
         }
 
         .top-app-bar {
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            background-color: rgba(255, 255, 255, 0.72);
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 28px;
-            box-shadow: 0 8px 24px rgba(29, 52, 92, 0.08);
-            border-bottom: 1px solid var(--card-border);
             position: sticky;
             top: 0;
-            z-index: 10;
-            gap: 16px;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 18px 28px;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--line);
         }
 
-        .top-app-bar-title {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: -0.03em;
+        .brand-lockup {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            color: #fff;
+            background: linear-gradient(135deg, #0f5ef7 0%, #00a3ff 100%);
+            box-shadow: 0 12px 24px rgba(15, 94, 247, 0.28);
+        }
+
+        .brand-copy h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .brand-copy p {
+            margin: 2px 0 0;
+            color: var(--text-muted);
+            font-size: 13px;
         }
 
         .top-bar-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
-        .status-badge {
-            display: flex;
+        .status-pill,
+        .chip {
+            display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 13px;
-            font-weight: 700;
-            background: linear-gradient(180deg, rgba(221, 248, 232, 0.95), rgba(212, 245, 227, 0.92));
-            color: var(--md-sys-color-success);
-            padding: 7px 12px;
             border-radius: 999px;
-            border: 1px solid rgba(22, 121, 76, 0.12);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+            padding: 7px 12px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-pill {
+            color: var(--success);
+            background: linear-gradient(180deg, rgba(222, 248, 232, 0.96), rgba(214, 244, 225, 0.92));
+            border-color: rgba(17, 122, 79, 0.14);
         }
 
         .status-dot {
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
-            background-color: #1ea362;
+            background: #19a867;
+        }
+
+        .chip.code {
+            font-family: var(--mono);
+            font-weight: 500;
+        }
+
+        .chip.success {
+            background: var(--success-soft);
+            color: var(--success);
+            border-color: rgba(17, 122, 79, 0.14);
+        }
+
+        .chip.warning {
+            background: var(--warning-soft);
+            color: var(--warning);
+            border-color: rgba(168, 98, 0, 0.14);
+        }
+
+        .chip.danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: rgba(183, 50, 50, 0.14);
+        }
+
+        .tabs-wrap {
+            position: sticky;
+            top: 78px;
+            z-index: 15;
+            padding: 14px 24px 0;
+            background: linear-gradient(180deg, rgba(243, 247, 251, 0.96), rgba(243, 247, 251, 0.72));
+            backdrop-filter: blur(12px);
         }
 
         .tabs {
-            background-color: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
-            padding: 0 24px;
-            border-bottom: 1px solid var(--card-border);
             gap: 8px;
+            padding: 8px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.72);
+            border-radius: 18px;
             overflow-x: auto;
         }
 
         .tab {
-            padding: 13px 18px;
+            border: none;
+            background: transparent;
+            color: var(--text-soft);
+            border-radius: 12px;
+            padding: 11px 14px;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 0.01em;
-            color: var(--md-sys-color-outline);
             cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.18s ease;
             white-space: nowrap;
         }
 
-        .tab:hover {
-            color: var(--md-sys-color-on-surface);
-        }
-
         .tab.active {
-            color: var(--md-sys-color-primary);
-            border-bottom-color: var(--md-sys-color-primary);
+            color: var(--brand);
+            background: rgba(15, 94, 247, 0.1);
         }
 
         .tab-content {
             display: none;
-            padding: 28px 24px 40px;
-            max-width: 1120px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 28px 24px 44px;
         }
 
         .tab-content.active {
@@ -156,69 +229,236 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 20px;
+            margin-bottom: 22px;
         }
 
-        .page-header h2,
-        .card-title {
-            margin: 0 0 8px 0;
-            font-size: 24px;
-            font-weight: 500;
-        }
-
-        .page-header p,
-        .card-subtitle,
-        .helper-text {
+        .page-header h2 {
             margin: 0;
-            color: var(--md-sys-color-outline);
+            font-size: 30px;
+            letter-spacing: -0.04em;
+        }
+
+        .page-header p {
+            margin: 6px 0 0;
+            color: var(--text-muted);
             font-size: 14px;
+            max-width: 720px;
+        }
+
+        .action-cluster,
+        .button-row,
+        .tag-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            appearance: none;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.84);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 800;
+            transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            border-color: var(--line-strong);
+        }
+
+        .btn-primary {
+            color: #fff;
+            border-color: transparent;
+            background: linear-gradient(135deg, #0f5ef7 0%, #1677ff 54%, #00a3ff 100%);
+            box-shadow: 0 14px 28px rgba(15, 94, 247, 0.24);
+        }
+
+        .btn-danger {
+            color: var(--danger);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn:disabled {
+            opacity: 0.56;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .card {
-            background-color: var(--md-sys-color-surface);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-radius: 20px;
-            border: 1px solid var(--card-border);
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: var(--md-elevation-1);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-xl);
+            padding: 22px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(16px);
+            margin-bottom: 22px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 19px;
+            letter-spacing: -0.03em;
+        }
+
+        .card-subtitle,
+        .helper-text,
+        .micro-note,
+        .empty-state {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .hero-grid,
+        .summary-grid,
+        .overview-grid,
+        .panel-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .hero-grid {
+            grid-template-columns: 1.5fr 1fr;
+            margin-bottom: 22px;
         }
 
         .summary-grid {
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        }
+
+        .overview-grid {
+            grid-template-columns: 1.2fr 0.8fr;
+        }
+
+        .panel-grid {
+            grid-template-columns: 1.25fr 0.75fr;
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            min-height: 220px;
+            background:
+                radial-gradient(circle at top right, rgba(11, 91, 246, 0.22), transparent 28%),
+                linear-gradient(160deg, rgba(255, 255, 255, 0.88), rgba(234, 242, 255, 0.9));
+        }
+
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            right: -50px;
+            bottom: -60px;
+            width: 200px;
+            height: 200px;
+            border-radius: 42px;
+            background: linear-gradient(135deg, rgba(15, 94, 247, 0.16), rgba(0, 163, 255, 0.08));
+            transform: rotate(16deg);
+        }
+
+        .hero-card h3 {
+            margin: 0 0 8px;
+            font-size: 30px;
+            letter-spacing: -0.05em;
+            max-width: 520px;
+        }
+
+        .hero-card p {
+            margin: 0 0 18px;
+            max-width: 600px;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .summary-card,
+        .mini-card,
+        .stat-card,
+        .preset-card,
+        .list-card {
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+        }
+
+        .summary-card h3,
+        .mini-card h3,
+        .stat-card h3 {
+            margin: 0 0 8px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .summary-card strong,
+        .mini-card strong,
+        .stat-card strong {
+            display: block;
+            font-size: 30px;
+            letter-spacing: -0.05em;
+            margin-bottom: 8px;
+        }
+
+        .list-card ul,
+        .drawer-body ul {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--text-muted);
+        }
+
+        .list-card li,
+        .drawer-body li {
+            margin-bottom: 6px;
+        }
+
+        .quick-link-list,
+        .inline-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .quick-link {
+            border: 1px solid rgba(15, 94, 247, 0.14);
+            background: rgba(255, 255, 255, 0.74);
+            color: var(--brand);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .form-card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .summary-card {
-            background-color: rgba(255, 255, 255, 0.78);
-            border-radius: 18px;
-            border: 1px solid var(--card-border);
-            box-shadow: var(--md-elevation-1);
-            padding: 20px;
-        }
-
-        .summary-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 14px;
-            color: var(--md-sys-color-outline);
-            font-weight: 500;
-        }
-
-        .summary-card strong {
-            font-size: 28px;
-            font-weight: 500;
+            gap: 18px;
         }
 
         .form-row {
             display: flex;
-            align-items: flex-start;
             gap: 16px;
             padding: 14px 0;
-            border-bottom: 1px solid rgba(116, 119, 127, 0.14);
+            border-bottom: 1px solid rgba(105, 122, 154, 0.14);
         }
 
         .form-row:last-child {
@@ -227,10 +467,10 @@
 
         .form-label {
             width: 140px;
-            font-size: 14px;
-            font-weight: 500;
             flex-shrink: 0;
-            padding-top: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            padding-top: 10px;
         }
 
         .form-value {
@@ -239,360 +479,403 @@
 
         .field-stack {
             display: grid;
-            gap: 10px;
+            gap: 8px;
+        }
+
+        .field-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .md-input,
+        .md-select,
+        .md-textarea {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: var(--surface-strong);
+            color: var(--text);
+            padding: 11px 13px;
+            outline: none;
+        }
+
+        .md-textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
         }
 
         .model-pair {
             display: grid;
-            grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
-            gap: 12px;
+            grid-template-columns: minmax(150px, 220px) 1fr;
+            gap: 10px;
         }
 
-        .md-input,
-        .md-select {
-            appearance: none;
-            background-color: rgba(248, 250, 255, 0.92);
-            border: 1px solid rgba(126, 138, 163, 0.36);
-            border-radius: 12px;
-            padding: 12px 14px;
-            font-size: 14px;
-            font-family: inherit;
-            color: var(--md-sys-color-on-surface);
-            box-sizing: border-box;
-            width: 100%;
-            transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
-        }
-
-        .md-input:focus,
-        .md-select:focus {
-            outline: none;
-            border-color: rgba(21, 84, 255, 0.45);
-            box-shadow: 0 0 0 4px rgba(21, 84, 255, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .md-select {
-            cursor: pointer;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23444" d="M7 10l5 5 5-5z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            background-size: 20px;
-            padding-right: 36px;
-        }
-
-        .field-meta,
-        .tag-row,
-        .button-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.01em;
-            background-color: var(--md-sys-color-surface-container);
-            color: var(--md-sys-color-on-surface);
-            border: 1px solid rgba(126, 138, 163, 0.16);
-        }
-
-        .chip-warning {
-            background-color: var(--md-sys-color-warning-container);
-            color: var(--md-sys-color-warning);
-            border-color: rgba(168, 96, 0, 0.12);
-        }
-
-        .chip-success {
-            background-color: var(--md-sys-color-success-container);
-            color: var(--md-sys-color-success);
-            border-color: rgba(22, 121, 76, 0.12);
-        }
-
-        .btn {
-            padding: 11px 16px;
-            font-size: 13px;
-            font-weight: 700;
-            border: 1px solid transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
-        }
-
-        .btn:hover:not([disabled]) {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 18px rgba(36, 61, 102, 0.12);
-        }
-
-        .btn-primary {
-            background: linear-gradient(180deg, #1d63ff, #1554ff);
-            color: var(--md-sys-color-on-primary);
-            box-shadow: 0 10px 22px rgba(21, 84, 255, 0.22);
-        }
-
-        .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.72);
-            color: var(--md-sys-color-on-surface);
-            border-color: rgba(126, 138, 163, 0.22);
-        }
-
-        .btn-danger {
-            background-color: #fff3f3;
-            color: var(--md-sys-color-error);
-            border-color: rgba(186, 26, 26, 0.12);
-        }
-
-        .btn[disabled] {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .table-container {
-            overflow-x: auto;
+        .table-shell {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.62);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
         }
 
-        th, td {
-            padding: 12px 16px;
+        th,
+        td {
             text-align: left;
-            border-bottom: 1px solid var(--md-sys-color-surface-container);
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(105, 122, 154, 0.12);
+            vertical-align: top;
+            font-size: 13px;
         }
 
         th {
-            font-weight: 500;
-            color: var(--md-sys-color-outline);
-            background-color: var(--md-sys-color-surface-container-low);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            background: rgba(239, 244, 251, 0.7);
         }
 
-        .status-ok { color: #1ea362; }
-        .status-error { color: var(--md-sys-color-error); }
-        .status-idle { color: var(--md-sys-color-outline); }
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr.is-clickable {
+            cursor: pointer;
+        }
+
+        tr.is-clickable:hover td {
+            background: rgba(15, 94, 247, 0.04);
+        }
 
         .agent-card {
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 22px;
-            border: 1px solid var(--card-border);
-            padding: 22px;
-            margin-bottom: 22px;
-            box-shadow: var(--md-elevation-1);
             display: grid;
-            grid-template-columns: 210px minmax(0, 1fr);
-            gap: 24px;
-            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            margin-bottom: 18px;
         }
 
-        .agent-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--md-elevation-2);
-            border-color: rgba(21, 84, 255, 0.16);
-        }
-
-        .agent-info {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-right: 8px;
+        .agent-sidebar {
+            display: grid;
+            gap: 14px;
+            align-content: start;
         }
 
         .agent-avatar-wrap {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
         }
 
         .agent-avatar {
-            width: 76px;
-            height: 76px;
-            border-radius: 22px;
-            background-color: var(--md-sys-color-primary-container);
+            width: 78px;
+            height: 78px;
+            border-radius: 24px;
             object-fit: cover;
-            flex-shrink: 0;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 8px 18px rgba(21, 84, 255, 0.12);
+            border: 1px solid var(--line);
+            background: #fff;
         }
 
         .agent-name {
-            font-size: 17px;
+            font-size: 19px;
             font-weight: 800;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
         }
 
         .agent-id {
+            color: var(--text-muted);
+            font-family: var(--mono);
             font-size: 12px;
-            color: var(--md-sys-color-outline);
-            font-family: 'IBM Plex Mono', monospace;
         }
 
         .section-divider {
-            margin: 20px 0 12px 0;
-            font-size: 13px;
-            color: var(--md-sys-color-outline);
+            font-size: 12px;
+            color: var(--text-soft);
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.08em;
+            margin: 8px 0 2px;
+        }
+
+        .preset-stack,
+        .stats-stack {
+            display: grid;
+            gap: 12px;
         }
 
         .preset-card {
-            background-color: var(--md-sys-color-surface-container-low);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             gap: 16px;
         }
 
-        .preset-info h4 {
-            margin: 0 0 4px 0;
-            font-size: 16px;
+        .preset-card h4 {
+            margin: 0 0 6px;
+            font-size: 17px;
+            letter-spacing: -0.03em;
         }
 
-        .preset-info p,
-        .empty-state {
+        .preset-card p {
             margin: 0;
+            color: var(--text-muted);
             font-size: 13px;
-            color: var(--md-sys-color-outline);
         }
 
-        code {
-            font-family: 'IBM Plex Mono', monospace;
+        .meta-list,
+        .drawer-grid,
+        .info-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .drawer-grid {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .info-tile {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.68);
+        }
+
+        .info-tile h4 {
+            margin: 0 0 8px;
             font-size: 12px;
-            background: rgba(232, 238, 249, 0.72);
-            border-radius: 8px;
-            padding: 2px 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-soft);
         }
 
-        .micro-note {
-            font-size: 12px;
-            color: var(--md-sys-color-outline);
-            line-height: 1.5;
+        .info-tile p,
+        .info-tile pre {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
 
-        .auth-shell {
-            min-height: 100vh;
+        .mono {
+            font-family: var(--mono);
+        }
+
+        .status-ok {
+            color: var(--success);
+            font-weight: 800;
+        }
+
+        .status-error {
+            color: var(--danger);
+            font-weight: 800;
+        }
+
+        .status-idle {
+            color: var(--text-muted);
+            font-weight: 800;
+        }
+
+        .drawer,
+        .modal {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(560px, 100vw);
+            background: rgba(247, 251, 255, 0.96);
+            backdrop-filter: blur(22px);
+            box-shadow: -24px 0 60px rgba(20, 41, 75, 0.18);
+            border-left: 1px solid var(--line);
+            transform: translateX(100%);
+            transition: transform 0.24s ease, opacity 0.18s ease;
+            z-index: 40;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            box-sizing: border-box;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
         }
 
-        .auth-card {
-            width: 100%;
-            max-width: 440px;
-            background: rgba(255, 255, 255, 0.82);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            box-shadow: var(--md-elevation-2);
-            border-radius: 28px;
-            border: 1px solid var(--card-border);
-            padding: 30px;
+        .drawer.active {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .auth-card h1 {
-            margin: 0 0 8px 0;
-            font-size: 28px;
+        .modal {
+            top: 50%;
+            left: 50%;
+            right: auto;
+            bottom: auto;
+            width: min(560px, calc(100vw - 24px));
+            max-height: calc(100vh - 24px);
+            border-left: none;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            transform: translate(-50%, -50%) scale(0.94);
+            box-shadow: 0 28px 60px rgba(20, 41, 75, 0.24);
+            overflow: hidden;
         }
 
-        .auth-card p {
-            margin: 0 0 20px 0;
-            color: var(--md-sys-color-outline);
+        .modal.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .auth-error {
-            min-height: 20px;
-            color: var(--md-sys-color-error);
+        .drawer-header,
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px 22px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .drawer-header h3,
+        .modal-header h3 {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: -0.04em;
+        }
+
+        .drawer-header p,
+        .modal-header p {
+            margin: 6px 0 0;
+            color: var(--text-muted);
             font-size: 13px;
-            margin-top: 10px;
+        }
+
+        .drawer-body,
+        .modal-body {
+            padding: 20px 22px;
+            overflow: auto;
+            display: grid;
+            gap: 16px;
+        }
+
+        .drawer-actions,
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 0 22px 20px;
+        }
+
+        .scrim {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 19, 32, 0.34);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 35;
+        }
+
+        .scrim.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .overlay {
             position: fixed;
             inset: 0;
-            background: rgba(255,255,255,0.7);
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            background: rgba(244, 247, 251, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 60;
         }
 
         .spinner {
-            border: 4px solid var(--md-sys-color-surface-container);
-            border-top: 4px solid var(--md-sys-color-primary);
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+            border: 4px solid rgba(15, 94, 247, 0.14);
+            border-top-color: var(--brand);
+            animation: spin 0.75s linear infinite;
+        }
+
+        .auth-shell {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .auth-card {
+            width: min(420px, 100%);
+            padding: 28px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .auth-card h2 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            letter-spacing: -0.05em;
+        }
+
+        .auth-stack {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .auth-error {
+            min-height: 18px;
+            margin-top: 12px;
+            color: var(--danger);
+            font-size: 13px;
         }
 
         .snackbar {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #323232;
-            color: #fff;
-            text-align: center;
-            border-radius: 8px;
-            padding: 16px;
             position: fixed;
-            z-index: 2000;
             left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 14px;
+            bottom: 24px;
+            transform: translateX(-50%) translateY(120%);
+            background: rgba(17, 24, 39, 0.92);
+            color: #fff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+            transition: transform 0.2s ease;
+            z-index: 70;
         }
 
         .snackbar.show {
-            visibility: visible;
-            animation: fadein 0.3s, fadeout 0.3s 2.7s;
+            transform: translateX(-50%) translateY(0);
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        @keyframes fadein {
-            from { bottom: 0; opacity: 0; }
-            to { bottom: 30px; opacity: 1; }
-        }
-
-        @keyframes fadeout {
-            from { bottom: 30px; opacity: 1; }
-            to { bottom: 0; opacity: 0; }
-        }
-
-        @media (max-width: 860px) {
-            .top-app-bar,
-            .page-header,
-            .preset-card,
-            .form-row,
+        @media (max-width: 960px) {
+            .hero-grid,
+            .overview-grid,
+            .panel-grid,
             .agent-card {
                 grid-template-columns: 1fr;
+            }
+
+            .form-row {
                 flex-direction: column;
-            }
-
-            .top-app-bar {
-                height: auto;
-                padding: 16px;
-                align-items: flex-start;
-            }
-
-            .top-bar-actions {
-                width: 100%;
-                justify-content: space-between;
+                gap: 8px;
             }
 
             .form-label {
@@ -604,8 +887,17 @@
                 grid-template-columns: 1fr;
             }
 
-            .agent-avatar-wrap {
-                align-items: flex-start;
+            .top-app-bar {
+                padding: 16px 18px;
+            }
+
+            .tabs-wrap {
+                top: 92px;
+                padding: 10px 14px 0;
+            }
+
+            .tab-content {
+                padding: 22px 14px 40px;
             }
         }
     </style>
@@ -613,13 +905,25 @@
 <body>
     <div id="auth-shell" class="auth-shell">
         <div class="auth-card">
-            <h1>Clawboard</h1>
-            <p>Local control surface for OpenClaw routing, defaults, avatars, and quick ops.</p>
-            <div class="field-stack">
+            <div class="brand-lockup">
+                <div class="brand-mark">
+                    <span class="material-icons-round">dashboard_customize</span>
+                </div>
+                <div class="brand-copy">
+                    <h1>Clawboard</h1>
+                    <p>AI-first control surface for OpenClaw.</p>
+                </div>
+            </div>
+            <h2>Sign In</h2>
+            <p class="helper-text">Local auth only. This does not change OpenClaw provider credentials.</p>
+            <div class="auth-stack">
                 <input id="login-username" class="md-input" type="text" autocomplete="username" placeholder="Username" value="admin">
                 <input id="login-password" class="md-input" type="password" autocomplete="current-password" placeholder="Password" value="password">
-                <button class="btn btn-primary" onclick="login()">Sign In</button>
-                <div class="micro-note">Initial credentials are <code>admin</code> / <code>password</code>. Change them in the Account tab after first login.</div>
+                <button class="btn btn-primary" onclick="login()">
+                    <span class="material-icons-round">login</span>
+                    Sign In
+                </button>
+                <p class="micro-note">Initial credentials are <code>admin</code> / <code>password</code>.</p>
             </div>
             <div id="auth-error" class="auth-error"></div>
         </div>
@@ -627,234 +931,232 @@
 
     <div id="app-shell" class="hidden">
         <header class="top-app-bar">
-            <div class="top-app-bar-title">
-                <span class="material-icons-round" style="color: var(--md-sys-color-primary)">dashboard</span>
-                Clawboard <span style="font-size: 14px; color: var(--md-sys-color-outline); margin-left: 8px;">vNext</span>
+            <div class="brand-lockup">
+                <div class="brand-mark">
+                    <span class="material-icons-round">dashboard_customize</span>
+                </div>
+                <div class="brand-copy">
+                    <h1>Clawboard</h1>
+                    <p>Panel-first routing, health, and handoff.</p>
+                </div>
             </div>
             <div class="top-bar-actions">
-                <div class="status-badge">
-                    <div class="status-dot"></div>
-                    <span>Hot reload enabled</span>
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    Hot reload enabled
                 </div>
                 <div class="chip" id="current-user-chip">Signed in</div>
-                <button class="btn btn-secondary" onclick="logout()">
+                <button class="btn" onclick="logout()">
                     <span class="material-icons-round">logout</span>
                     Logout
                 </button>
             </div>
         </header>
 
-        <nav class="tabs">
-            <div class="tab active" data-tab="agents">Agents</div>
-            <div class="tab" data-tab="defaults">Defaults</div>
-            <div class="tab" data-tab="models">Models</div>
-            <div class="tab" data-tab="cron">Cron</div>
-            <div class="tab" data-tab="account">Account</div>
-        </nav>
+        <div class="tabs-wrap">
+            <nav class="tabs">
+                <button class="tab active" data-tab="agents">Agents</button>
+                <button class="tab" data-tab="overview">Overview</button>
+                <button class="tab" data-tab="models">Models</button>
+                <button class="tab" data-tab="cron">Cron</button>
+                <button class="tab" data-tab="account">Account</button>
+            </nav>
+        </div>
 
-        <div id="agents" class="tab-content active">
+        <section id="agents" class="tab-content active">
             <div class="page-header">
                 <div>
                     <h2>Agents</h2>
-                    <p>Agent model chains and avatars are saved immediately and picked up by OpenClaw hot reload.</p>
+                    <p>Keep routing edits in context, save reusable presets, and hand complex comparisons off to AI instead of burying them in management UI.</p>
                 </div>
-                <button class="btn btn-primary" onclick="applyAgents()">
-                    <span class="material-icons-round">sync</span>
-                    Apply Agents
-                </button>
-            </div>
-
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <h3>Agents</h3>
-                    <strong id="agents-count">0</strong>
-                </div>
-                <div class="summary-card">
-                    <h3>Presets</h3>
-                    <strong id="presets-count">0</strong>
-                </div>
-                <div class="summary-card">
-                    <h3>Selectable Models</h3>
-                    <strong id="model-options-count">0</strong>
+                <div class="action-cluster">
+                    <button class="btn" onclick="openPresetModal()">
+                        <span class="material-icons-round">bookmark_add</span>
+                        Save as Preset
+                    </button>
+                    <button class="btn btn-primary" onclick="applyAgents()">
+                        <span class="material-icons-round">sync</span>
+                        Apply Agents
+                    </button>
                 </div>
             </div>
 
-            <div class="card">
-                <h3 class="card-title">Presets</h3>
-                <p class="card-subtitle">Applying a preset updates config and is treated as hot-applied. No manual restart is needed.</p>
-                <div id="presets-list"></div>
+            <div class="panel-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Presets</h3>
+                            <p class="card-subtitle">Compact snapshots of the current defaults and agent routing.</p>
+                        </div>
+                        <div class="button-row">
+                            <button class="btn" onclick="openPromptModal('Compare presets', buildPresetComparisonPrompt())">
+                                <span class="material-icons-round">psychology</span>
+                                Ask AI to compare presets
+                            </button>
+                        </div>
+                    </div>
+                    <div id="presets-list" class="preset-stack"></div>
+                </div>
+
+                <div class="stats-stack">
+                    <div class="stat-card">
+                        <h3>Agents</h3>
+                        <strong id="agents-count">0</strong>
+                        <p class="helper-text">Live model chains ready for hot apply.</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Presets</h3>
+                        <strong id="presets-count">0</strong>
+                        <p class="helper-text">Lightweight reusable states, not a management system.</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Selectable Models</h3>
+                        <strong id="model-options-count">0</strong>
+                        <p class="helper-text">Provider menus merge current config, saved refs, and LiteLLM.</p>
+                    </div>
+                </div>
             </div>
 
             <div id="agents-container"></div>
-        </div>
+        </section>
 
-        <div id="defaults" class="tab-content">
+        <section id="overview" class="tab-content">
             <div class="page-header">
                 <div>
-                    <h2>Defaults</h2>
-                    <p>Provider and model menus are built from current OpenClaw config, saved refs, and LiteLLM config.</p>
+                    <h2>Overview</h2>
+                    <p>Use this as the high-signal control layer: defaults on the left, relationship summaries and quick pivots on the right.</p>
                 </div>
-                <button class="btn btn-primary" onclick="applyDefaults()">
-                    <span class="material-icons-round">save</span>
-                    Apply Defaults
-                </button>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title">Default Model Configuration</h3>
-                <div class="form-row">
-                    <span class="form-label">Primary</span>
-                    <div class="form-value">
-                        <div class="field-stack">
-                            <select class="md-select" id="defaults-primary-select"></select>
-                            <div class="field-meta" id="defaults-primary-meta"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">Fallback 1</span>
-                    <div class="form-value">
-                        <div class="field-stack">
-                            <select class="md-select" id="defaults-fb1-select"></select>
-                            <div class="field-meta" id="defaults-fb1-meta"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">Fallback 2</span>
-                    <div class="form-value">
-                        <div class="field-stack">
-                            <select class="md-select" id="defaults-fb2-select"></select>
-                            <div class="field-meta" id="defaults-fb2-meta"></div>
-                        </div>
-                    </div>
+                <div class="action-cluster">
+                    <button class="btn" onclick="openPromptModal('Optimize model routing', buildRoutingPrompt())">
+                        <span class="material-icons-round">auto_awesome</span>
+                        Ask AI to optimize model routing
+                    </button>
+                    <button class="btn btn-primary" onclick="applyDefaults()">
+                        <span class="material-icons-round">save</span>
+                        Apply Defaults
+                    </button>
                 </div>
             </div>
 
-            <div class="card">
-                <h3 class="card-title">Image Model</h3>
-                <div class="form-row">
-                    <span class="form-label">Primary</span>
-                    <div class="form-value">
-                        <div class="field-stack">
-                            <select class="md-select" id="image-primary-select"></select>
-                            <div class="field-meta" id="image-primary-meta"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">Fallback 1</span>
-                    <div class="form-value">
-                        <div class="field-stack">
-                            <select class="md-select" id="image-fb1-select"></select>
-                            <div class="field-meta" id="image-fb1-meta"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">Fallback 2</span>
-                    <div class="form-value">
-                        <div class="field-stack">
-                            <select class="md-select" id="image-fb2-select"></select>
-                            <div class="field-meta" id="image-fb2-meta"></div>
-                        </div>
-                    </div>
-                </div>
+            <div id="overview-hero"></div>
+            <div class="overview-grid">
+                <div id="defaults-editor"></div>
+                <div id="overview-sidecards"></div>
             </div>
+        </section>
 
-            <div class="card">
-                <h3 class="card-title">Heartbeat</h3>
-                <div class="form-row">
-                    <span class="form-label">Model</span>
-                    <div class="form-value">
-                        <div class="field-stack">
-                            <select class="md-select" id="heartbeat-model"></select>
-                            <div class="field-meta" id="heartbeat-meta"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="models" class="tab-content">
+        <section id="models" class="tab-content">
             <div class="page-header">
                 <div>
                     <h2>Models</h2>
-                    <p>Read-only registry view from the unified server catalog.</p>
+                    <p>One panel, multiple views. Filter the registry by usage shape, provider, and access without leaving the page.</p>
+                </div>
+                <div class="action-cluster">
+                    <button class="btn" onclick="openPromptModal('Optimize model routing', buildRoutingPrompt())">
+                        <span class="material-icons-round">psychology</span>
+                        Ask AI to optimize model routing
+                    </button>
+                    <button class="btn" onclick="loadDashboard()">
+                        <span class="material-icons-round">refresh</span>
+                        Refresh
+                    </button>
                 </div>
             </div>
+
             <div class="card">
-                <h3 class="card-title">Model Registry</h3>
-                <div class="button-row" style="margin-bottom: 16px;">
-                    <select class="md-select" id="models-filter-access" onchange="renderModels()" style="min-width: 150px; width: auto;">
-                        <option value="">All Access</option>
-                        <option value="Direct">Direct</option>
-                        <option value="LiteLLM">LiteLLM</option>
-                    </select>
-                    <select class="md-select" id="models-filter-upstream" onchange="renderModels()" style="min-width: 150px; width: auto;">
-                        <option value="">All Upstream</option>
-                    </select>
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Registry View</h3>
+                        <p class="card-subtitle">Click a row to inspect cross-links and usage context.</p>
+                    </div>
+                    <div class="button-row">
+                        <select id="models-view" class="md-select" style="width: auto; min-width: 160px;" onchange="renderModels()">
+                            <option value="all">All</option>
+                            <option value="in-use">In use</option>
+                            <option value="orphans">Orphans / saved refs</option>
+                            <option value="provider">By provider</option>
+                        </select>
+                        <select id="models-filter-access" class="md-select" style="width: auto; min-width: 150px;" onchange="renderModels()">
+                            <option value="">All Access</option>
+                            <option value="Direct">Direct</option>
+                            <option value="LiteLLM">LiteLLM</option>
+                        </select>
+                        <select id="models-filter-provider" class="md-select" style="width: auto; min-width: 180px;" onchange="renderModels()">
+                            <option value="">All Providers</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="table-container">
+                <div class="table-shell">
                     <table id="models-table">
                         <thead>
                             <tr>
                                 <th>Model</th>
                                 <th>Provider</th>
                                 <th>Access</th>
-                                <th>Upstream</th>
+                                <th>Used By</th>
+                                <th>Usage Count</th>
                                 <th>Source</th>
-                                <th>Context</th>
-                                <th>Max Tokens</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="cron" class="tab-content">
+        <section id="cron" class="tab-content">
             <div class="page-header">
                 <div>
                     <h2>Cron</h2>
-                    <p>Read-only schedule overview.</p>
+                    <p>Observability first. Inspect jobs, run them once, and toggle them without opening a heavy scheduler builder.</p>
                 </div>
-                <button class="btn btn-secondary" onclick="loadCron()">
-                    <span class="material-icons-round">refresh</span>
-                    Refresh
-                </button>
+                <div class="action-cluster">
+                    <button class="btn" onclick="openPromptModal('Review cron health', buildCronHealthPrompt())">
+                        <span class="material-icons-round">psychology</span>
+                        Ask AI to review cron health
+                    </button>
+                    <button class="btn" onclick="loadDashboard()">
+                        <span class="material-icons-round">refresh</span>
+                        Refresh
+                    </button>
+                </div>
             </div>
             <div class="card">
-                <div class="table-container">
+                <div class="table-shell">
                     <table id="cron-table">
                         <thead>
                             <tr>
+                                <th>Enabled</th>
                                 <th>Name</th>
                                 <th>Schedule</th>
-                                <th>Next</th>
-                                <th>Last</th>
-                                <th>Status</th>
-                                <th>Agent</th>
+                                <th>Next Run</th>
+                                <th>Last Run</th>
+                                <th>Last Status</th>
+                                <th>Target</th>
                                 <th>Model</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="account" class="tab-content">
+        <section id="account" class="tab-content">
             <div class="page-header">
                 <div>
                     <h2>Account</h2>
-                    <p>Update the local Clawboard login stored at <code>~/.openclaw/clawboard/auth.json</code>.</p>
+                    <p>Update the local Clawboard login stored under <code>~/.openclaw/clawboard/auth.json</code>.</p>
                 </div>
             </div>
             <div class="card">
-                <h3 class="card-title">Credentials</h3>
-                <p class="card-subtitle" style="margin-bottom: 12px;">This login is local to Clawboard. Updating it does not change OpenClaw channel or provider credentials.</p>
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Credentials</h3>
+                        <p class="card-subtitle">This only affects Clawboard access.</p>
+                    </div>
+                </div>
                 <div class="form-row">
                     <span class="form-label">New Username</span>
                     <div class="form-value">
@@ -880,10 +1182,78 @@
                     </button>
                 </div>
             </div>
+        </section>
+    </div>
+
+    <div id="surface-scrim" class="scrim" onclick="closeSurfaces()"></div>
+
+    <aside id="detail-drawer" class="drawer">
+        <div class="drawer-header">
+            <div>
+                <h3 id="drawer-title">Details</h3>
+                <p id="drawer-subtitle"></p>
+            </div>
+            <button class="btn" onclick="closeDrawer()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div id="drawer-body" class="drawer-body"></div>
+        <div id="drawer-actions" class="drawer-actions"></div>
+    </aside>
+
+    <div id="preset-modal" class="modal">
+        <div class="modal-header">
+            <div>
+                <h3 id="preset-modal-title">Save Preset</h3>
+                <p id="preset-modal-subtitle">Capture the current defaults and agent routing.</p>
+            </div>
+            <button class="btn" onclick="closePresetModal()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="field-stack">
+                <label for="preset-name">Preset name</label>
+                <input id="preset-name" class="md-input" type="text" maxlength="80" placeholder="Daytime routing">
+            </div>
+            <div class="field-stack">
+                <label for="preset-description">Description</label>
+                <textarea id="preset-description" class="md-textarea" placeholder="Optional note for when to use this snapshot."></textarea>
+            </div>
+            <input id="preset-original-name" type="hidden">
+        </div>
+        <div class="modal-actions">
+            <button class="btn" onclick="closePresetModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="submitPresetModal()">
+                <span class="material-icons-round">bookmark</span>
+                Save Preset
+            </button>
         </div>
     </div>
 
-    <div class="overlay" id="loading-overlay">
+    <div id="prompt-modal" class="modal">
+        <div class="modal-header">
+            <div>
+                <h3 id="prompt-modal-title">AI Handoff</h3>
+                <p>Copy the structured prompt into your preferred AI flow.</p>
+            </div>
+            <button class="btn" onclick="closePromptModal()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <textarea id="prompt-modal-text" class="md-textarea" readonly></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn" onclick="closePromptModal()">Close</button>
+            <button class="btn btn-primary" onclick="copyPromptText()">
+                <span class="material-icons-round">content_copy</span>
+                Copy Prompt
+            </button>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="overlay">
         <div class="spinner"></div>
     </div>
 
@@ -897,11 +1267,15 @@
             UNKNOWN: 'custom'
         };
 
+        let sessionUser = null;
         let agentsData = [];
         let defaultsData = {};
-        let presetsData = {};
-        let modelsData = [];
-        let sessionUser = null;
+        let dashboardData = {
+            overview: {},
+            presets: [],
+            models: [],
+            cron: []
+        };
         let modelCatalog = {
             options: [],
             providers: [],
@@ -953,20 +1327,13 @@
 
         function initTabs() {
             document.querySelectorAll('.tab').forEach((tab) => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab').forEach((entry) => entry.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach((entry) => entry.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById(tab.dataset.tab).classList.add('active');
-
-                    if (tab.dataset.tab === 'models') {
-                        loadModelRegistry();
-                    }
-                    if (tab.dataset.tab === 'cron') {
-                        loadCron();
-                    }
-                });
+                tab.addEventListener('click', () => activateTab(tab.dataset.tab));
             });
+        }
+
+        function activateTab(tabName) {
+            document.querySelectorAll('.tab').forEach((entry) => entry.classList.toggle('active', entry.dataset.tab === tabName));
+            document.querySelectorAll('.tab-content').forEach((entry) => entry.classList.toggle('active', entry.id === tabName));
         }
 
         async function login() {
@@ -1042,17 +1409,14 @@
 
         async function loadAppData() {
             await loadModelOptions();
-            await Promise.all([
-                loadDefaults(),
-                loadAgents(),
-                loadPresets()
-            ]);
+            await Promise.all([loadAgents(), loadDashboard()]);
             updateUserChip();
         }
 
         function showAuthShell() {
             document.getElementById('auth-shell').classList.remove('hidden');
             document.getElementById('app-shell').classList.add('hidden');
+            closeSurfaces();
         }
 
         function showAppShell() {
@@ -1088,9 +1452,9 @@
                 }
                 hydrateModelCatalog(data);
             } catch (err) {
-                console.error('Failed to load model options:', err);
+                console.error(err);
                 hydrateModelCatalog({ options: [], providers: [], litellmOnly: [] });
-                showSnackbar('Model options unavailable. Saved values remain selectable.');
+                showSnackbar('Model options unavailable. Saved refs remain selectable.');
             } finally {
                 document.getElementById('model-options-count').textContent = String(modelCatalog.options.length);
             }
@@ -1306,9 +1670,9 @@
             }
 
             if (option?.sourceStatus === MODEL_SOURCE_LABELS.OPENCLAW_ONLY) {
-                chips.push('<span class="chip chip-warning"><span class="material-icons-round" style="font-size:14px;">warning</span>openclaw-only</span>');
+                chips.push('<span class="chip warning">openclaw-only</span>');
             } else if (option?.sourceStatus === MODEL_SOURCE_LABELS.OPENCLAW_AND_LITELLM) {
-                chips.push('<span class="chip chip-success"><span class="material-icons-round" style="font-size:14px;">done_all</span>openclaw+litellm</span>');
+                chips.push('<span class="chip success">openclaw+litellm</span>');
             } else if (option?.sourceStatus === MODEL_SOURCE_LABELS.LITELLM_ONLY) {
                 chips.push('<span class="chip">litellm-only</span>');
             } else {
@@ -1322,25 +1686,413 @@
             meta.innerHTML = chips.join('');
         }
 
-        async function loadDefaults() {
+        async function loadDashboard() {
             try {
-                const res = await apiFetch('/api/defaults');
+                const res = await apiFetch('/api/dashboard');
                 const data = await res.json();
                 if (!res.ok) {
-                    throw new Error(data.error || 'Failed to load defaults');
+                    throw new Error(data.error || 'Failed to load dashboard');
                 }
 
-                defaultsData = data;
-                setModelSelect('defaults-primary-select', data.model?.primary || '', false, 'defaults-primary-meta');
-                setModelSelect('defaults-fb1-select', data.model?.fallbacks?.[0] || '', true, 'defaults-fb1-meta');
-                setModelSelect('defaults-fb2-select', data.model?.fallbacks?.[1] || '', true, 'defaults-fb2-meta');
-                setModelSelect('image-primary-select', data.imageModel?.primary || '', false, 'image-primary-meta');
-                setModelSelect('image-fb1-select', data.imageModel?.fallbacks?.[0] || '', true, 'image-fb1-meta');
-                setModelSelect('image-fb2-select', data.imageModel?.fallbacks?.[1] || '', true, 'image-fb2-meta');
-                setModelSelect('heartbeat-model', data.heartbeatModel || '', false, 'heartbeat-meta');
+                dashboardData = data;
+                defaultsData = data.defaults || {};
+                renderOverview();
+                renderPresets();
+                renderModels();
+                renderCron();
+                populateModelProviderFilter();
             } catch (err) {
-                showSnackbar(err.message || 'Failed to load defaults');
+                console.error(err);
+                showSnackbar(err.message || 'Failed to load dashboard');
+            } finally {
+                document.getElementById('presets-count').textContent = String((dashboardData.presets || []).length);
             }
+        }
+
+        async function loadAgents() {
+            try {
+                const res = await apiFetch('/api/agents');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to load agents');
+                }
+                agentsData = data.agents || [];
+                renderAgents();
+            } catch (err) {
+                console.error(err);
+                showSnackbar(err.message || 'Failed to load agents');
+            } finally {
+                document.getElementById('agents-count').textContent = String(agentsData.length);
+            }
+        }
+
+        function renderOverview() {
+            const overview = dashboardData.overview || {};
+            document.getElementById('overview-hero').innerHTML = `
+                <div class="hero-grid">
+                    <div class="card hero-card">
+                        <h3>Lightweight oversight for defaults, routing, presets, and cron health.</h3>
+                        <p>Clawboard stays panel-first: fast edits, visible relationships, low-risk actions, and AI handoffs for the heavier reasoning.</p>
+                        <div class="quick-link-list">
+                            <button class="quick-link" onclick="activateTab('models')">Jump to Models</button>
+                            <button class="quick-link" onclick="activateTab('cron')">Jump to Cron</button>
+                            <button class="quick-link" onclick="activateTab('agents')">Jump to Agents</button>
+                        </div>
+                    </div>
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <h3>Presets Summary</h3>
+                            <strong>${escapeHtml(overview.presets?.total ?? 0)}</strong>
+                            <p class="helper-text">${escapeHtml((overview.presets?.recentlyUpdated || []).join(', ') || 'No recent preset activity.')}</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Model Usage Summary</h3>
+                            <strong>${escapeHtml(overview.models?.inUse ?? 0)}</strong>
+                            <p class="helper-text">${escapeHtml(`In use ${overview.models?.inUse ?? 0} of ${overview.models?.total ?? 0}, orphans ${overview.models?.orphans ?? 0}.`)}</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Cron Health Summary</h3>
+                            <strong>${escapeHtml(overview.cron?.enabled ?? 0)}</strong>
+                            <p class="helper-text">${escapeHtml(`${overview.cron?.healthy ?? 0} healthy, ${overview.cron?.attention ?? 0} needing attention.`)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('defaults-editor').innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Default Model Configuration</h3>
+                            <p class="card-subtitle">These defaults remain editable here. Saving still hot-applies to OpenClaw.</p>
+                        </div>
+                    </div>
+                    <div class="form-card-grid">
+                        <div class="list-card">
+                            <div class="form-row">
+                                <span class="form-label">Primary</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="defaults-primary-select" class="md-select"></select>
+                                        <div id="defaults-primary-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Fallback 1</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="defaults-fb1-select" class="md-select"></select>
+                                        <div id="defaults-fb1-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Fallback 2</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="defaults-fb2-select" class="md-select"></select>
+                                        <div id="defaults-fb2-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-card">
+                            <div class="form-row">
+                                <span class="form-label">Image Primary</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="image-primary-select" class="md-select"></select>
+                                        <div id="image-primary-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Image Fallback 1</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="image-fb1-select" class="md-select"></select>
+                                        <div id="image-fb1-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Image Fallback 2</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="image-fb2-select" class="md-select"></select>
+                                        <div id="image-fb2-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Heartbeat</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="heartbeat-model" class="md-select"></select>
+                                        <div id="heartbeat-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('overview-sidecards').innerHTML = `
+                <div class="stats-stack">
+                    <div class="list-card">
+                        <h3 class="card-title">Presets Summary</h3>
+                        <ul>${renderListItems((dashboardData.presets || []).slice(0, 4).map((preset) => `${preset.name}: ${preset.liveDiffSummary.join(', ') || 'No live diff'}`), 'No presets saved.')}</ul>
+                    </div>
+                    <div class="list-card">
+                        <h3 class="card-title">Model Usage Summary</h3>
+                        <ul>${renderListItems((overview.models?.topUsed || []).map((model) => `${model} is a top referenced route.`), 'No model usage data.')}</ul>
+                    </div>
+                    <div class="list-card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Cron Health Summary</h3>
+                                <p class="card-subtitle">Quick visibility into the jobs that need review.</p>
+                            </div>
+                            <button class="btn" onclick="openPromptModal('Review cron health', buildCronHealthPrompt())">
+                                <span class="material-icons-round">auto_awesome</span>
+                                AI Review
+                            </button>
+                        </div>
+                        <ul>${renderListItems(getCronAttentionItems(), 'No cron issues detected.')}</ul>
+                    </div>
+                </div>
+            `;
+
+            setModelSelect('defaults-primary-select', defaultsData.model?.primary || '', false, 'defaults-primary-meta');
+            setModelSelect('defaults-fb1-select', defaultsData.model?.fallbacks?.[0] || '', true, 'defaults-fb1-meta');
+            setModelSelect('defaults-fb2-select', defaultsData.model?.fallbacks?.[1] || '', true, 'defaults-fb2-meta');
+            setModelSelect('image-primary-select', defaultsData.imageModel?.primary || '', false, 'image-primary-meta');
+            setModelSelect('image-fb1-select', defaultsData.imageModel?.fallbacks?.[0] || '', true, 'image-fb1-meta');
+            setModelSelect('image-fb2-select', defaultsData.imageModel?.fallbacks?.[1] || '', true, 'image-fb2-meta');
+            setModelSelect('heartbeat-model', defaultsData.heartbeatModel || '', false, 'heartbeat-meta');
+        }
+
+        function renderListItems(items, fallbackText) {
+            if (!items || items.length === 0) {
+                return `<li>${escapeHtml(fallbackText)}</li>`;
+            }
+            return items.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+        }
+
+        function getCronAttentionItems() {
+            return (dashboardData.cron || [])
+                .filter((job) => job.status === 'error' || !job.enabled)
+                .slice(0, 4)
+                .map((job) => `${job.name}: ${job.status === 'error' ? 'last run errored' : 'currently disabled'}`);
+        }
+
+        function renderPresets() {
+            const container = document.getElementById('presets-list');
+            const presets = dashboardData.presets || [];
+
+            if (presets.length === 0) {
+                container.innerHTML = '<p class="empty-state">No presets saved.</p>';
+                return;
+            }
+
+            container.innerHTML = presets.map((preset) => `
+                <div class="preset-card">
+                    <div>
+                        <h4>${escapeHtml(preset.name)}</h4>
+                        <p>${escapeHtml(preset.description || 'No description')}</p>
+                        <div class="tag-row" style="margin-top: 10px;">
+                            ${(preset.liveDiffSummary || []).slice(0, 3).map((entry) => `<span class="chip">${escapeHtml(entry)}</span>`).join('') || '<span class="chip">No live diff</span>'}
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <button class="btn" onclick="openPresetDrawer('${escapeJsString(preset.name)}')">View details</button>
+                        <button class="btn" onclick="openPresetModal('${escapeJsString(preset.name)}')">Rename / edit note</button>
+                        <button class="btn btn-primary" onclick="applyPreset('${escapeJsString(preset.name)}')">Apply</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAgents() {
+            const container = document.getElementById('agents-container');
+            if (!agentsData.length) {
+                container.innerHTML = '<div class="card"><p class="empty-state">No agents configured.</p></div>';
+                return;
+            }
+
+            container.innerHTML = agentsData.map((agent) => {
+                const installedSkills = Array.isArray(agent.installedSkills) ? agent.installedSkills : [];
+                const workspaceSkills = Array.isArray(agent.workspaceSkills) ? agent.workspaceSkills : [];
+                return `
+                    <div class="card agent-card">
+                        <div class="agent-sidebar">
+                            <div class="agent-avatar-wrap">
+                                <img class="agent-avatar" id="avatar-${escapeHtml(agent.id)}" src="${escapeHtml(agent.avatarUrl)}" alt="${escapeHtml(agent.name)} avatar">
+                                <div>
+                                    <div class="agent-name">${escapeHtml(agent.name || agent.id)}</div>
+                                    <div class="agent-id">${escapeHtml(agent.id)}</div>
+                                </div>
+                            </div>
+                            <div class="button-row">
+                                <input class="hidden" type="file" id="avatar-input-${escapeHtml(agent.id)}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" onchange="handleAvatarSelected('${escapeJsString(agent.id)}', this)">
+                                <button class="btn" onclick="document.getElementById('avatar-input-${escapeHtml(agent.id)}').click()">
+                                    <span class="material-icons-round">upload</span>
+                                    Upload Avatar
+                                </button>
+                                <button class="btn btn-danger" onclick="resetAvatar('${escapeJsString(agent.id)}')" ${agent.hasCustomAvatar ? '' : 'disabled'}>
+                                    <span class="material-icons-round">restart_alt</span>
+                                    Reset
+                                </button>
+                            </div>
+                            <p class="helper-text">Stored under <code>~/.openclaw/clawboard/avatars</code>.</p>
+                            <div>
+                                <div class="section-divider">Installed Skills</div>
+                                <div class="tag-row">${installedSkills.length ? installedSkills.map((skill) => `<span class="chip">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">No installed skills</span>'}</div>
+                            </div>
+                            <div>
+                                <div class="section-divider">Workspace Skills</div>
+                                <div class="tag-row">${workspaceSkills.length ? workspaceSkills.map((skill) => `<span class="chip success">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">No workspace skills</span>'}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-row">
+                                <span class="form-label">Primary</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="agent-${escapeHtml(agent.id)}-primary" class="md-select"></select>
+                                        <div id="agent-${escapeHtml(agent.id)}-primary-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Fallback 1</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="agent-${escapeHtml(agent.id)}-fb1" class="md-select"></select>
+                                        <div id="agent-${escapeHtml(agent.id)}-fb1-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Fallback 2</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select id="agent-${escapeHtml(agent.id)}-fb2" class="md-select"></select>
+                                        <div id="agent-${escapeHtml(agent.id)}-fb2-meta" class="field-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            agentsData.forEach((agent) => {
+                setModelSelect(`agent-${agent.id}-primary`, agent.primary || '', false, `agent-${agent.id}-primary-meta`);
+                setModelSelect(`agent-${agent.id}-fb1`, agent.fallbacks?.[0] || '', true, `agent-${agent.id}-fb1-meta`);
+                setModelSelect(`agent-${agent.id}-fb2`, agent.fallbacks?.[1] || '', true, `agent-${agent.id}-fb2-meta`);
+            });
+        }
+
+        function populateModelProviderFilter() {
+            const filter = document.getElementById('models-filter-provider');
+            const current = filter.value;
+            const providers = Array.from(new Set((dashboardData.models || []).map((model) => model.provider).filter(Boolean))).sort();
+            filter.innerHTML = ['<option value="">All Providers</option>']
+                .concat(providers.map((provider) => `<option value="${escapeHtml(provider)}">${escapeHtml(provider)}</option>`))
+                .join('');
+            filter.value = providers.includes(current) ? current : '';
+        }
+
+        function renderModels() {
+            const tbody = document.querySelector('#models-table tbody');
+            const models = (dashboardData.models || []).slice();
+            const accessFilter = document.getElementById('models-filter-access').value;
+            const providerFilter = document.getElementById('models-filter-provider').value;
+            const view = document.getElementById('models-view').value;
+
+            let filtered = models;
+            if (accessFilter) {
+                filtered = filtered.filter((model) => model.access === accessFilter);
+            }
+            if (providerFilter) {
+                filtered = filtered.filter((model) => model.provider === providerFilter);
+            }
+            if (view === 'in-use') {
+                filtered = filtered.filter((model) => (model.usage?.usageCount || 0) > 0);
+            } else if (view === 'orphans') {
+                filtered = filtered.filter((model) => (model.usage?.usageCount || 0) === 0);
+            } else if (view === 'provider' && providerFilter) {
+                filtered = filtered.filter((model) => model.provider === providerFilter);
+            }
+
+            if (!filtered.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted)">No models match the current view.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((model) => {
+                const ref = `${model.provider}/${model.modelId}`;
+                const usage = model.usage || {};
+                const usedBy = summarizeModelUsage(usage);
+                return `
+                    <tr class="is-clickable" onclick="openModelDrawer('${escapeJsString(ref)}')">
+                        <td>${escapeHtml(model.modelName || model.modelId)}</td>
+                        <td>${escapeHtml(model.provider || '-')}</td>
+                        <td><span class="chip">${escapeHtml(model.access || '-')}</span></td>
+                        <td>${escapeHtml(usedBy)}</td>
+                        <td>${escapeHtml(usage.usageCount || 0)}</td>
+                        <td>${escapeHtml(model.sourceStatus || '-')}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function summarizeModelUsage(usage) {
+            const parts = [];
+            if ((usage.defaults || []).length) parts.push(`defaults ${usage.defaults.length}`);
+            if ((usage.agents || []).length) parts.push(`agents ${usage.agents.length}`);
+            if ((usage.presets || []).length) parts.push(`presets ${usage.presets.length}`);
+            if ((usage.cron || []).length) parts.push(`cron ${usage.cron.length}`);
+            return parts.join(', ') || 'unused';
+        }
+
+        function renderCron() {
+            const tbody = document.querySelector('#cron-table tbody');
+            const jobs = dashboardData.cron || [];
+
+            if (!jobs.length) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color: var(--text-muted)">No cron jobs available.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = jobs.map((job) => {
+                const statusClass = job.status === 'error' ? 'status-error' : (job.status === 'ok' ? 'status-ok' : 'status-idle');
+                return `
+                    <tr>
+                        <td><span class="chip ${job.enabled ? 'success' : 'warning'}">${job.enabled ? 'Enabled' : 'Disabled'}</span></td>
+                        <td>
+                            <strong>${escapeHtml(job.name || job.id)}</strong><br>
+                            <span class="helper-text">${escapeHtml(job.agentId || job.id)}</span>
+                        </td>
+                        <td>${escapeHtml(job.scheduleLabel || job.schedule || '-')}</td>
+                        <td>${escapeHtml(formatTimestamp(job.nextRun || job.nextRunAtMs))}</td>
+                        <td>${escapeHtml(formatTimestamp(job.lastRun || job.lastRunAtMs))}</td>
+                        <td class="${statusClass}">${escapeHtml(job.status || 'idle')}</td>
+                        <td>${escapeHtml(job.target || '-')}</td>
+                        <td>${escapeHtml(job.model || '-')}</td>
+                        <td>
+                            <div class="button-row">
+                                <button class="btn" onclick="event.stopPropagation(); openCronDrawer('${escapeJsString(job.id)}')">Inspect</button>
+                                <button class="btn" onclick="event.stopPropagation(); toggleCronJob('${escapeJsString(job.id)}')">${job.enabled ? 'Disable' : 'Enable'}</button>
+                                <button class="btn btn-primary" onclick="event.stopPropagation(); runCronJob('${escapeJsString(job.id)}')">Run once</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         async function applyDefaults() {
@@ -1349,17 +2101,11 @@
                 const payload = {
                     model: {
                         primary: document.getElementById('defaults-primary-select').value,
-                        fallbacks: [
-                            document.getElementById('defaults-fb1-select').value,
-                            document.getElementById('defaults-fb2-select').value
-                        ].filter(Boolean)
+                        fallbacks: [document.getElementById('defaults-fb1-select').value, document.getElementById('defaults-fb2-select').value].filter(Boolean)
                     },
                     imageModel: {
                         primary: document.getElementById('image-primary-select').value,
-                        fallbacks: [
-                            document.getElementById('image-fb1-select').value,
-                            document.getElementById('image-fb2-select').value
-                        ].filter(Boolean)
+                        fallbacks: [document.getElementById('image-fb1-select').value, document.getElementById('image-fb2-select').value].filter(Boolean)
                     },
                     heartbeatModel: document.getElementById('heartbeat-model').value,
                     thinkingDefault: defaultsData.thinkingDefault || 'adaptive'
@@ -1375,233 +2121,8 @@
                     throw new Error(data.error || 'Failed to save defaults');
                 }
 
-                await Promise.all([loadDefaults(), loadModelRegistry()]);
+                await Promise.all([loadModelOptions(), loadDashboard()]);
                 showSnackbar(data.message || 'Defaults saved');
-            } catch (err) {
-                showSnackbar(`Error: ${err.message}`);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function loadPresets() {
-            try {
-                const res = await apiFetch('/api/presets');
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || 'Failed to load presets');
-                }
-                presetsData = data.presets || {};
-                renderPresets();
-            } catch (err) {
-                document.getElementById('presets-list').innerHTML = '<p class="empty-state">Unable to load presets.</p>';
-            } finally {
-                document.getElementById('presets-count').textContent = String(Object.keys(presetsData).length);
-            }
-        }
-
-        function renderPresets() {
-            const container = document.getElementById('presets-list');
-            const names = Object.keys(presetsData);
-
-            if (names.length === 0) {
-                container.innerHTML = '<p class="empty-state">No presets saved.</p>';
-                return;
-            }
-
-            container.innerHTML = names.map((name) => {
-                const preset = presetsData[name];
-                return `
-                    <div class="preset-card">
-                        <div class="preset-info">
-                            <h4>${escapeHtml(preset.name || name)}</h4>
-                            <p>${escapeHtml(preset.description || 'No description')}</p>
-                        </div>
-                        <button class="btn btn-primary" onclick="applyPreset('${escapeJsString(name)}')">Apply</button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function applyPreset(name) {
-            showLoading();
-            try {
-                const res = await apiFetch(`/api/presets/${encodeURIComponent(name)}/apply`, { method: 'POST' });
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || 'Failed to apply preset');
-                }
-
-                showSnackbar(data.message || 'Preset applied');
-                await Promise.all([loadDefaults(), loadAgents()]);
-            } catch (err) {
-                showSnackbar(`Error: ${err.message}`);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function loadAgents() {
-            try {
-                const res = await apiFetch('/api/agents');
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || 'Failed to load agents');
-                }
-
-                agentsData = data.agents || [];
-                renderAgents();
-            } catch (err) {
-                showSnackbar(err.message || 'Failed to load agents');
-            } finally {
-                document.getElementById('agents-count').textContent = String(agentsData.length);
-            }
-        }
-
-        function renderAgents() {
-            const container = document.getElementById('agents-container');
-
-            if (agentsData.length === 0) {
-                container.innerHTML = '<div class="card"><p class="empty-state">No agents configured.</p></div>';
-                return;
-            }
-
-            container.innerHTML = agentsData.map((agent) => {
-                const installedSkills = Array.isArray(agent.installedSkills) ? agent.installedSkills : [];
-                const workspaceSkills = Array.isArray(agent.workspaceSkills) ? agent.workspaceSkills : [];
-                return `
-                    <div class="agent-card">
-                        <div class="agent-info">
-                            <div class="agent-avatar-wrap">
-                                <img class="agent-avatar" id="avatar-${escapeHtml(agent.id)}" src="${escapeHtml(agent.avatarUrl)}" alt="${escapeHtml(agent.name)} avatar">
-                                <div>
-                                    <div class="agent-name">${escapeHtml(agent.name || agent.id)}</div>
-                                    <div class="agent-id">${escapeHtml(agent.id)}</div>
-                                </div>
-                            </div>
-                            <div class="button-row">
-                                <input class="hidden" type="file" id="avatar-input-${escapeHtml(agent.id)}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" onchange="handleAvatarSelected('${escapeJsString(agent.id)}', this)">
-                                <button class="btn btn-secondary" onclick="document.getElementById('avatar-input-${escapeHtml(agent.id)}').click()">
-                                    <span class="material-icons-round">upload</span>
-                                    Upload Avatar
-                                </button>
-                                <button class="btn btn-danger" onclick="resetAvatar('${escapeJsString(agent.id)}')" ${agent.hasCustomAvatar ? '' : 'disabled'}>
-                                    <span class="material-icons-round">restart_alt</span>
-                                    Reset
-                                </button>
-                            </div>
-                            <div class="helper-text">Stored under <code>~/.openclaw/clawboard/avatars</code>.</div>
-                        </div>
-                        <div class="agent-config">
-                            <div class="form-row">
-                                <span class="form-label">Primary</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select class="md-select" id="agent-${escapeHtml(agent.id)}-primary"></select>
-                                        <div class="field-meta" id="agent-${escapeHtml(agent.id)}-primary-meta"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <span class="form-label">Fallback 1</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select class="md-select" id="agent-${escapeHtml(agent.id)}-fb1"></select>
-                                        <div class="field-meta" id="agent-${escapeHtml(agent.id)}-fb1-meta"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <span class="form-label">Fallback 2</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select class="md-select" id="agent-${escapeHtml(agent.id)}-fb2"></select>
-                                        <div class="field-meta" id="agent-${escapeHtml(agent.id)}-fb2-meta"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="section-divider">Installed Skills</div>
-                            <div class="tag-row">
-                                ${installedSkills.length ? installedSkills.map((skill) => `<span class="chip">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">No installed skills</span>'}
-                            </div>
-
-                            <div class="section-divider">Workspace Skills</div>
-                            <div class="tag-row">
-                                ${workspaceSkills.length ? workspaceSkills.map((skill) => `<span class="chip chip-success">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">No workspace skills</span>'}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            agentsData.forEach((agent) => {
-                setModelSelect(`agent-${agent.id}-primary`, agent.primary || '', false, `agent-${agent.id}-primary-meta`);
-                setModelSelect(`agent-${agent.id}-fb1`, agent.fallbacks?.[0] || '', true, `agent-${agent.id}-fb1-meta`);
-                setModelSelect(`agent-${agent.id}-fb2`, agent.fallbacks?.[1] || '', true, `agent-${agent.id}-fb2-meta`);
-            });
-        }
-
-        async function handleAvatarSelected(agentId, input) {
-            const [file] = input.files || [];
-            if (!file) {
-                return;
-            }
-
-            if (file.size > 2 * 1024 * 1024) {
-                showSnackbar('Avatar must be 2 MB or smaller.');
-                input.value = '';
-                return;
-            }
-
-            showLoading();
-            try {
-                const dataUrl = await readFileAsDataUrl(file);
-                const res = await apiFetch(`/api/agents/${encodeURIComponent(agentId)}/avatar`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ dataUrl })
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || 'Failed to upload avatar');
-                }
-
-                const agent = agentsData.find((entry) => entry.id === agentId);
-                if (agent) {
-                    agent.avatarUrl = data.avatarUrl;
-                    agent.hasCustomAvatar = true;
-                }
-                const image = document.getElementById(`avatar-${agentId}`);
-                if (image) {
-                    image.src = data.avatarUrl;
-                }
-                showSnackbar(data.message || 'Avatar uploaded');
-                renderAgents();
-            } catch (err) {
-                showSnackbar(`Error: ${err.message}`);
-            } finally {
-                input.value = '';
-                hideLoading();
-            }
-        }
-
-        async function resetAvatar(agentId) {
-            showLoading();
-            try {
-                const res = await apiFetch(`/api/agents/${encodeURIComponent(agentId)}/avatar`, { method: 'DELETE' });
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || 'Failed to reset avatar');
-                }
-
-                const agent = agentsData.find((entry) => entry.id === agentId);
-                if (agent) {
-                    agent.avatarUrl = `/api/agents/${encodeURIComponent(agentId)}/avatar?v=${Date.now()}`;
-                    agent.hasCustomAvatar = false;
-                }
-                renderAgents();
-                showSnackbar(data.message || 'Avatar reset');
             } catch (err) {
                 showSnackbar(`Error: ${err.message}`);
             } finally {
@@ -1631,7 +2152,7 @@
                     throw new Error(data.error || 'Failed to save agents');
                 }
 
-                await Promise.all([loadAgents(), loadModelRegistry()]);
+                await Promise.all([loadAgents(), loadModelOptions(), loadDashboard()]);
                 showSnackbar(data.message || 'Agents saved');
             } catch (err) {
                 showSnackbar(`Error: ${err.message}`);
@@ -1640,108 +2161,447 @@
             }
         }
 
-        async function loadCron() {
+        async function applyPreset(name) {
+            showLoading();
             try {
-                const res = await apiFetch('/api/cron');
-                const data = await res.json();
-                const tbody = document.querySelector('#cron-table tbody');
-
-                if (!res.ok || data.error || !Array.isArray(data.jobs) || data.jobs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: var(--md-sys-color-outline)">No cron jobs available.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = data.jobs.map((job) => {
-                    let statusClass = 'status-ok';
-                    if (job.status === 'error') statusClass = 'status-error';
-                    if (job.status === 'idle') statusClass = 'status-idle';
-
-                    return `
-                        <tr>
-                            <td>${escapeHtml(job.name || job.id || '-')}</td>
-                            <td>${escapeHtml(job.schedule || '-')}</td>
-                            <td>${escapeHtml(formatTimestamp(job.nextRun || job.next || job.nextRunAtMs))}</td>
-                            <td>${escapeHtml(formatTimestamp(job.lastRun || job.last || job.lastRunAtMs))}</td>
-                            <td class="${statusClass}">${escapeHtml(job.status || '-')}</td>
-                            <td>${escapeHtml(job.agentId || '-')}</td>
-                            <td>${escapeHtml(job.model || '-')}</td>
-                        </tr>
-                    `;
-                }).join('');
-            } catch (err) {
-                console.error('Failed to load cron:', err);
-            }
-        }
-
-        async function loadModelRegistry() {
-            try {
-                const res = await apiFetch('/api/models');
+                const res = await apiFetch(`/api/presets/${encodeURIComponent(name)}/apply`, { method: 'POST' });
                 const data = await res.json();
                 if (!res.ok) {
-                    throw new Error(data.error || 'Failed to load models');
+                    throw new Error(data.error || 'Failed to apply preset');
                 }
-                modelsData = data.models || [];
-                populateUpstreamFilter();
-                renderModels();
+
+                await Promise.all([loadAgents(), loadModelOptions(), loadDashboard()]);
+                showSnackbar(data.message || 'Preset applied');
             } catch (err) {
-                console.error('Failed to load models:', err);
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
             }
         }
 
-        function populateUpstreamFilter() {
-            const filter = document.getElementById('models-filter-upstream');
-            const current = filter.value;
-            const upstreams = Array.from(new Set(modelsData.map((model) => model.upstream).filter(Boolean))).sort();
-            filter.innerHTML = ['<option value="">All Upstream</option>']
-                .concat(upstreams.map((upstream) => `<option value="${escapeHtml(upstream)}">${escapeHtml(upstream)}</option>`))
-                .join('');
-            filter.value = upstreams.includes(current) ? current : '';
+        function openPresetModal(name = '') {
+            const preset = (dashboardData.presets || []).find((entry) => entry.name === name);
+            document.getElementById('preset-modal-title').textContent = preset ? 'Rename / Edit Preset' : 'Save Preset';
+            document.getElementById('preset-modal-subtitle').textContent = preset
+                ? 'Adjust the label or note without turning presets into a management subsystem.'
+                : 'Capture the current defaults and agent routing.';
+            document.getElementById('preset-name').value = preset?.name || '';
+            document.getElementById('preset-description').value = preset?.description || '';
+            document.getElementById('preset-original-name').value = preset?.name || '';
+            openModal('preset-modal');
         }
 
-        function renderModels() {
-            const tbody = document.querySelector('#models-table tbody');
-            const accessFilter = document.getElementById('models-filter-access').value;
-            const upstreamFilter = document.getElementById('models-filter-upstream').value;
+        function closePresetModal() {
+            closeModal('preset-modal');
+        }
 
-            let filtered = modelsData.slice();
-            if (accessFilter) {
-                filtered = filtered.filter((model) => model.access === accessFilter);
-            }
-            if (upstreamFilter) {
-                filtered = filtered.filter((model) => model.upstream === upstreamFilter);
-            }
+        async function submitPresetModal() {
+            const originalName = document.getElementById('preset-original-name').value.trim();
+            const name = document.getElementById('preset-name').value.trim();
+            const description = document.getElementById('preset-description').value.trim();
 
-            if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: var(--md-sys-color-outline)">No models match the current filters.</td></tr>';
+            if (!name) {
+                showSnackbar('Preset name is required.');
                 return;
             }
 
-            tbody.innerHTML = filtered.map((model) => {
-                const modelLabel = model.docsUrl
-                    ? `<a href="${escapeHtml(model.docsUrl)}" target="_blank" rel="noreferrer" style="color: var(--md-sys-color-primary); text-decoration:none;">${escapeHtml(model.modelId)}</a>`
-                    : escapeHtml(model.modelId);
-
-                return `
-                    <tr>
-                        <td>${modelLabel}</td>
-                        <td>${escapeHtml(model.provider || '-')}</td>
-                        <td><span class="chip">${escapeHtml(model.access || '-')}</span></td>
-                        <td>${escapeHtml(model.upstream || '-')}</td>
-                        <td>${escapeHtml(model.sourceStatus || '-')}</td>
-                        <td>${escapeHtml(model.contextWindow ? `${(model.contextWindow / 1000).toFixed(0)}K` : '-')}</td>
-                        <td>${escapeHtml(model.maxTokens || '-')}</td>
-                    </tr>
-                `;
-            }).join('');
+            showLoading();
+            try {
+                const url = originalName ? `/api/presets/${encodeURIComponent(originalName)}` : '/api/presets';
+                const method = originalName ? 'PATCH' : 'POST';
+                const res = await apiFetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(originalName ? { newName: name, description } : { name, description })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to save preset');
+                }
+                closePresetModal();
+                await loadDashboard();
+                showSnackbar(data.message || 'Preset saved');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
         }
 
-        function formatTimestamp(value) {
-            if (!value) return '-';
-            if (typeof value === 'number') {
-                return new Date(value).toLocaleString();
+        function openPresetDrawer(name) {
+            const preset = (dashboardData.presets || []).find((entry) => entry.name === name);
+            if (!preset) {
+                showSnackbar('Preset not found.');
+                return;
             }
-            const parsed = Date.parse(value);
-            return Number.isNaN(parsed) ? String(value) : new Date(parsed).toLocaleString();
+
+            document.getElementById('drawer-title').textContent = preset.name;
+            document.getElementById('drawer-subtitle').textContent = preset.description || 'Preset snapshot';
+            document.getElementById('drawer-body').innerHTML = `
+                <div class="drawer-grid">
+                    <div class="info-tile">
+                        <h4>Live Diff Summary</h4>
+                        <p>${escapeHtml((preset.liveDiffSummary || []).join(', ') || 'No live diff against current state.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Impacted Defaults</h4>
+                        <p>${escapeHtml((preset.impactedDefaults || []).join(', ') || 'No default changes.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Impacted Agents</h4>
+                        <p>${escapeHtml((preset.impactedAgents || []).join(', ') || 'No agent changes.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Models Summary</h4>
+                        <p>${escapeHtml((preset.models || []).map((model) => model.ref).join(', ') || 'No models recorded.')}</p>
+                    </div>
+                </div>
+                <div class="info-tile">
+                    <h4>Cross-links</h4>
+                    <div class="tag-row">
+                        ${(preset.models || []).map((model) => `<button class="btn" onclick="activateTab('models'); openModelDrawer('${escapeJsString(model.ref)}')">${escapeHtml(model.ref)}</button>`).join('') || '<span class="empty-state">No model links.</span>'}
+                    </div>
+                </div>
+            `;
+            document.getElementById('drawer-actions').innerHTML = `
+                <button class="btn" onclick="openPresetModal('${escapeJsString(name)}')">Rename / edit note</button>
+                <button class="btn" onclick="openPromptModal('Compare preset', buildPresetPrompt('${escapeJsString(name)}'))">Ask AI to compare preset</button>
+                <button class="btn btn-primary" onclick="applyPreset('${escapeJsString(name)}')">Apply</button>
+            `;
+            openDrawer();
+        }
+
+        function openModelDrawer(modelRef) {
+            const [provider, ...rest] = modelRef.split('/');
+            const target = (dashboardData.models || []).find((entry) => `${entry.provider}/${entry.modelId}` === modelRef || (!provider && entry.modelId === modelRef) || `${entry.provider}/${rest.join('/')}` === modelRef);
+            if (!target) {
+                showSnackbar('Model not found.');
+                return;
+            }
+            const usage = target.usage || {};
+
+            document.getElementById('drawer-title').textContent = target.modelName || target.modelId;
+            document.getElementById('drawer-subtitle').textContent = `${target.provider || 'Saved ref'} • ${target.access || 'Unknown access'}`;
+            document.getElementById('drawer-body').innerHTML = `
+                <div class="drawer-grid">
+                    <div class="info-tile">
+                        <h4>Usage Count</h4>
+                        <p>${escapeHtml(String(usage.usageCount || 0))}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Defaults</h4>
+                        <p>${escapeHtml((usage.defaults || []).join(', ') || 'Not used by defaults.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Agents</h4>
+                        <p>${escapeHtml((usage.agents || []).join(', ') || 'Not used by agents.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Presets</h4>
+                        <p>${escapeHtml((usage.presets || []).join(', ') || 'Not used by presets.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Cron</h4>
+                        <p>${escapeHtml((usage.cron || []).join(', ') || 'Not used by cron.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Context</h4>
+                        <p>${escapeHtml(`Context ${target.contextWindow || '-'} | Max tokens ${target.maxTokens || '-'}`)}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('drawer-actions').innerHTML = `
+                <button class="btn" onclick="activateTab('overview')">Open Overview</button>
+                <button class="btn" onclick="activateTab('agents')">Open Agents</button>
+                <button class="btn" onclick="openPromptModal('Optimize model routing', buildModelPrompt('${escapeJsString(modelRef)}'))">Ask AI to optimize routing</button>
+            `;
+            openDrawer();
+        }
+
+        function openCronDrawer(jobId) {
+            const job = (dashboardData.cron || []).find((entry) => entry.id === jobId);
+            if (!job) {
+                showSnackbar('Cron job not found.');
+                return;
+            }
+
+            document.getElementById('drawer-title').textContent = job.name || job.id;
+            document.getElementById('drawer-subtitle').textContent = `${job.enabled ? 'Enabled' : 'Disabled'} • ${job.scheduleLabel || job.schedule || 'Custom schedule'}`;
+            document.getElementById('drawer-body').innerHTML = `
+                <div class="drawer-grid">
+                    <div class="info-tile">
+                        <h4>Schedule Detail</h4>
+                        <pre>${escapeHtml(JSON.stringify(job.scheduleDetail || {}, null, 2))}</pre>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Payload Summary</h4>
+                        <p>${escapeHtml(job.payloadSummary?.promptPreview || 'No payload preview.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Delivery Summary</h4>
+                        <p>${escapeHtml(`${job.deliverySummary?.mode || 'none'} ${job.deliverySummary?.channel ? `via ${job.deliverySummary.channel}` : ''} ${job.deliverySummary?.to || ''}`)}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Recent Error</h4>
+                        <p>${escapeHtml(job.recentErrorSummary || 'No recent errors.')}</p>
+                    </div>
+                </div>
+                <div class="info-tile">
+                    <h4>Recent Runs</h4>
+                    <div class="meta-list">
+                        ${(job.recentRuns || []).length ? job.recentRuns.map((run) => `
+                            <div class="list-card">
+                                <div class="button-row" style="justify-content: space-between;">
+                                    <strong>${escapeHtml(formatTimestamp(run.ts))}</strong>
+                                    <span class="chip ${run.status === 'error' ? 'danger' : 'success'}">${escapeHtml(run.status)}</span>
+                                </div>
+                                <p class="helper-text" style="margin-top: 8px;">${escapeHtml(run.summary || run.error || 'No summary')}</p>
+                            </div>
+                        `).join('') : '<p class="empty-state">No run history found.</p>'}
+                    </div>
+                </div>
+            `;
+            document.getElementById('drawer-actions').innerHTML = `
+                <button class="btn" onclick="toggleCronJob('${escapeJsString(job.id)}')">${job.enabled ? 'Disable' : 'Enable'}</button>
+                <button class="btn" onclick="loadDashboard()">Refresh / inspect</button>
+                <button class="btn" onclick="openPromptModal('Review cron health', buildSingleCronPrompt('${escapeJsString(job.id)}'))">Ask AI to review</button>
+                <button class="btn btn-primary" onclick="runCronJob('${escapeJsString(job.id)}')">Run once</button>
+            `;
+            openDrawer();
+        }
+
+        async function toggleCronJob(jobId) {
+            showLoading();
+            try {
+                const res = await apiFetch(`/api/cron/${encodeURIComponent(jobId)}/toggle`, { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to toggle cron job');
+                }
+                await loadDashboard();
+                showSnackbar(data.message || 'Cron job updated');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function runCronJob(jobId) {
+            showLoading();
+            try {
+                const res = await apiFetch(`/api/cron/${encodeURIComponent(jobId)}/run`, { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to request run');
+                }
+                await loadDashboard();
+                showSnackbar(data.message || 'Run requested');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function handleAvatarSelected(agentId, input) {
+            const [file] = input.files || [];
+            if (!file) {
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                showSnackbar('Avatar must be 2 MB or smaller.');
+                input.value = '';
+                return;
+            }
+
+            showLoading();
+            try {
+                const dataUrl = await readFileAsDataUrl(file);
+                const res = await apiFetch(`/api/agents/${encodeURIComponent(agentId)}/avatar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dataUrl })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to upload avatar');
+                }
+                await loadAgents();
+                showSnackbar(data.message || 'Avatar uploaded');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                input.value = '';
+                hideLoading();
+            }
+        }
+
+        async function resetAvatar(agentId) {
+            showLoading();
+            try {
+                const res = await apiFetch(`/api/agents/${encodeURIComponent(agentId)}/avatar`, { method: 'DELETE' });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to reset avatar');
+                }
+                await loadAgents();
+                showSnackbar(data.message || 'Avatar reset');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function buildPresetComparisonPrompt() {
+            const presets = (dashboardData.presets || []).map((preset) => ({
+                name: preset.name,
+                description: preset.description || '',
+                diff: preset.liveDiffSummary || [],
+                impactedAgents: preset.impactedAgents || [],
+                impactedDefaults: preset.impactedDefaults || []
+            }));
+
+            return [
+                'Compare the current Clawboard presets and recommend when each should be applied.',
+                '',
+                'Constraints:',
+                '- Keep recommendations lightweight and operational.',
+                '- Prefer routing clarity over exhaustive diff output.',
+                '- Call out overlap, risk, and obvious consolidation opportunities.',
+                '',
+                'Presets:',
+                JSON.stringify(presets, null, 2)
+            ].join('\n');
+        }
+
+        function buildRoutingPrompt() {
+            return [
+                'Review this Clawboard routing snapshot and suggest improvements.',
+                '',
+                'Goals:',
+                '- Reduce overlap between defaults, agents, presets, and cron model choices.',
+                '- Preserve hot-reload friendly operations.',
+                '- Avoid suggesting heavy UI workflows; focus on config and policy changes.',
+                '',
+                'Overview:',
+                JSON.stringify(dashboardData.overview || {}, null, 2),
+                '',
+                'Models:',
+                JSON.stringify((dashboardData.models || []).map((model) => ({
+                    ref: `${model.provider}/${model.modelId}`,
+                    usage: model.usage
+                })), null, 2)
+            ].join('\n');
+        }
+
+        function buildCronHealthPrompt() {
+            return [
+                'Review cron health from Clawboard and identify which jobs need attention first.',
+                '',
+                'Focus on:',
+                '- recent errors',
+                '- disabled jobs that look accidental',
+                '- model concentration risk',
+                '- delivery risk',
+                '',
+                JSON.stringify(dashboardData.cron || [], null, 2)
+            ].join('\n');
+        }
+
+        function buildSingleCronPrompt(jobId) {
+            const job = (dashboardData.cron || []).find((entry) => entry.id === jobId);
+            return [
+                'Review this single Clawboard cron job.',
+                '',
+                'Tasks:',
+                '- explain the likely health state',
+                '- summarize delivery and model risk',
+                '- suggest low-risk next steps only',
+                '',
+                JSON.stringify(job || {}, null, 2)
+            ].join('\n');
+        }
+
+        function buildPresetPrompt(name) {
+            const preset = (dashboardData.presets || []).find((entry) => entry.name === name);
+            return [
+                `Compare preset "${name}" against the current Clawboard routing state.`,
+                '',
+                'Tasks:',
+                '- summarize what changes if this preset is applied',
+                '- identify the highest-impact model moves',
+                '- note any likely regressions or redundancies',
+                '',
+                JSON.stringify(preset || {}, null, 2)
+            ].join('\n');
+        }
+
+        function buildModelPrompt(modelRef) {
+            const model = (dashboardData.models || []).find((entry) => `${entry.provider}/${entry.modelId}` === modelRef);
+            return [
+                `Review model routing for "${modelRef}".`,
+                '',
+                'Tasks:',
+                '- evaluate whether this model is placed in the right defaults, agents, presets, and cron roles',
+                '- suggest any consolidation or isolation changes',
+                '- keep recommendations compatible with a lightweight control surface',
+                '',
+                JSON.stringify(model || {}, null, 2)
+            ].join('\n');
+        }
+
+        function openPromptModal(title, text) {
+            document.getElementById('prompt-modal-title').textContent = title;
+            document.getElementById('prompt-modal-text').value = text;
+            openModal('prompt-modal');
+        }
+
+        function closePromptModal() {
+            closeModal('prompt-modal');
+        }
+
+        async function copyPromptText() {
+            const text = document.getElementById('prompt-modal-text').value;
+            try {
+                await navigator.clipboard.writeText(text);
+                showSnackbar('Prompt copied.');
+            } catch {
+                showSnackbar('Clipboard unavailable. Copy manually.');
+            }
+        }
+
+        function openDrawer() {
+            document.getElementById('detail-drawer').classList.add('active');
+            document.getElementById('surface-scrim').classList.add('active');
+        }
+
+        function closeDrawer() {
+            document.getElementById('detail-drawer').classList.remove('active');
+            maybeHideScrim();
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.getElementById('surface-scrim').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            maybeHideScrim();
+        }
+
+        function maybeHideScrim() {
+            const modalOpen = Array.from(document.querySelectorAll('.modal')).some((entry) => entry.classList.contains('active'));
+            const drawerOpen = document.getElementById('detail-drawer').classList.contains('active');
+            document.getElementById('surface-scrim').classList.toggle('active', modalOpen || drawerOpen);
+        }
+
+        function closeSurfaces() {
+            closeDrawer();
+            closeModal('preset-modal');
+            closeModal('prompt-modal');
         }
 
         function readFileAsDataUrl(file) {
@@ -1751,6 +2611,13 @@
                 reader.onerror = () => reject(new Error('Failed to read file'));
                 reader.readAsDataURL(file);
             });
+        }
+
+        function formatTimestamp(value) {
+            if (!value) return '-';
+            if (typeof value === 'number') return new Date(value).toLocaleString();
+            const parsed = Date.parse(value);
+            return Number.isNaN(parsed) ? String(value) : new Date(parsed).toLocaleString();
         }
 
         function showLoading() {
