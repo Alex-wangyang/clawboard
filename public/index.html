@@ -6,33 +6,50 @@
     <title>Clawboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         :root {
-            --md-sys-color-primary: #0b57d0;
+            --md-sys-color-primary: #1554ff;
             --md-sys-color-on-primary: #ffffff;
-            --md-sys-color-primary-container: #d3e3fd;
-            --md-sys-color-on-primary-container: #041e49;
-            --md-sys-color-background: #f8fafd;
-            --md-sys-color-surface: #fdfbff;
-            --md-sys-color-on-surface: #1a1c1e;
-            --md-sys-color-surface-container-low: #f3f3fa;
-            --md-sys-color-surface-container: #ededf4;
-            --md-sys-color-outline: #74777f;
+            --md-sys-color-primary-container: #dfe8ff;
+            --md-sys-color-on-primary-container: #0c2468;
+            --md-sys-color-background: #f4f7fb;
+            --md-sys-color-surface: rgba(255, 255, 255, 0.84);
+            --md-sys-color-on-surface: #162033;
+            --md-sys-color-surface-container-low: #f8faff;
+            --md-sys-color-surface-container: #e8eef9;
+            --md-sys-color-outline: #7e8aa3;
             --md-sys-color-error: #ba1a1a;
-            --md-sys-color-warning: #b06000;
-            --md-sys-color-warning-container: #ffe0b2;
-            --md-elevation-1: 0px 1px 2px 0px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15);
-            --md-elevation-2: 0px 1px 2px 0px rgba(0,0,0,0.3), 0px 2px 6px 2px rgba(0,0,0,0.15);
+            --md-sys-color-warning: #a86000;
+            --md-sys-color-warning-container: #fff0d8;
+            --md-sys-color-success: #16794c;
+            --md-sys-color-success-container: #daf6e7;
+            --card-border: rgba(102, 125, 170, 0.18);
+            --glass-highlight: rgba(255, 255, 255, 0.7);
+            --md-elevation-1: 0 10px 30px rgba(36, 61, 102, 0.08);
+            --md-elevation-2: 0 18px 48px rgba(36, 61, 102, 0.14);
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--md-sys-color-background);
+            font-family: 'Manrope', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(21, 84, 255, 0.12), transparent 28%),
+                radial-gradient(circle at top right, rgba(64, 192, 255, 0.12), transparent 24%),
+                linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
             color: var(--md-sys-color-on-surface);
             margin: 0;
             min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(92, 117, 172, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(92, 117, 172, 0.05) 1px, transparent 1px);
+            background-size: 28px 28px;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 72%);
         }
 
         .hidden {
@@ -40,13 +57,16 @@
         }
 
         .top-app-bar {
-            background-color: var(--md-sys-color-surface);
-            height: 64px;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            background-color: rgba(255, 255, 255, 0.72);
+            height: 72px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            padding: 0 28px;
+            box-shadow: 0 8px 24px rgba(29, 52, 92, 0.08);
+            border-bottom: 1px solid var(--card-border);
             position: sticky;
             top: 0;
             z-index: 10;
@@ -55,7 +75,8 @@
 
         .top-app-bar-title {
             font-size: 22px;
-            font-weight: 500;
+            font-weight: 800;
+            letter-spacing: -0.03em;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -71,11 +92,14 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            background-color: var(--md-sys-color-surface-container);
-            padding: 6px 12px;
-            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 700;
+            background: linear-gradient(180deg, rgba(221, 248, 232, 0.95), rgba(212, 245, 227, 0.92));
+            color: var(--md-sys-color-success);
+            padding: 7px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(22, 121, 76, 0.12);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
         }
 
         .status-dot {
@@ -86,23 +110,30 @@
         }
 
         .tabs {
-            background-color: var(--md-sys-color-surface);
+            background-color: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             display: flex;
             padding: 0 24px;
-            border-bottom: 1px solid var(--md-sys-color-surface-container);
-            gap: 4px;
+            border-bottom: 1px solid var(--card-border);
+            gap: 8px;
             overflow-x: auto;
         }
 
         .tab {
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 13px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
             color: var(--md-sys-color-outline);
             cursor: pointer;
             border-bottom: 3px solid transparent;
-            transition: all 0.2s;
+            transition: all 0.18s ease;
             white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--md-sys-color-on-surface);
         }
 
         .tab.active {
@@ -112,8 +143,8 @@
 
         .tab-content {
             display: none;
-            padding: 24px;
-            max-width: 1080px;
+            padding: 28px 24px 40px;
+            max-width: 1120px;
             margin: 0 auto;
         }
 
@@ -146,7 +177,10 @@
 
         .card {
             background-color: var(--md-sys-color-surface);
-            border-radius: 16px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
             padding: 24px;
             margin-bottom: 24px;
             box-shadow: var(--md-elevation-1);
@@ -160,8 +194,9 @@
         }
 
         .summary-card {
-            background-color: var(--md-sys-color-surface);
-            border-radius: 16px;
+            background-color: rgba(255, 255, 255, 0.78);
+            border-radius: 18px;
+            border: 1px solid var(--card-border);
             box-shadow: var(--md-elevation-1);
             padding: 20px;
         }
@@ -183,7 +218,7 @@
             align-items: flex-start;
             gap: 16px;
             padding: 14px 0;
-            border-bottom: 1px solid var(--md-sys-color-surface-container);
+            border-bottom: 1px solid rgba(116, 119, 127, 0.14);
         }
 
         .form-row:last-child {
@@ -216,15 +251,24 @@
         .md-input,
         .md-select {
             appearance: none;
-            background-color: var(--md-sys-color-surface-container-low);
-            border: 1px solid var(--md-sys-color-outline);
-            border-radius: 4px;
-            padding: 12px;
+            background-color: rgba(248, 250, 255, 0.92);
+            border: 1px solid rgba(126, 138, 163, 0.36);
+            border-radius: 12px;
+            padding: 12px 14px;
             font-size: 14px;
             font-family: inherit;
             color: var(--md-sys-color-on-surface);
             box-sizing: border-box;
             width: 100%;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+        }
+
+        .md-input:focus,
+        .md-select:focus {
+            outline: none;
+            border-color: rgba(21, 84, 255, 0.45);
+            box-shadow: 0 0 0 4px rgba(21, 84, 255, 0.12);
+            transform: translateY(-1px);
         }
 
         .md-select {
@@ -249,49 +293,62 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 10px;
+            padding: 5px 10px;
             border-radius: 999px;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
             background-color: var(--md-sys-color-surface-container);
             color: var(--md-sys-color-on-surface);
+            border: 1px solid rgba(126, 138, 163, 0.16);
         }
 
         .chip-warning {
             background-color: var(--md-sys-color-warning-container);
             color: var(--md-sys-color-warning);
+            border-color: rgba(168, 96, 0, 0.12);
         }
 
         .chip-success {
-            background-color: #d8f8e5;
-            color: #0b6b3a;
+            background-color: var(--md-sys-color-success-container);
+            color: var(--md-sys-color-success);
+            border-color: rgba(22, 121, 76, 0.12);
         }
 
         .btn {
-            padding: 12px 18px;
-            font-size: 14px;
-            font-weight: 500;
-            border: none;
-            border-radius: 8px;
+            padding: 11px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            border-radius: 12px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+        }
+
+        .btn:hover:not([disabled]) {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 18px rgba(36, 61, 102, 0.12);
         }
 
         .btn-primary {
-            background-color: var(--md-sys-color-primary);
+            background: linear-gradient(180deg, #1d63ff, #1554ff);
             color: var(--md-sys-color-on-primary);
+            box-shadow: 0 10px 22px rgba(21, 84, 255, 0.22);
         }
 
         .btn-secondary {
-            background-color: var(--md-sys-color-surface-container);
+            background-color: rgba(255, 255, 255, 0.72);
             color: var(--md-sys-color-on-surface);
+            border-color: rgba(126, 138, 163, 0.22);
         }
 
         .btn-danger {
-            background-color: #f7d7d7;
+            background-color: #fff3f3;
             color: var(--md-sys-color-error);
+            border-color: rgba(186, 26, 26, 0.12);
         }
 
         .btn[disabled] {
@@ -326,20 +383,29 @@
         .status-idle { color: var(--md-sys-color-outline); }
 
         .agent-card {
-            background-color: var(--md-sys-color-surface);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 22px;
+            border: 1px solid var(--card-border);
+            padding: 22px;
+            margin-bottom: 22px;
             box-shadow: var(--md-elevation-1);
             display: grid;
-            grid-template-columns: 220px minmax(0, 1fr);
+            grid-template-columns: 210px minmax(0, 1fr);
             gap: 24px;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--md-elevation-2);
+            border-color: rgba(21, 84, 255, 0.16);
         }
 
         .agent-info {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
+            padding-right: 8px;
         }
 
         .agent-avatar-wrap {
@@ -349,22 +415,25 @@
         }
 
         .agent-avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
+            width: 76px;
+            height: 76px;
+            border-radius: 22px;
             background-color: var(--md-sys-color-primary-container);
             object-fit: cover;
             flex-shrink: 0;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 8px 18px rgba(21, 84, 255, 0.12);
         }
 
         .agent-name {
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
 
         .agent-id {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--md-sys-color-outline);
+            font-family: 'IBM Plex Mono', monospace;
         }
 
         .section-divider {
@@ -398,6 +467,20 @@
             color: var(--md-sys-color-outline);
         }
 
+        code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            background: rgba(232, 238, 249, 0.72);
+            border-radius: 8px;
+            padding: 2px 6px;
+        }
+
+        .micro-note {
+            font-size: 12px;
+            color: var(--md-sys-color-outline);
+            line-height: 1.5;
+        }
+
         .auth-shell {
             min-height: 100vh;
             display: flex;
@@ -409,11 +492,14 @@
 
         .auth-card {
             width: 100%;
-            max-width: 420px;
-            background: var(--md-sys-color-surface);
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             box-shadow: var(--md-elevation-2);
-            border-radius: 20px;
-            padding: 28px;
+            border-radius: 28px;
+            border: 1px solid var(--card-border);
+            padding: 30px;
         }
 
         .auth-card h1 {
@@ -528,11 +614,12 @@
     <div id="auth-shell" class="auth-shell">
         <div class="auth-card">
             <h1>Clawboard</h1>
-            <p>Sign in to manage agent routing, defaults, and runtime state.</p>
+            <p>Local control surface for OpenClaw routing, defaults, avatars, and quick ops.</p>
             <div class="field-stack">
                 <input id="login-username" class="md-input" type="text" autocomplete="username" placeholder="Username" value="admin">
                 <input id="login-password" class="md-input" type="password" autocomplete="current-password" placeholder="Password" value="password">
                 <button class="btn btn-primary" onclick="login()">Sign In</button>
+                <div class="micro-note">Initial credentials are <code>admin</code> / <code>password</code>. Change them in the Account tab after first login.</div>
             </div>
             <div id="auth-error" class="auth-error"></div>
         </div>
@@ -767,6 +854,7 @@
             </div>
             <div class="card">
                 <h3 class="card-title">Credentials</h3>
+                <p class="card-subtitle" style="margin-bottom: 12px;">This login is local to Clawboard. Updating it does not change OpenClaw channel or provider credentials.</p>
                 <div class="form-row">
                     <span class="form-label">New Username</span>
                     <div class="form-value">
@@ -823,6 +911,7 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             initTabs();
+            bindAuthShortcuts();
             await bootstrapAuth();
         });
 
@@ -848,6 +937,18 @@
             } finally {
                 hideLoading();
             }
+        }
+
+        function bindAuthShortcuts() {
+            ['login-username', 'login-password'].forEach((id) => {
+                const input = document.getElementById(id);
+                input?.addEventListener('keydown', async (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        await login();
+                    }
+                });
+            });
         }
 
         function initTabs() {
@@ -962,6 +1063,10 @@
 
         function updateUserChip() {
             document.getElementById('current-user-chip').textContent = sessionUser ? `Signed in as ${sessionUser}` : 'Signed in';
+            const accountUsername = document.getElementById('account-username');
+            if (accountUsername) {
+                accountUsername.placeholder = sessionUser ? `Current: ${sessionUser}` : 'Leave unchanged to keep current';
+            }
         }
 
         async function apiFetch(url, options = {}) {
@@ -1270,6 +1375,7 @@
                     throw new Error(data.error || 'Failed to save defaults');
                 }
 
+                await Promise.all([loadDefaults(), loadModelRegistry()]);
                 showSnackbar(data.message || 'Defaults saved');
             } catch (err) {
                 showSnackbar(`Error: ${err.message}`);
@@ -1525,6 +1631,7 @@
                     throw new Error(data.error || 'Failed to save agents');
                 }
 
+                await Promise.all([loadAgents(), loadModelRegistry()]);
                 showSnackbar(data.message || 'Agents saved');
             } catch (err) {
                 showSnackbar(`Error: ${err.message}`);
@@ -1604,17 +1711,28 @@
                 filtered = filtered.filter((model) => model.upstream === upstreamFilter);
             }
 
-            tbody.innerHTML = filtered.map((model) => `
-                <tr>
-                    <td><a href="${escapeHtml(model.docsUrl || '#')}" target="_blank" rel="noreferrer" style="color: var(--md-sys-color-primary); text-decoration:none;">${escapeHtml(model.modelId)}</a></td>
-                    <td>${escapeHtml(model.provider || '-')}</td>
-                    <td><span class="chip">${escapeHtml(model.access || '-')}</span></td>
-                    <td>${escapeHtml(model.upstream || '-')}</td>
-                    <td>${escapeHtml(model.sourceStatus || '-')}</td>
-                    <td>${escapeHtml(model.contextWindow ? `${(model.contextWindow / 1000).toFixed(0)}K` : '-')}</td>
-                    <td>${escapeHtml(model.maxTokens || '-')}</td>
-                </tr>
-            `).join('');
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: var(--md-sys-color-outline)">No models match the current filters.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((model) => {
+                const modelLabel = model.docsUrl
+                    ? `<a href="${escapeHtml(model.docsUrl)}" target="_blank" rel="noreferrer" style="color: var(--md-sys-color-primary); text-decoration:none;">${escapeHtml(model.modelId)}</a>`
+                    : escapeHtml(model.modelId);
+
+                return `
+                    <tr>
+                        <td>${modelLabel}</td>
+                        <td>${escapeHtml(model.provider || '-')}</td>
+                        <td><span class="chip">${escapeHtml(model.access || '-')}</span></td>
+                        <td>${escapeHtml(model.upstream || '-')}</td>
+                        <td>${escapeHtml(model.sourceStatus || '-')}</td>
+                        <td>${escapeHtml(model.contextWindow ? `${(model.contextWindow / 1000).toFixed(0)}K` : '-')}</td>
+                        <td>${escapeHtml(model.maxTokens || '-')}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function formatTimestamp(value) {
