@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  clawboard:
+    build: .
+    container_name: clawboard
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/.openclaw:/root/.openclaw
+    environment:
+      - GATEWAY_URL=http://host.docker.internal:18789
+      - GATEWAY_TOKEN=e0a883035eb1c104fb654a987dcee30817edb6bdfb2eee18
+      - HOST_HOME=/Users/alexwang
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

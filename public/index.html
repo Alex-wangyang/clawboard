@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clawboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root {
+            --md-sys-color-primary: #0b57d0;
+            --md-sys-color-on-primary: #ffffff;
+            --md-sys-color-primary-container: #d3e3fd;
+            --md-sys-color-on-primary-container: #041e49;
+            --md-sys-color-background: #f8fafd;
+            --md-sys-color-surface: #fdfbff;
+            --md-sys-color-on-surface: #1a1c1e;
+            --md-sys-color-surface-container-low: #f3f3fa;
+            --md-sys-color-surface-container: #ededf4;
+            --md-sys-color-outline: #74777f;
+            --md-sys-color-error: #ba1a1a;
+            --md-sys-color-warning: #b06000;
+            --md-sys-color-warning-container: #ffe0b2;
+            --md-elevation-1: 0px 1px 2px 0px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15);
+            --md-elevation-2: 0px 1px 2px 0px rgba(0,0,0,0.3), 0px 2px 6px 2px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-surface);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .top-app-bar {
+            background-color: var(--md-sys-color-surface);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            gap: 16px;
+        }
+
+        .top-app-bar-title {
+            font-size: 22px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: var(--md-sys-color-surface-container);
+            padding: 6px 12px;
+            border-radius: 16px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #1ea362;
+        }
+
+        .tabs {
+            background-color: var(--md-sys-color-surface);
+            display: flex;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--md-sys-color-surface-container);
+            gap: 4px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--md-sys-color-outline);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            color: var(--md-sys-color-primary);
+            border-bottom-color: var(--md-sys-color-primary);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 24px;
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .page-header h2,
+        .card-title {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .page-header p,
+        .card-subtitle,
+        .helper-text {
+            margin: 0;
+            color: var(--md-sys-color-outline);
+            font-size: 14px;
+        }
+
+        .card {
+            background-color: var(--md-sys-color-surface);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--md-elevation-1);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background-color: var(--md-sys-color-surface);
+            border-radius: 16px;
+            box-shadow: var(--md-elevation-1);
+            padding: 20px;
+        }
+
+        .summary-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: var(--md-sys-color-outline);
+            font-weight: 500;
+        }
+
+        .summary-card strong {
+            font-size: 28px;
+            font-weight: 500;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--md-sys-color-surface-container);
+        }
+
+        .form-row:last-child {
+            border-bottom: none;
+        }
+
+        .form-label {
+            width: 140px;
+            font-size: 14px;
+            font-weight: 500;
+            flex-shrink: 0;
+            padding-top: 12px;
+        }
+
+        .form-value {
+            flex: 1;
+        }
+
+        .field-stack {
+            display: grid;
+            gap: 10px;
+        }
+
+        .model-pair {
+            display: grid;
+            grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+            gap: 12px;
+        }
+
+        .md-input,
+        .md-select {
+            appearance: none;
+            background-color: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--md-sys-color-on-surface);
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .md-select {
+            cursor: pointer;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23444" d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 20px;
+            padding-right: 36px;
+        }
+
+        .field-meta,
+        .tag-row,
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: var(--md-sys-color-surface-container);
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .chip-warning {
+            background-color: var(--md-sys-color-warning-container);
+            color: var(--md-sys-color-warning);
+        }
+
+        .chip-success {
+            background-color: #d8f8e5;
+            color: #0b6b3a;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+        }
+
+        .btn-secondary {
+            background-color: var(--md-sys-color-surface-container);
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .btn-danger {
+            background-color: #f7d7d7;
+            color: var(--md-sys-color-error);
+        }
+
+        .btn[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--md-sys-color-surface-container);
+        }
+
+        th {
+            font-weight: 500;
+            color: var(--md-sys-color-outline);
+            background-color: var(--md-sys-color-surface-container-low);
+        }
+
+        .status-ok { color: #1ea362; }
+        .status-error { color: var(--md-sys-color-error); }
+        .status-idle { color: var(--md-sys-color-outline); }
+
+        .agent-card {
+            background-color: var(--md-sys-color-surface);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--md-elevation-1);
+            display: grid;
+            grid-template-columns: 220px minmax(0, 1fr);
+            gap: 24px;
+        }
+
+        .agent-info {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .agent-avatar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .agent-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background-color: var(--md-sys-color-primary-container);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .agent-name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .agent-id {
+            font-size: 13px;
+            color: var(--md-sys-color-outline);
+        }
+
+        .section-divider {
+            margin: 20px 0 12px 0;
+            font-size: 13px;
+            color: var(--md-sys-color-outline);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .preset-card {
+            background-color: var(--md-sys-color-surface-container-low);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .preset-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+        }
+
+        .preset-info p,
+        .empty-state {
+            margin: 0;
+            font-size: 13px;
+            color: var(--md-sys-color-outline);
+        }
+
+        .auth-shell {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--md-sys-color-surface);
+            box-shadow: var(--md-elevation-2);
+            border-radius: 20px;
+            padding: 28px;
+        }
+
+        .auth-card h1 {
+            margin: 0 0 8px 0;
+            font-size: 28px;
+        }
+
+        .auth-card p {
+            margin: 0 0 20px 0;
+            color: var(--md-sys-color-outline);
+        }
+
+        .auth-error {
+            min-height: 20px;
+            color: var(--md-sys-color-error);
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid var(--md-sys-color-surface-container);
+            border-top: 4px solid var(--md-sys-color-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .snackbar {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #323232;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px;
+        }
+
+        .snackbar.show {
+            visibility: visible;
+            animation: fadein 0.3s, fadeout 0.3s 2.7s;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            from { bottom: 30px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
+        }
+
+        @media (max-width: 860px) {
+            .top-app-bar,
+            .page-header,
+            .preset-card,
+            .form-row,
+            .agent-card {
+                grid-template-columns: 1fr;
+                flex-direction: column;
+            }
+
+            .top-app-bar {
+                height: auto;
+                padding: 16px;
+                align-items: flex-start;
+            }
+
+            .top-bar-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .form-label {
+                width: auto;
+                padding-top: 0;
+            }
+
+            .model-pair {
+                grid-template-columns: 1fr;
+            }
+
+            .agent-avatar-wrap {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="auth-shell" class="auth-shell">
+        <div class="auth-card">
+            <h1>Clawboard</h1>
+            <p>Sign in to manage agent routing, defaults, and runtime state.</p>
+            <div class="field-stack">
+                <input id="login-username" class="md-input" type="text" autocomplete="username" placeholder="Username" value="admin">
+                <input id="login-password" class="md-input" type="password" autocomplete="current-password" placeholder="Password" value="password">
+                <button class="btn btn-primary" onclick="login()">Sign In</button>
+            </div>
+            <div id="auth-error" class="auth-error"></div>
+        </div>
+    </div>
+
+    <div id="app-shell" class="hidden">
+        <header class="top-app-bar">
+            <div class="top-app-bar-title">
+                <span class="material-icons-round" style="color: var(--md-sys-color-primary)">dashboard</span>
+                Clawboard <span style="font-size: 14px; color: var(--md-sys-color-outline); margin-left: 8px;">vNext</span>
+            </div>
+            <div class="top-bar-actions">
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>Hot reload enabled</span>
+                </div>
+                <div class="chip" id="current-user-chip">Signed in</div>
+                <button class="btn btn-secondary" onclick="logout()">
+                    <span class="material-icons-round">logout</span>
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <div class="tab active" data-tab="agents">Agents</div>
+            <div class="tab" data-tab="defaults">Defaults</div>
+            <div class="tab" data-tab="models">Models</div>
+            <div class="tab" data-tab="cron">Cron</div>
+            <div class="tab" data-tab="account">Account</div>
+        </nav>
+
+        <div id="agents" class="tab-content active">
+            <div class="page-header">
+                <div>
+                    <h2>Agents</h2>
+                    <p>Agent model chains and avatars are saved immediately and picked up by OpenClaw hot reload.</p>
+                </div>
+                <button class="btn btn-primary" onclick="applyAgents()">
+                    <span class="material-icons-round">sync</span>
+                    Apply Agents
+                </button>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Agents</h3>
+                    <strong id="agents-count">0</strong>
+                </div>
+                <div class="summary-card">
+                    <h3>Presets</h3>
+                    <strong id="presets-count">0</strong>
+                </div>
+                <div class="summary-card">
+                    <h3>Selectable Models</h3>
+                    <strong id="model-options-count">0</strong>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Presets</h3>
+                <p class="card-subtitle">Applying a preset updates config and is treated as hot-applied. No manual restart is needed.</p>
+                <div id="presets-list"></div>
+            </div>
+
+            <div id="agents-container"></div>
+        </div>
+
+        <div id="defaults" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h2>Defaults</h2>
+                    <p>Provider and model menus are built from current OpenClaw config, saved refs, and LiteLLM config.</p>
+                </div>
+                <button class="btn btn-primary" onclick="applyDefaults()">
+                    <span class="material-icons-round">save</span>
+                    Apply Defaults
+                </button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Default Model Configuration</h3>
+                <div class="form-row">
+                    <span class="form-label">Primary</span>
+                    <div class="form-value">
+                        <div class="field-stack">
+                            <select class="md-select" id="defaults-primary-select"></select>
+                            <div class="field-meta" id="defaults-primary-meta"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Fallback 1</span>
+                    <div class="form-value">
+                        <div class="field-stack">
+                            <select class="md-select" id="defaults-fb1-select"></select>
+                            <div class="field-meta" id="defaults-fb1-meta"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Fallback 2</span>
+                    <div class="form-value">
+                        <div class="field-stack">
+                            <select class="md-select" id="defaults-fb2-select"></select>
+                            <div class="field-meta" id="defaults-fb2-meta"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Image Model</h3>
+                <div class="form-row">
+                    <span class="form-label">Primary</span>
+                    <div class="form-value">
+                        <div class="field-stack">
+                            <select class="md-select" id="image-primary-select"></select>
+                            <div class="field-meta" id="image-primary-meta"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Fallback 1</span>
+                    <div class="form-value">
+                        <div class="field-stack">
+                            <select class="md-select" id="image-fb1-select"></select>
+                            <div class="field-meta" id="image-fb1-meta"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Fallback 2</span>
+                    <div class="form-value">
+                        <div class="field-stack">
+                            <select class="md-select" id="image-fb2-select"></select>
+                            <div class="field-meta" id="image-fb2-meta"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Heartbeat</h3>
+                <div class="form-row">
+                    <span class="form-label">Model</span>
+                    <div class="form-value">
+                        <div class="field-stack">
+                            <select class="md-select" id="heartbeat-model"></select>
+                            <div class="field-meta" id="heartbeat-meta"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="models" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h2>Models</h2>
+                    <p>Read-only registry view from the unified server catalog.</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Model Registry</h3>
+                <div class="button-row" style="margin-bottom: 16px;">
+                    <select class="md-select" id="models-filter-access" onchange="renderModels()" style="min-width: 150px; width: auto;">
+                        <option value="">All Access</option>
+                        <option value="Direct">Direct</option>
+                        <option value="LiteLLM">LiteLLM</option>
+                    </select>
+                    <select class="md-select" id="models-filter-upstream" onchange="renderModels()" style="min-width: 150px; width: auto;">
+                        <option value="">All Upstream</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="models-table">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Provider</th>
+                                <th>Access</th>
+                                <th>Upstream</th>
+                                <th>Source</th>
+                                <th>Context</th>
+                                <th>Max Tokens</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="cron" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h2>Cron</h2>
+                    <p>Read-only schedule overview.</p>
+                </div>
+                <button class="btn btn-secondary" onclick="loadCron()">
+                    <span class="material-icons-round">refresh</span>
+                    Refresh
+                </button>
+            </div>
+            <div class="card">
+                <div class="table-container">
+                    <table id="cron-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Schedule</th>
+                                <th>Next</th>
+                                <th>Last</th>
+                                <th>Status</th>
+                                <th>Agent</th>
+                                <th>Model</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="account" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h2>Account</h2>
+                    <p>Update the local Clawboard login stored at <code>~/.openclaw/clawboard/auth.json</code>.</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Credentials</h3>
+                <div class="form-row">
+                    <span class="form-label">New Username</span>
+                    <div class="form-value">
+                        <input id="account-username" class="md-input" type="text" autocomplete="username" placeholder="Leave unchanged to keep current">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Current Password</span>
+                    <div class="form-value">
+                        <input id="account-current-password" class="md-input" type="password" autocomplete="current-password">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">New Password</span>
+                    <div class="form-value">
+                        <input id="account-new-password" class="md-input" type="password" autocomplete="new-password" placeholder="Optional">
+                    </div>
+                </div>
+                <div class="button-row" style="margin-top: 16px;">
+                    <button class="btn btn-primary" onclick="changeCredentials()">
+                        <span class="material-icons-round">key</span>
+                        Save Credentials
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="snackbar" class="snackbar"></div>
+
+    <script>
+        const MODEL_SOURCE_LABELS = {
+            OPENCLAW_ONLY: 'openclaw-only',
+            OPENCLAW_AND_LITELLM: 'openclaw+litellm',
+            LITELLM_ONLY: 'litellm-only',
+            UNKNOWN: 'custom'
+        };
+
+        let agentsData = [];
+        let defaultsData = {};
+        let presetsData = {};
+        let modelsData = [];
+        let sessionUser = null;
+        let modelCatalog = {
+            options: [],
+            providers: [],
+            litellmOnly: [],
+            byValue: new Map()
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            initTabs();
+            await bootstrapAuth();
+        });
+
+        async function bootstrapAuth() {
+            showLoading();
+            try {
+                const res = await fetch('/api/auth/status');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to read auth status');
+                }
+
+                if (data.authenticated) {
+                    sessionUser = data.username;
+                    showAppShell();
+                    await loadAppData();
+                } else {
+                    showAuthShell();
+                }
+            } catch (err) {
+                document.getElementById('auth-error').textContent = err.message || 'Failed to initialize app.';
+                showAuthShell();
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function initTabs() {
+            document.querySelectorAll('.tab').forEach((tab) => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach((entry) => entry.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach((entry) => entry.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+
+                    if (tab.dataset.tab === 'models') {
+                        loadModelRegistry();
+                    }
+                    if (tab.dataset.tab === 'cron') {
+                        loadCron();
+                    }
+                });
+            });
+        }
+
+        async function login() {
+            showLoading();
+            document.getElementById('auth-error').textContent = '';
+            try {
+                const payload = {
+                    username: document.getElementById('login-username').value.trim(),
+                    password: document.getElementById('login-password').value
+                };
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Login failed');
+                }
+
+                sessionUser = data.username;
+                showAppShell();
+                await loadAppData();
+                showSnackbar('Signed in.');
+            } catch (err) {
+                document.getElementById('auth-error').textContent = err.message || 'Login failed.';
+                showAuthShell();
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function logout() {
+            showLoading();
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } finally {
+                sessionUser = null;
+                showAuthShell();
+                hideLoading();
+            }
+        }
+
+        async function changeCredentials() {
+            showLoading();
+            try {
+                const res = await apiFetch('/api/auth/change', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        currentPassword: document.getElementById('account-current-password').value,
+                        newUsername: document.getElementById('account-username').value.trim(),
+                        newPassword: document.getElementById('account-new-password').value
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to update credentials');
+                }
+
+                sessionUser = data.username;
+                document.getElementById('account-current-password').value = '';
+                document.getElementById('account-new-password').value = '';
+                document.getElementById('account-username').value = '';
+                updateUserChip();
+                showSnackbar(data.message || 'Credentials updated.');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadAppData() {
+            await loadModelOptions();
+            await Promise.all([
+                loadDefaults(),
+                loadAgents(),
+                loadPresets()
+            ]);
+            updateUserChip();
+        }
+
+        function showAuthShell() {
+            document.getElementById('auth-shell').classList.remove('hidden');
+            document.getElementById('app-shell').classList.add('hidden');
+        }
+
+        function showAppShell() {
+            document.getElementById('auth-shell').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('hidden');
+            updateUserChip();
+        }
+
+        function updateUserChip() {
+            document.getElementById('current-user-chip').textContent = sessionUser ? `Signed in as ${sessionUser}` : 'Signed in';
+        }
+
+        async function apiFetch(url, options = {}) {
+            const res = await fetch(url, options);
+            if (res.status === 401) {
+                sessionUser = null;
+                showAuthShell();
+                throw new Error('Session expired. Sign in again.');
+            }
+            return res;
+        }
+
+        async function loadModelOptions() {
+            try {
+                const res = await apiFetch('/api/model-options');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to load model options');
+                }
+                hydrateModelCatalog(data);
+            } catch (err) {
+                console.error('Failed to load model options:', err);
+                hydrateModelCatalog({ options: [], providers: [], litellmOnly: [] });
+                showSnackbar('Model options unavailable. Saved values remain selectable.');
+            } finally {
+                document.getElementById('model-options-count').textContent = String(modelCatalog.options.length);
+            }
+        }
+
+        function hydrateModelCatalog(data) {
+            const options = Array.isArray(data.options) ? data.options.slice() : [];
+            const litellmOnly = Array.isArray(data.litellmOnly) ? data.litellmOnly.slice() : [];
+            const providers = Array.isArray(data.providers) ? data.providers.slice() : [];
+            modelCatalog = {
+                options,
+                providers,
+                litellmOnly,
+                byValue: new Map()
+            };
+
+            options.forEach((option) => {
+                modelCatalog.byValue.set(option.value, normalizeModelOption(option));
+            });
+            litellmOnly.forEach((option) => {
+                modelCatalog.byValue.set(option.value, normalizeModelOption(option));
+            });
+        }
+
+        function normalizeModelOption(option) {
+            const sources = Array.isArray(option.sources) ? option.sources : [];
+            let sourceStatus = MODEL_SOURCE_LABELS.UNKNOWN;
+            if (sources.includes('openclaw') && sources.includes('litellm')) {
+                sourceStatus = MODEL_SOURCE_LABELS.OPENCLAW_AND_LITELLM;
+            } else if (sources.includes('openclaw')) {
+                sourceStatus = MODEL_SOURCE_LABELS.OPENCLAW_ONLY;
+            } else if (sources.includes('litellm')) {
+                sourceStatus = MODEL_SOURCE_LABELS.LITELLM_ONLY;
+            }
+
+            return {
+                ...option,
+                label: option.label || option.value,
+                sourceStatus
+            };
+        }
+
+        function parseModelRef(value = '') {
+            if (!value || !value.includes('/')) {
+                return { provider: '', modelId: value || '' };
+            }
+            const parts = value.split('/');
+            return {
+                provider: parts[0],
+                modelId: parts.slice(1).join('/')
+            };
+        }
+
+        function getModelOption(value) {
+            if (!value) {
+                return null;
+            }
+
+            if (!modelCatalog.byValue.has(value)) {
+                const parsed = parseModelRef(value);
+                modelCatalog.byValue.set(value, normalizeModelOption({
+                    value,
+                    label: parsed.modelId || value,
+                    provider: parsed.provider,
+                    modelId: parsed.modelId || value,
+                    access: '',
+                    upstream: '',
+                    sources: [],
+                    selectable: true
+                }));
+            }
+
+            return modelCatalog.byValue.get(value);
+        }
+
+        function ensureModelPair(selectId, allowEmpty) {
+            const modelSelect = document.getElementById(selectId);
+            if (!modelSelect) {
+                return null;
+            }
+
+            let wrapper = modelSelect.closest('.model-pair');
+            let providerSelect = document.getElementById(`${selectId}-provider`);
+
+            if (!wrapper) {
+                wrapper = document.createElement('div');
+                wrapper.className = 'model-pair';
+                modelSelect.parentNode.insertBefore(wrapper, modelSelect);
+                wrapper.appendChild(modelSelect);
+            }
+
+            if (!providerSelect) {
+                providerSelect = document.createElement('select');
+                providerSelect.className = 'md-select';
+                providerSelect.id = `${selectId}-provider`;
+                wrapper.insertBefore(providerSelect, modelSelect);
+                providerSelect.addEventListener('change', () => {
+                    populateModelSelect(selectId, providerSelect.value, '', allowEmpty);
+                    updateModelIndicator(selectId, modelSelect.dataset.metaId, allowEmpty);
+                });
+                modelSelect.addEventListener('change', () => {
+                    updateModelIndicator(selectId, modelSelect.dataset.metaId, allowEmpty);
+                });
+            }
+
+            return { providerSelect, modelSelect };
+        }
+
+        function getProviderOptions() {
+            const providers = new Map();
+            modelCatalog.options.forEach((option) => {
+                if (option.provider) {
+                    providers.set(option.provider, option.provider);
+                }
+            });
+            modelCatalog.providers.forEach((provider) => providers.set(provider.id, provider.id));
+            return Array.from(providers.values()).sort();
+        }
+
+        function buildProviderOptionsHtml(selectedProvider, allowEmpty) {
+            const providers = getProviderOptions();
+            const options = [];
+
+            if (allowEmpty) {
+                options.push('<option value="">None</option>');
+            }
+
+            if (selectedProvider && !providers.includes(selectedProvider)) {
+                providers.push(selectedProvider);
+                providers.sort();
+            }
+
+            providers.forEach((providerId) => {
+                options.push(`<option value="${escapeHtml(providerId)}">${escapeHtml(providerId)}</option>`);
+            });
+
+            if (!allowEmpty && options.length === 0) {
+                return '<option value="">No providers available</option>';
+            }
+
+            return options.join('');
+        }
+
+        function populateModelSelect(selectId, providerId, selectedValue, allowEmpty) {
+            const modelSelect = document.getElementById(selectId);
+            const options = modelCatalog.options.filter((option) => option.provider === providerId);
+            const html = [];
+
+            if (allowEmpty) {
+                html.push('<option value="">None</option>');
+            }
+
+            options.forEach((option) => {
+                html.push(`<option value="${escapeHtml(option.value)}">${escapeHtml(option.modelName || option.modelId || option.value)}</option>`);
+            });
+
+            if (selectedValue && !options.some((option) => option.value === selectedValue)) {
+                html.push(`<option value="${escapeHtml(selectedValue)}">${escapeHtml(getModelOption(selectedValue)?.modelId || selectedValue)} (saved)</option>`);
+            }
+
+            if (!allowEmpty && html.length === 0) {
+                html.push('<option value="">No models available</option>');
+            }
+
+            modelSelect.innerHTML = html.join('');
+            if (selectedValue && Array.from(modelSelect.options).some((option) => option.value === selectedValue)) {
+                modelSelect.value = selectedValue;
+            } else if (allowEmpty) {
+                modelSelect.value = '';
+            } else if (modelSelect.options.length > 0) {
+                modelSelect.selectedIndex = 0;
+            }
+        }
+
+        function setModelSelect(selectId, value, allowEmpty, metaId) {
+            const pair = ensureModelPair(selectId, allowEmpty);
+            if (!pair) {
+                return;
+            }
+
+            pair.modelSelect.dataset.metaId = metaId;
+            const parsed = parseModelRef(value);
+            const selectedProvider = parsed.provider || (allowEmpty ? '' : getProviderOptions()[0] || '');
+            pair.providerSelect.innerHTML = buildProviderOptionsHtml(selectedProvider, allowEmpty);
+            if (selectedProvider && Array.from(pair.providerSelect.options).some((option) => option.value === selectedProvider)) {
+                pair.providerSelect.value = selectedProvider;
+            } else if (allowEmpty) {
+                pair.providerSelect.value = '';
+            }
+
+            populateModelSelect(selectId, pair.providerSelect.value, value, allowEmpty);
+            updateModelIndicator(selectId, metaId, allowEmpty);
+        }
+
+        function updateModelIndicator(selectId, metaId, allowEmpty) {
+            const select = document.getElementById(selectId);
+            const meta = document.getElementById(metaId);
+            if (!select || !meta) {
+                return;
+            }
+
+            const value = select.value;
+            if (!value) {
+                meta.innerHTML = allowEmpty ? '<span class="helper-text">No fallback configured.</span>' : '<span class="helper-text">Choose a provider and model.</span>';
+                return;
+            }
+
+            const option = getModelOption(value);
+            const chips = [];
+
+            if (option?.provider) {
+                chips.push(`<span class="chip">${escapeHtml(option.provider)}</span>`);
+            }
+
+            if (option?.sourceStatus === MODEL_SOURCE_LABELS.OPENCLAW_ONLY) {
+                chips.push('<span class="chip chip-warning"><span class="material-icons-round" style="font-size:14px;">warning</span>openclaw-only</span>');
+            } else if (option?.sourceStatus === MODEL_SOURCE_LABELS.OPENCLAW_AND_LITELLM) {
+                chips.push('<span class="chip chip-success"><span class="material-icons-round" style="font-size:14px;">done_all</span>openclaw+litellm</span>');
+            } else if (option?.sourceStatus === MODEL_SOURCE_LABELS.LITELLM_ONLY) {
+                chips.push('<span class="chip">litellm-only</span>');
+            } else {
+                chips.push('<span class="chip">saved ref</span>');
+            }
+
+            if (option?.upstream) {
+                chips.push(`<span class="chip">${escapeHtml(option.upstream)}</span>`);
+            }
+
+            meta.innerHTML = chips.join('');
+        }
+
+        async function loadDefaults() {
+            try {
+                const res = await apiFetch('/api/defaults');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to load defaults');
+                }
+
+                defaultsData = data;
+                setModelSelect('defaults-primary-select', data.model?.primary || '', false, 'defaults-primary-meta');
+                setModelSelect('defaults-fb1-select', data.model?.fallbacks?.[0] || '', true, 'defaults-fb1-meta');
+                setModelSelect('defaults-fb2-select', data.model?.fallbacks?.[1] || '', true, 'defaults-fb2-meta');
+                setModelSelect('image-primary-select', data.imageModel?.primary || '', false, 'image-primary-meta');
+                setModelSelect('image-fb1-select', data.imageModel?.fallbacks?.[0] || '', true, 'image-fb1-meta');
+                setModelSelect('image-fb2-select', data.imageModel?.fallbacks?.[1] || '', true, 'image-fb2-meta');
+                setModelSelect('heartbeat-model', data.heartbeatModel || '', false, 'heartbeat-meta');
+            } catch (err) {
+                showSnackbar(err.message || 'Failed to load defaults');
+            }
+        }
+
+        async function applyDefaults() {
+            showLoading();
+            try {
+                const payload = {
+                    model: {
+                        primary: document.getElementById('defaults-primary-select').value,
+                        fallbacks: [
+                            document.getElementById('defaults-fb1-select').value,
+                            document.getElementById('defaults-fb2-select').value
+                        ].filter(Boolean)
+                    },
+                    imageModel: {
+                        primary: document.getElementById('image-primary-select').value,
+                        fallbacks: [
+                            document.getElementById('image-fb1-select').value,
+                            document.getElementById('image-fb2-select').value
+                        ].filter(Boolean)
+                    },
+                    heartbeatModel: document.getElementById('heartbeat-model').value,
+                    thinkingDefault: defaultsData.thinkingDefault || 'adaptive'
+                };
+
+                const res = await apiFetch('/api/defaults/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to save defaults');
+                }
+
+                showSnackbar(data.message || 'Defaults saved');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadPresets() {
+            try {
+                const res = await apiFetch('/api/presets');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to load presets');
+                }
+                presetsData = data.presets || {};
+                renderPresets();
+            } catch (err) {
+                document.getElementById('presets-list').innerHTML = '<p class="empty-state">Unable to load presets.</p>';
+            } finally {
+                document.getElementById('presets-count').textContent = String(Object.keys(presetsData).length);
+            }
+        }
+
+        function renderPresets() {
+            const container = document.getElementById('presets-list');
+            const names = Object.keys(presetsData);
+
+            if (names.length === 0) {
+                container.innerHTML = '<p class="empty-state">No presets saved.</p>';
+                return;
+            }
+
+            container.innerHTML = names.map((name) => {
+                const preset = presetsData[name];
+                return `
+                    <div class="preset-card">
+                        <div class="preset-info">
+                            <h4>${escapeHtml(preset.name || name)}</h4>
+                            <p>${escapeHtml(preset.description || 'No description')}</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="applyPreset('${escapeJsString(name)}')">Apply</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function applyPreset(name) {
+            showLoading();
+            try {
+                const res = await apiFetch(`/api/presets/${encodeURIComponent(name)}/apply`, { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to apply preset');
+                }
+
+                showSnackbar(data.message || 'Preset applied');
+                await Promise.all([loadDefaults(), loadAgents()]);
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadAgents() {
+            try {
+                const res = await apiFetch('/api/agents');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to load agents');
+                }
+
+                agentsData = data.agents || [];
+                renderAgents();
+            } catch (err) {
+                showSnackbar(err.message || 'Failed to load agents');
+            } finally {
+                document.getElementById('agents-count').textContent = String(agentsData.length);
+            }
+        }
+
+        function renderAgents() {
+            const container = document.getElementById('agents-container');
+
+            if (agentsData.length === 0) {
+                container.innerHTML = '<div class="card"><p class="empty-state">No agents configured.</p></div>';
+                return;
+            }
+
+            container.innerHTML = agentsData.map((agent) => {
+                const installedSkills = Array.isArray(agent.installedSkills) ? agent.installedSkills : [];
+                const workspaceSkills = Array.isArray(agent.workspaceSkills) ? agent.workspaceSkills : [];
+                return `
+                    <div class="agent-card">
+                        <div class="agent-info">
+                            <div class="agent-avatar-wrap">
+                                <img class="agent-avatar" id="avatar-${escapeHtml(agent.id)}" src="${escapeHtml(agent.avatarUrl)}" alt="${escapeHtml(agent.name)} avatar">
+                                <div>
+                                    <div class="agent-name">${escapeHtml(agent.name || agent.id)}</div>
+                                    <div class="agent-id">${escapeHtml(agent.id)}</div>
+                                </div>
+                            </div>
+                            <div class="button-row">
+                                <input class="hidden" type="file" id="avatar-input-${escapeHtml(agent.id)}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" onchange="handleAvatarSelected('${escapeJsString(agent.id)}', this)">
+                                <button class="btn btn-secondary" onclick="document.getElementById('avatar-input-${escapeHtml(agent.id)}').click()">
+                                    <span class="material-icons-round">upload</span>
+                                    Upload Avatar
+                                </button>
+                                <button class="btn btn-danger" onclick="resetAvatar('${escapeJsString(agent.id)}')" ${agent.hasCustomAvatar ? '' : 'disabled'}>
+                                    <span class="material-icons-round">restart_alt</span>
+                                    Reset
+                                </button>
+                            </div>
+                            <div class="helper-text">Stored under <code>~/.openclaw/clawboard/avatars</code>.</div>
+                        </div>
+                        <div class="agent-config">
+                            <div class="form-row">
+                                <span class="form-label">Primary</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select class="md-select" id="agent-${escapeHtml(agent.id)}-primary"></select>
+                                        <div class="field-meta" id="agent-${escapeHtml(agent.id)}-primary-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Fallback 1</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select class="md-select" id="agent-${escapeHtml(agent.id)}-fb1"></select>
+                                        <div class="field-meta" id="agent-${escapeHtml(agent.id)}-fb1-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <span class="form-label">Fallback 2</span>
+                                <div class="form-value">
+                                    <div class="field-stack">
+                                        <select class="md-select" id="agent-${escapeHtml(agent.id)}-fb2"></select>
+                                        <div class="field-meta" id="agent-${escapeHtml(agent.id)}-fb2-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section-divider">Installed Skills</div>
+                            <div class="tag-row">
+                                ${installedSkills.length ? installedSkills.map((skill) => `<span class="chip">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">No installed skills</span>'}
+                            </div>
+
+                            <div class="section-divider">Workspace Skills</div>
+                            <div class="tag-row">
+                                ${workspaceSkills.length ? workspaceSkills.map((skill) => `<span class="chip chip-success">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">No workspace skills</span>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            agentsData.forEach((agent) => {
+                setModelSelect(`agent-${agent.id}-primary`, agent.primary || '', false, `agent-${agent.id}-primary-meta`);
+                setModelSelect(`agent-${agent.id}-fb1`, agent.fallbacks?.[0] || '', true, `agent-${agent.id}-fb1-meta`);
+                setModelSelect(`agent-${agent.id}-fb2`, agent.fallbacks?.[1] || '', true, `agent-${agent.id}-fb2-meta`);
+            });
+        }
+
+        async function handleAvatarSelected(agentId, input) {
+            const [file] = input.files || [];
+            if (!file) {
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                showSnackbar('Avatar must be 2 MB or smaller.');
+                input.value = '';
+                return;
+            }
+
+            showLoading();
+            try {
+                const dataUrl = await readFileAsDataUrl(file);
+                const res = await apiFetch(`/api/agents/${encodeURIComponent(agentId)}/avatar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dataUrl })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to upload avatar');
+                }
+
+                const agent = agentsData.find((entry) => entry.id === agentId);
+                if (agent) {
+                    agent.avatarUrl = data.avatarUrl;
+                    agent.hasCustomAvatar = true;
+                }
+                const image = document.getElementById(`avatar-${agentId}`);
+                if (image) {
+                    image.src = data.avatarUrl;
+                }
+                showSnackbar(data.message || 'Avatar uploaded');
+                renderAgents();
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                input.value = '';
+                hideLoading();
+            }
+        }
+
+        async function resetAvatar(agentId) {
+            showLoading();
+            try {
+                const res = await apiFetch(`/api/agents/${encodeURIComponent(agentId)}/avatar`, { method: 'DELETE' });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to reset avatar');
+                }
+
+                const agent = agentsData.find((entry) => entry.id === agentId);
+                if (agent) {
+                    agent.avatarUrl = `/api/agents/${encodeURIComponent(agentId)}/avatar?v=${Date.now()}`;
+                    agent.hasCustomAvatar = false;
+                }
+                renderAgents();
+                showSnackbar(data.message || 'Avatar reset');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function applyAgents() {
+            showLoading();
+            try {
+                const payload = agentsData.map((agent) => ({
+                    id: agent.id,
+                    primary: document.getElementById(`agent-${agent.id}-primary`).value,
+                    fallbacks: [
+                        document.getElementById(`agent-${agent.id}-fb1`).value,
+                        document.getElementById(`agent-${agent.id}-fb2`).value
+                    ].filter(Boolean)
+                }));
+
+                const res = await apiFetch('/api/agents/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agents: payload })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to save agents');
+                }
+
+                showSnackbar(data.message || 'Agents saved');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadCron() {
+            try {
+                const res = await apiFetch('/api/cron');
+                const data = await res.json();
+                const tbody = document.querySelector('#cron-table tbody');
+
+                if (!res.ok || data.error || !Array.isArray(data.jobs) || data.jobs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: var(--md-sys-color-outline)">No cron jobs available.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.jobs.map((job) => {
+                    let statusClass = 'status-ok';
+                    if (job.status === 'error') statusClass = 'status-error';
+                    if (job.status === 'idle') statusClass = 'status-idle';
+
+                    return `
+                        <tr>
+                            <td>${escapeHtml(job.name || job.id || '-')}</td>
+                            <td>${escapeHtml(job.schedule || '-')}</td>
+                            <td>${escapeHtml(formatTimestamp(job.nextRun || job.next || job.nextRunAtMs))}</td>
+                            <td>${escapeHtml(formatTimestamp(job.lastRun || job.last || job.lastRunAtMs))}</td>
+                            <td class="${statusClass}">${escapeHtml(job.status || '-')}</td>
+                            <td>${escapeHtml(job.agentId || '-')}</td>
+                            <td>${escapeHtml(job.model || '-')}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Failed to load cron:', err);
+            }
+        }
+
+        async function loadModelRegistry() {
+            try {
+                const res = await apiFetch('/api/models');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to load models');
+                }
+                modelsData = data.models || [];
+                populateUpstreamFilter();
+                renderModels();
+            } catch (err) {
+                console.error('Failed to load models:', err);
+            }
+        }
+
+        function populateUpstreamFilter() {
+            const filter = document.getElementById('models-filter-upstream');
+            const current = filter.value;
+            const upstreams = Array.from(new Set(modelsData.map((model) => model.upstream).filter(Boolean))).sort();
+            filter.innerHTML = ['<option value="">All Upstream</option>']
+                .concat(upstreams.map((upstream) => `<option value="${escapeHtml(upstream)}">${escapeHtml(upstream)}</option>`))
+                .join('');
+            filter.value = upstreams.includes(current) ? current : '';
+        }
+
+        function renderModels() {
+            const tbody = document.querySelector('#models-table tbody');
+            const accessFilter = document.getElementById('models-filter-access').value;
+            const upstreamFilter = document.getElementById('models-filter-upstream').value;
+
+            let filtered = modelsData.slice();
+            if (accessFilter) {
+                filtered = filtered.filter((model) => model.access === accessFilter);
+            }
+            if (upstreamFilter) {
+                filtered = filtered.filter((model) => model.upstream === upstreamFilter);
+            }
+
+            tbody.innerHTML = filtered.map((model) => `
+                <tr>
+                    <td><a href="${escapeHtml(model.docsUrl || '#')}" target="_blank" rel="noreferrer" style="color: var(--md-sys-color-primary); text-decoration:none;">${escapeHtml(model.modelId)}</a></td>
+                    <td>${escapeHtml(model.provider || '-')}</td>
+                    <td><span class="chip">${escapeHtml(model.access || '-')}</span></td>
+                    <td>${escapeHtml(model.upstream || '-')}</td>
+                    <td>${escapeHtml(model.sourceStatus || '-')}</td>
+                    <td>${escapeHtml(model.contextWindow ? `${(model.contextWindow / 1000).toFixed(0)}K` : '-')}</td>
+                    <td>${escapeHtml(model.maxTokens || '-')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function formatTimestamp(value) {
+            if (!value) return '-';
+            if (typeof value === 'number') {
+                return new Date(value).toLocaleString();
+            }
+            const parsed = Date.parse(value);
+            return Number.isNaN(parsed) ? String(value) : new Date(parsed).toLocaleString();
+        }
+
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function showLoading() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        function showSnackbar(message) {
+            const snackbar = document.getElementById('snackbar');
+            snackbar.textContent = message;
+            snackbar.className = 'snackbar show';
+            setTimeout(() => {
+                snackbar.className = 'snackbar';
+            }, 3000);
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function escapeJsString(value) {
+            return String(value)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'");
+        }
+    </script>
+</body>
+</html>
