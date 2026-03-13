@@ -35,6 +35,24 @@
             --mono: 'IBM Plex Mono', monospace;
         }
 
+        :root[data-theme="dark"] {
+            --bg: #0c1420;
+            --bg-soft: #111d2c;
+            --surface: rgba(18, 29, 43, 0.88);
+            --surface-strong: rgba(20, 33, 49, 0.95);
+            --surface-muted: rgba(17, 28, 42, 0.92);
+            --line: rgba(160, 184, 214, 0.16);
+            --line-strong: rgba(180, 204, 232, 0.3);
+            --text: #edf4ff;
+            --text-muted: #9eb0ca;
+            --text-soft: #7f93af;
+            --brand-soft: rgba(39, 112, 255, 0.18);
+            --success-soft: rgba(18, 92, 57, 0.22);
+            --warning-soft: rgba(168, 98, 0, 0.22);
+            --danger-soft: rgba(183, 50, 50, 0.2);
+            --shadow: 0 22px 58px rgba(0, 0, 0, 0.28);
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -48,6 +66,7 @@
                 radial-gradient(circle at top left, rgba(15, 94, 247, 0.14), transparent 32%),
                 radial-gradient(circle at 85% 10%, rgba(0, 163, 255, 0.1), transparent 26%),
                 linear-gradient(180deg, #f7fbff 0%, var(--bg) 100%);
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         body::before {
@@ -82,7 +101,7 @@
             align-items: center;
             gap: 18px;
             padding: 18px 28px;
-            background: rgba(255, 255, 255, 0.78);
+            background: var(--surface);
             backdrop-filter: blur(18px);
             border-bottom: 1px solid var(--line);
         }
@@ -125,6 +144,111 @@
             justify-content: flex-end;
         }
 
+        .menu-shell {
+            position: relative;
+        }
+
+        .menu-trigger {
+            min-width: 188px;
+            justify-content: space-between;
+        }
+
+        .menu-trigger-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .menu-trigger-copy {
+            min-width: 0;
+            text-align: left;
+        }
+
+        .menu-trigger-copy strong,
+        .menu-trigger-copy span {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .menu-trigger-copy strong {
+            font-size: 13px;
+        }
+
+        .menu-trigger-copy span {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .menu-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 260px;
+            padding: 10px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: var(--surface-strong);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+            display: none;
+            z-index: 45;
+        }
+
+        .menu-panel.active {
+            display: block;
+        }
+
+        .menu-section + .menu-section {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--line);
+        }
+
+        .menu-heading {
+            margin: 0 0 6px;
+            padding: 6px 10px 0;
+            color: var(--text-soft);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .menu-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 11px 12px;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-soft);
+        }
+
+        .menu-item-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .menu-item.active {
+            background: var(--brand-soft);
+            color: var(--brand);
+        }
+
         .status-pill,
         .chip {
             display: inline-flex;
@@ -133,7 +257,7 @@
             border-radius: 999px;
             padding: 7px 12px;
             border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.7);
+            background: var(--surface-strong);
             color: var(--text-muted);
             font-size: 12px;
             font-weight: 700;
@@ -180,7 +304,7 @@
             top: 78px;
             z-index: 15;
             padding: 14px 24px 0;
-            background: linear-gradient(180deg, rgba(243, 247, 251, 0.96), rgba(243, 247, 251, 0.72));
+            background: linear-gradient(180deg, var(--bg) 0%, rgba(0, 0, 0, 0) 100%);
             backdrop-filter: blur(12px);
         }
 
@@ -191,7 +315,7 @@
             gap: 8px;
             padding: 8px;
             border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.72);
+            background: var(--surface);
             border-radius: 18px;
             overflow-x: auto;
         }
@@ -258,7 +382,7 @@
         .btn {
             appearance: none;
             border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.84);
+            background: var(--surface-strong);
             color: var(--text);
             border-radius: 12px;
             padding: 10px 14px;
@@ -285,7 +409,7 @@
 
         .btn-danger {
             color: var(--danger);
-            background: rgba(255, 255, 255, 0.8);
+            background: var(--surface-strong);
         }
 
         .btn:disabled {
@@ -327,7 +451,12 @@
             margin: 0;
         }
 
-        .hero-grid,
+        .page-header p:empty,
+        .card-subtitle:empty,
+        .helper-text:empty {
+            display: none;
+        }
+
         .summary-grid,
         .overview-grid,
         .panel-grid {
@@ -335,56 +464,16 @@
             gap: 16px;
         }
 
-        .hero-grid {
-            grid-template-columns: 1.5fr 1fr;
-            margin-bottom: 22px;
-        }
-
         .summary-grid {
             grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
         }
 
         .overview-grid {
-            grid-template-columns: 1.2fr 0.8fr;
+            grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.85fr);
         }
 
         .panel-grid {
             grid-template-columns: 1.25fr 0.75fr;
-        }
-
-        .hero-card {
-            position: relative;
-            overflow: hidden;
-            min-height: 220px;
-            background:
-                radial-gradient(circle at top right, rgba(11, 91, 246, 0.22), transparent 28%),
-                linear-gradient(160deg, rgba(255, 255, 255, 0.88), rgba(234, 242, 255, 0.9));
-        }
-
-        .hero-card::after {
-            content: '';
-            position: absolute;
-            right: -50px;
-            bottom: -60px;
-            width: 200px;
-            height: 200px;
-            border-radius: 42px;
-            background: linear-gradient(135deg, rgba(15, 94, 247, 0.16), rgba(0, 163, 255, 0.08));
-            transform: rotate(16deg);
-        }
-
-        .hero-card h3 {
-            margin: 0 0 8px;
-            font-size: 30px;
-            letter-spacing: -0.05em;
-            max-width: 520px;
-        }
-
-        .hero-card p {
-            margin: 0 0 18px;
-            max-width: 600px;
-            color: var(--text-muted);
-            line-height: 1.55;
         }
 
         .summary-card,
@@ -392,7 +481,7 @@
         .stat-card,
         .preset-card,
         .list-card {
-            background: rgba(255, 255, 255, 0.72);
+            background: var(--surface-muted);
             border: 1px solid var(--line);
             border-radius: var(--radius-lg);
             padding: 18px;
@@ -430,6 +519,103 @@
             margin-bottom: 6px;
         }
 
+        .metric-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .metric-card {
+            padding: 16px 18px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: var(--surface-muted);
+        }
+
+        .metric-card strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 28px;
+            letter-spacing: -0.05em;
+        }
+
+        .metric-card span {
+            color: var(--text-soft);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .defaults-shell {
+            display: grid;
+            gap: 16px;
+        }
+
+        .defaults-section {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 18px;
+            background: var(--surface-muted);
+        }
+
+        .defaults-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .defaults-section-header h4 {
+            margin: 0;
+            font-size: 16px;
+            letter-spacing: -0.03em;
+        }
+
+        .stack-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .summary-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(105, 122, 154, 0.12);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .summary-item-label {
+            min-width: 0;
+        }
+
+        .summary-item-label strong,
+        .summary-item-value strong {
+            display: block;
+        }
+
+        .summary-item-label span,
+        .summary-item-value span {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .summary-item-value {
+            text-align: right;
+        }
+
         .quick-link-list,
         .inline-links {
             display: flex;
@@ -440,7 +626,7 @@
 
         .quick-link {
             border: 1px solid rgba(15, 94, 247, 0.14);
-            background: rgba(255, 255, 255, 0.74);
+            background: var(--surface-strong);
             color: var(--brand);
             border-radius: 12px;
             padding: 10px 12px;
@@ -516,7 +702,7 @@
             overflow: hidden;
             border: 1px solid var(--line);
             border-radius: 18px;
-            background: rgba(255, 255, 255, 0.62);
+            background: var(--surface);
         }
 
         table {
@@ -538,7 +724,7 @@
             text-transform: uppercase;
             font-size: 11px;
             letter-spacing: 0.08em;
-            background: rgba(239, 244, 251, 0.7);
+            background: var(--surface-muted);
         }
 
         tr:last-child td {
@@ -555,14 +741,14 @@
 
         .agent-card {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
             gap: 20px;
             margin-bottom: 18px;
         }
 
-        .agent-sidebar {
+        .agent-identity {
             display: grid;
-            gap: 14px;
+            gap: 12px;
             align-content: start;
         }
 
@@ -593,13 +779,49 @@
             font-size: 12px;
         }
 
+        .agent-route-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .route-card {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 16px;
+            background: var(--surface-muted);
+        }
+
+        .route-card .form-row {
+            padding: 12px 0;
+        }
+
+        .skills-group {
+            display: grid;
+            gap: 8px;
+            padding-top: 4px;
+        }
+
+        .chip-row-soft {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chip-row-soft .chip {
+            background: transparent;
+            border-color: rgba(105, 122, 154, 0.12);
+            color: var(--text-soft);
+            padding: 5px 9px;
+            font-size: 11px;
+        }
+
         .section-divider {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-soft);
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin: 8px 0 2px;
+            margin: 4px 0 0;
         }
 
         .preset-stack,
@@ -642,7 +864,7 @@
             border: 1px solid var(--line);
             border-radius: 16px;
             padding: 14px;
-            background: rgba(255, 255, 255, 0.68);
+            background: var(--surface-muted);
         }
 
         .info-tile h4 {
@@ -688,7 +910,7 @@
             right: 0;
             bottom: 0;
             width: min(560px, 100vw);
-            background: rgba(247, 251, 255, 0.96);
+            background: var(--surface-strong);
             backdrop-filter: blur(22px);
             box-shadow: -24px 0 60px rgba(20, 41, 75, 0.18);
             border-left: 1px solid var(--line);
@@ -815,7 +1037,7 @@
             width: min(420px, 100%);
             padding: 28px;
             border-radius: 28px;
-            background: rgba(255, 255, 255, 0.86);
+            background: var(--surface-strong);
             border: 1px solid var(--line);
             box-shadow: var(--shadow);
             backdrop-filter: blur(18px);
@@ -866,7 +1088,6 @@
         }
 
         @media (max-width: 960px) {
-            .hero-grid,
             .overview-grid,
             .panel-grid,
             .agent-card {
@@ -898,6 +1119,10 @@
 
             .tab-content {
                 padding: 22px 14px 40px;
+            }
+
+            .menu-trigger {
+                min-width: 0;
             }
         }
     </style>
@@ -937,7 +1162,7 @@
                 </div>
                 <div class="brand-copy">
                     <h1>Clawboard</h1>
-                    <p>Panel-first routing, health, and handoff.</p>
+                    <p></p>
                 </div>
             </div>
             <div class="top-bar-actions">
@@ -945,11 +1170,49 @@
                     <span class="status-dot"></span>
                     Hot reload enabled
                 </div>
-                <div class="chip" id="current-user-chip">Signed in</div>
-                <button class="btn" onclick="logout()">
-                    <span class="material-icons-round">logout</span>
-                    Logout
-                </button>
+                <div class="chip" id="theme-chip">Auto</div>
+                <div class="menu-shell">
+                    <button class="btn menu-trigger" id="account-menu-trigger" onclick="toggleAccountMenu(event)">
+                        <span class="menu-trigger-label">
+                            <span class="material-icons-round">account_circle</span>
+                            <span class="menu-trigger-copy">
+                                <strong id="current-user-chip">Account</strong>
+                                <span id="current-user-subtitle">Signed in</span>
+                            </span>
+                        </span>
+                        <span class="material-icons-round">expand_more</span>
+                    </button>
+                    <div class="menu-panel" id="account-menu">
+                        <div class="menu-section">
+                            <button class="menu-item" onclick="openAccountModal()">
+                                <span class="menu-item-label"><span class="material-icons-round">badge</span>Account</span>
+                            </button>
+                            <button class="menu-item" onclick="openSettingsModal()">
+                                <span class="menu-item-label"><span class="material-icons-round">settings</span>Settings</span>
+                            </button>
+                        </div>
+                        <div class="menu-section">
+                            <p class="menu-heading">Theme</p>
+                            <button class="menu-item" data-theme-option="light" onclick="setThemeMode('light')">
+                                <span class="menu-item-label"><span class="material-icons-round">light_mode</span>Light</span>
+                                <span class="material-icons-round">check</span>
+                            </button>
+                            <button class="menu-item" data-theme-option="dark" onclick="setThemeMode('dark')">
+                                <span class="menu-item-label"><span class="material-icons-round">dark_mode</span>Dark</span>
+                                <span class="material-icons-round">check</span>
+                            </button>
+                            <button class="menu-item" data-theme-option="auto" onclick="setThemeMode('auto')">
+                                <span class="menu-item-label"><span class="material-icons-round">contrast</span>Auto</span>
+                                <span class="material-icons-round">check</span>
+                            </button>
+                        </div>
+                        <div class="menu-section">
+                            <button class="menu-item" onclick="logout()">
+                                <span class="menu-item-label"><span class="material-icons-round">logout</span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -959,7 +1222,6 @@
                 <button class="tab" data-tab="overview">Overview</button>
                 <button class="tab" data-tab="models">Models</button>
                 <button class="tab" data-tab="cron">Cron</button>
-                <button class="tab" data-tab="account">Account</button>
             </nav>
         </div>
 
@@ -967,7 +1229,7 @@
             <div class="page-header">
                 <div>
                     <h2>Agents</h2>
-                    <p>Keep routing edits in context, save reusable presets, and hand complex comparisons off to AI instead of burying them in management UI.</p>
+                    <p></p>
                 </div>
                 <div class="action-cluster">
                     <button class="btn" onclick="openPresetModal()">
@@ -982,37 +1244,31 @@
             </div>
 
             <div class="panel-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <h3 class="card-title">Presets</h3>
-                            <p class="card-subtitle">Compact snapshots of the current defaults and agent routing.</p>
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Presets</h3>
+                                <p class="card-subtitle"></p>
+                            </div>
                         </div>
-                        <div class="button-row">
-                            <button class="btn" onclick="openPromptModal('Compare presets', buildPresetComparisonPrompt())">
-                                <span class="material-icons-round">psychology</span>
-                                Ask AI to compare presets
-                            </button>
-                        </div>
+                        <div id="presets-list" class="preset-stack"></div>
                     </div>
-                    <div id="presets-list" class="preset-stack"></div>
-                </div>
 
                 <div class="stats-stack">
                     <div class="stat-card">
                         <h3>Agents</h3>
                         <strong id="agents-count">0</strong>
-                        <p class="helper-text">Live model chains ready for hot apply.</p>
+                        <p class="helper-text"></p>
                     </div>
                     <div class="stat-card">
                         <h3>Presets</h3>
                         <strong id="presets-count">0</strong>
-                        <p class="helper-text">Lightweight reusable states, not a management system.</p>
+                        <p class="helper-text"></p>
                     </div>
                     <div class="stat-card">
                         <h3>Selectable Models</h3>
                         <strong id="model-options-count">0</strong>
-                        <p class="helper-text">Provider menus merge current config, saved refs, and LiteLLM.</p>
+                        <p class="helper-text"></p>
                     </div>
                 </div>
             </div>
@@ -1024,13 +1280,9 @@
             <div class="page-header">
                 <div>
                     <h2>Overview</h2>
-                    <p>Use this as the high-signal control layer: defaults on the left, relationship summaries and quick pivots on the right.</p>
+                    <p></p>
                 </div>
                 <div class="action-cluster">
-                    <button class="btn" onclick="openPromptModal('Optimize model routing', buildRoutingPrompt())">
-                        <span class="material-icons-round">auto_awesome</span>
-                        Ask AI to optimize model routing
-                    </button>
                     <button class="btn btn-primary" onclick="applyDefaults()">
                         <span class="material-icons-round">save</span>
                         Apply Defaults
@@ -1038,7 +1290,6 @@
                 </div>
             </div>
 
-            <div id="overview-hero"></div>
             <div class="overview-grid">
                 <div id="defaults-editor"></div>
                 <div id="overview-sidecards"></div>
@@ -1049,13 +1300,9 @@
             <div class="page-header">
                 <div>
                     <h2>Models</h2>
-                    <p>One panel, multiple views. Filter the registry by usage shape, provider, and access without leaving the page.</p>
+                    <p></p>
                 </div>
                 <div class="action-cluster">
-                    <button class="btn" onclick="openPromptModal('Optimize model routing', buildRoutingPrompt())">
-                        <span class="material-icons-round">psychology</span>
-                        Ask AI to optimize model routing
-                    </button>
                     <button class="btn" onclick="loadDashboard()">
                         <span class="material-icons-round">refresh</span>
                         Refresh
@@ -1108,13 +1355,9 @@
             <div class="page-header">
                 <div>
                     <h2>Cron</h2>
-                    <p>Observability first. Inspect jobs, run them once, and toggle them without opening a heavy scheduler builder.</p>
+                    <p></p>
                 </div>
                 <div class="action-cluster">
-                    <button class="btn" onclick="openPromptModal('Review cron health', buildCronHealthPrompt())">
-                        <span class="material-icons-round">psychology</span>
-                        Ask AI to review cron health
-                    </button>
                     <button class="btn" onclick="loadDashboard()">
                         <span class="material-icons-round">refresh</span>
                         Refresh
@@ -1143,46 +1386,6 @@
             </div>
         </section>
 
-        <section id="account" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h2>Account</h2>
-                    <p>Update the local Clawboard login stored under <code>~/.openclaw/clawboard/auth.json</code>.</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <h3 class="card-title">Credentials</h3>
-                        <p class="card-subtitle">This only affects Clawboard access.</p>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">New Username</span>
-                    <div class="form-value">
-                        <input id="account-username" class="md-input" type="text" autocomplete="username" placeholder="Leave unchanged to keep current">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">Current Password</span>
-                    <div class="form-value">
-                        <input id="account-current-password" class="md-input" type="password" autocomplete="current-password">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <span class="form-label">New Password</span>
-                    <div class="form-value">
-                        <input id="account-new-password" class="md-input" type="password" autocomplete="new-password" placeholder="Optional">
-                    </div>
-                </div>
-                <div class="button-row" style="margin-top: 16px;">
-                    <button class="btn btn-primary" onclick="changeCredentials()">
-                        <span class="material-icons-round">key</span>
-                        Save Credentials
-                    </button>
-                </div>
-            </div>
-        </section>
     </div>
 
     <div id="surface-scrim" class="scrim" onclick="closeSurfaces()"></div>
@@ -1205,7 +1408,7 @@
         <div class="modal-header">
             <div>
                 <h3 id="preset-modal-title">Save Preset</h3>
-                <p id="preset-modal-subtitle">Capture the current defaults and agent routing.</p>
+                <p id="preset-modal-subtitle"></p>
             </div>
             <button class="btn" onclick="closePresetModal()">
                 <span class="material-icons-round">close</span>
@@ -1231,24 +1434,82 @@
         </div>
     </div>
 
-    <div id="prompt-modal" class="modal">
+    <div id="account-modal" class="modal">
         <div class="modal-header">
             <div>
-                <h3 id="prompt-modal-title">AI Handoff</h3>
-                <p>Copy the structured prompt into your preferred AI flow.</p>
+                <h3>Account</h3>
+                <p></p>
             </div>
-            <button class="btn" onclick="closePromptModal()">
+            <button class="btn" onclick="closeAccountModal()">
                 <span class="material-icons-round">close</span>
             </button>
         </div>
         <div class="modal-body">
-            <textarea id="prompt-modal-text" class="md-textarea" readonly></textarea>
+            <div class="form-row">
+                <span class="form-label">New Username</span>
+                <div class="form-value">
+                    <input id="account-username" class="md-input" type="text" autocomplete="username" placeholder="Leave unchanged to keep current">
+                </div>
+            </div>
+            <div class="form-row">
+                <span class="form-label">Current Password</span>
+                <div class="form-value">
+                    <input id="account-current-password" class="md-input" type="password" autocomplete="current-password">
+                </div>
+            </div>
+            <div class="form-row">
+                <span class="form-label">New Password</span>
+                <div class="form-value">
+                    <input id="account-new-password" class="md-input" type="password" autocomplete="new-password" placeholder="Optional">
+                </div>
+            </div>
         </div>
         <div class="modal-actions">
-            <button class="btn" onclick="closePromptModal()">Close</button>
-            <button class="btn btn-primary" onclick="copyPromptText()">
-                <span class="material-icons-round">content_copy</span>
-                Copy Prompt
+            <button class="btn" onclick="closeAccountModal()">Close</button>
+            <button class="btn btn-primary" onclick="changeCredentials()">
+                <span class="material-icons-round">key</span>
+                Save Credentials
+            </button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-header">
+            <div>
+                <h3>Settings</h3>
+                <p></p>
+            </div>
+            <button class="btn" onclick="closeSettingsModal()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="defaults-section">
+                <div class="defaults-section-header">
+                    <h4>Theme</h4>
+                    <span class="chip" id="settings-theme-chip">Auto</span>
+                </div>
+                <div class="stack-list">
+                    <button class="menu-item" onclick="setThemeMode('light')">
+                        <span class="menu-item-label"><span class="material-icons-round">light_mode</span>Light</span>
+                        <span class="material-icons-round">arrow_forward</span>
+                    </button>
+                    <button class="menu-item" onclick="setThemeMode('dark')">
+                        <span class="menu-item-label"><span class="material-icons-round">dark_mode</span>Dark</span>
+                        <span class="material-icons-round">arrow_forward</span>
+                    </button>
+                    <button class="menu-item" onclick="setThemeMode('auto')">
+                        <span class="menu-item-label"><span class="material-icons-round">contrast</span>Auto</span>
+                        <span class="material-icons-round">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn" onclick="closeSettingsModal()">Close</button>
+            <button class="btn btn-primary" onclick="closeSettingsModal()">
+                <span class="material-icons-round">done</span>
+                Done
             </button>
         </div>
     </div>
@@ -1266,8 +1527,11 @@
             LITELLM_ONLY: 'litellm-only',
             UNKNOWN: 'custom'
         };
+        const THEME_STORAGE_KEY = 'clawboard-theme-mode';
 
         let sessionUser = null;
+        let themeMode = 'auto';
+        let systemThemeMedia = null;
         let agentsData = [];
         let defaultsData = {};
         let dashboardData = {
@@ -1284,7 +1548,9 @@
         };
 
         document.addEventListener('DOMContentLoaded', async () => {
+            initTheme();
             initTabs();
+            initMenus();
             bindAuthShortcuts();
             await bootstrapAuth();
         });
@@ -1331,6 +1597,63 @@
             });
         }
 
+        function initMenus() {
+            document.addEventListener('click', (event) => {
+                const trigger = document.getElementById('account-menu-trigger');
+                const menu = document.getElementById('account-menu');
+                if (!trigger || !menu) return;
+                if (!menu.contains(event.target) && !trigger.contains(event.target)) {
+                    closeAccountMenu();
+                }
+            });
+        }
+
+        function initTheme() {
+            themeMode = localStorage.getItem(THEME_STORAGE_KEY) || 'auto';
+            systemThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+            if (typeof systemThemeMedia.addEventListener === 'function') {
+                systemThemeMedia.addEventListener('change', applyTheme);
+            } else if (typeof systemThemeMedia.addListener === 'function') {
+                systemThemeMedia.addListener(applyTheme);
+            }
+            applyTheme();
+        }
+
+        function getResolvedTheme() {
+            return themeMode === 'auto' ? (systemThemeMedia?.matches ? 'dark' : 'light') : themeMode;
+        }
+
+        function applyTheme() {
+            document.documentElement.dataset.theme = getResolvedTheme();
+            updateThemeUi();
+        }
+
+        function setThemeMode(mode) {
+            themeMode = ['light', 'dark', 'auto'].includes(mode) ? mode : 'auto';
+            localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+            applyTheme();
+            closeAccountMenu();
+            showSnackbar(`Theme set to ${themeMode}.`);
+        }
+
+        function updateThemeUi() {
+            const label = themeMode.charAt(0).toUpperCase() + themeMode.slice(1);
+            document.getElementById('theme-chip').textContent = label;
+            document.getElementById('settings-theme-chip').textContent = label;
+            document.querySelectorAll('[data-theme-option]').forEach((item) => {
+                item.classList.toggle('active', item.dataset.themeOption === themeMode);
+            });
+        }
+
+        function toggleAccountMenu(event) {
+            event?.stopPropagation();
+            document.getElementById('account-menu').classList.toggle('active');
+        }
+
+        function closeAccountMenu() {
+            document.getElementById('account-menu')?.classList.remove('active');
+        }
+
         function activateTab(tabName) {
             document.querySelectorAll('.tab').forEach((entry) => entry.classList.toggle('active', entry.dataset.tab === tabName));
             document.querySelectorAll('.tab-content').forEach((entry) => entry.classList.toggle('active', entry.id === tabName));
@@ -1372,6 +1695,7 @@
                 await fetch('/api/auth/logout', { method: 'POST' });
             } finally {
                 sessionUser = null;
+                closeAccountMenu();
                 showAuthShell();
                 hideLoading();
             }
@@ -1399,6 +1723,7 @@
                 document.getElementById('account-new-password').value = '';
                 document.getElementById('account-username').value = '';
                 updateUserChip();
+                closeAccountModal();
                 showSnackbar(data.message || 'Credentials updated.');
             } catch (err) {
                 showSnackbar(`Error: ${err.message}`);
@@ -1417,6 +1742,7 @@
             document.getElementById('auth-shell').classList.remove('hidden');
             document.getElementById('app-shell').classList.add('hidden');
             closeSurfaces();
+            closeAccountMenu();
         }
 
         function showAppShell() {
@@ -1426,7 +1752,8 @@
         }
 
         function updateUserChip() {
-            document.getElementById('current-user-chip').textContent = sessionUser ? `Signed in as ${sessionUser}` : 'Signed in';
+            document.getElementById('current-user-chip').textContent = sessionUser || 'Account';
+            document.getElementById('current-user-subtitle').textContent = sessionUser ? 'Signed in' : 'Signed out';
             const accountUsername = document.getElementById('account-username');
             if (accountUsername) {
                 accountUsername.placeholder = sessionUser ? `Current: ${sessionUser}` : 'Leave unchanged to keep current';
@@ -1728,47 +2055,34 @@
 
         function renderOverview() {
             const overview = dashboardData.overview || {};
-            document.getElementById('overview-hero').innerHTML = `
-                <div class="hero-grid">
-                    <div class="card hero-card">
-                        <h3>Lightweight oversight for defaults, routing, presets, and cron health.</h3>
-                        <p>Clawboard stays panel-first: fast edits, visible relationships, low-risk actions, and AI handoffs for the heavier reasoning.</p>
-                        <div class="quick-link-list">
-                            <button class="quick-link" onclick="activateTab('models')">Jump to Models</button>
-                            <button class="quick-link" onclick="activateTab('cron')">Jump to Cron</button>
-                            <button class="quick-link" onclick="activateTab('agents')">Jump to Agents</button>
-                        </div>
-                    </div>
-                    <div class="summary-grid">
-                        <div class="summary-card">
-                            <h3>Presets Summary</h3>
-                            <strong>${escapeHtml(overview.presets?.total ?? 0)}</strong>
-                            <p class="helper-text">${escapeHtml((overview.presets?.recentlyUpdated || []).join(', ') || 'No recent preset activity.')}</p>
-                        </div>
-                        <div class="summary-card">
-                            <h3>Model Usage Summary</h3>
-                            <strong>${escapeHtml(overview.models?.inUse ?? 0)}</strong>
-                            <p class="helper-text">${escapeHtml(`In use ${overview.models?.inUse ?? 0} of ${overview.models?.total ?? 0}, orphans ${overview.models?.orphans ?? 0}.`)}</p>
-                        </div>
-                        <div class="summary-card">
-                            <h3>Cron Health Summary</h3>
-                            <strong>${escapeHtml(overview.cron?.enabled ?? 0)}</strong>
-                            <p class="helper-text">${escapeHtml(`${overview.cron?.healthy ?? 0} healthy, ${overview.cron?.attention ?? 0} needing attention.`)}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-
             document.getElementById('defaults-editor').innerHTML = `
                 <div class="card">
                     <div class="card-header">
                         <div>
-                            <h3 class="card-title">Default Model Configuration</h3>
-                            <p class="card-subtitle">These defaults remain editable here. Saving still hot-applies to OpenClaw.</p>
+                            <h3 class="card-title">Default Routing</h3>
+                            <p class="card-subtitle">Primary and fallback routes stay editable here.</p>
                         </div>
                     </div>
-                    <div class="form-card-grid">
-                        <div class="list-card">
+                    <div class="metric-strip">
+                        <div class="metric-card">
+                            <span>Presets</span>
+                            <strong>${escapeHtml(overview.presets?.total ?? 0)}</strong>
+                        </div>
+                        <div class="metric-card">
+                            <span>Models In Use</span>
+                            <strong>${escapeHtml(overview.models?.inUse ?? 0)}</strong>
+                        </div>
+                        <div class="metric-card">
+                            <span>Cron Enabled</span>
+                            <strong>${escapeHtml(overview.cron?.enabled ?? 0)}</strong>
+                        </div>
+                    </div>
+                    <div class="defaults-shell">
+                        <div class="defaults-section">
+                            <div class="defaults-section-header">
+                                <h4>Text</h4>
+                                <span class="chip">Primary</span>
+                            </div>
                             <div class="form-row">
                                 <span class="form-label">Primary</span>
                                 <div class="form-value">
@@ -1797,7 +2111,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="list-card">
+                        <div class="defaults-section">
+                            <div class="defaults-section-header">
+                                <h4>Image + Heartbeat</h4>
+                                <span class="chip">Supporting</span>
+                            </div>
                             <div class="form-row">
                                 <span class="form-label">Image Primary</span>
                                 <div class="form-value">
@@ -1842,25 +2160,37 @@
             document.getElementById('overview-sidecards').innerHTML = `
                 <div class="stats-stack">
                     <div class="list-card">
-                        <h3 class="card-title">Presets Summary</h3>
-                        <ul>${renderListItems((dashboardData.presets || []).slice(0, 4).map((preset) => `${preset.name}: ${preset.liveDiffSummary.join(', ') || 'No live diff'}`), 'No presets saved.')}</ul>
-                    </div>
-                    <div class="list-card">
-                        <h3 class="card-title">Model Usage Summary</h3>
-                        <ul>${renderListItems((overview.models?.topUsed || []).map((model) => `${model} is a top referenced route.`), 'No model usage data.')}</ul>
-                    </div>
-                    <div class="list-card">
-                        <div class="card-header">
-                            <div>
-                                <h3 class="card-title">Cron Health Summary</h3>
-                                <p class="card-subtitle">Quick visibility into the jobs that need review.</p>
-                            </div>
-                            <button class="btn" onclick="openPromptModal('Review cron health', buildCronHealthPrompt())">
-                                <span class="material-icons-round">auto_awesome</span>
-                                AI Review
-                            </button>
+                        <h3 class="card-title">Presets</h3>
+                        <div class="summary-list">
+                            ${renderSummaryItems((dashboardData.presets || []).slice(0, 4).map((preset) => ({
+                                label: preset.name,
+                                meta: preset.description || 'Saved state',
+                                value: (preset.liveDiffSummary || []).slice(0, 2).join(', ') || 'No diff'
+                            })), 'No presets saved.')}
                         </div>
-                        <ul>${renderListItems(getCronAttentionItems(), 'No cron issues detected.')}</ul>
+                    </div>
+                    <div class="list-card">
+                        <h3 class="card-title">Model Focus</h3>
+                        <div class="summary-list">
+                            ${renderSummaryItems((overview.models?.topUsed || []).slice(0, 4).map((model) => ({
+                                label: model,
+                                meta: 'Frequently referenced',
+                                value: 'In rotation'
+                            })), 'No model usage data.')}
+                        </div>
+                    </div>
+                    <div class="list-card">
+                        <h3 class="card-title">Cron</h3>
+                        <div class="summary-list">
+                            ${renderSummaryItems(getCronAttentionItems().map((item) => {
+                                const [label, ...rest] = item.split(':');
+                                return {
+                                    label,
+                                    meta: rest.join(':').trim(),
+                                    value: 'Attention'
+                                };
+                            }), 'No cron issues detected.')}
+                        </div>
                     </div>
                 </div>
             `;
@@ -1879,6 +2209,24 @@
                 return `<li>${escapeHtml(fallbackText)}</li>`;
             }
             return items.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+        }
+
+        function renderSummaryItems(items, fallbackText) {
+            if (!items || items.length === 0) {
+                return `<p class="empty-state">${escapeHtml(fallbackText)}</p>`;
+            }
+
+            return items.map((item) => `
+                <div class="summary-item">
+                    <div class="summary-item-label">
+                        <strong>${escapeHtml(item.label || '-')}</strong>
+                        <span>${escapeHtml(item.meta || '')}</span>
+                    </div>
+                    <div class="summary-item-value">
+                        <strong>${escapeHtml(item.value || '-')}</strong>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function getCronAttentionItems() {
@@ -1927,12 +2275,22 @@
                 const workspaceSkills = Array.isArray(agent.workspaceSkills) ? agent.workspaceSkills : [];
                 return `
                     <div class="card agent-card">
-                        <div class="agent-sidebar">
+                        <div class="agent-identity">
                             <div class="agent-avatar-wrap">
                                 <img class="agent-avatar" id="avatar-${escapeHtml(agent.id)}" src="${escapeHtml(agent.avatarUrl)}" alt="${escapeHtml(agent.name)} avatar">
                                 <div>
                                     <div class="agent-name">${escapeHtml(agent.name || agent.id)}</div>
                                     <div class="agent-id">${escapeHtml(agent.id)}</div>
+                                </div>
+                            </div>
+                            <div class="skills-group">
+                                <div>
+                                    <div class="section-divider">Installed Skills</div>
+                                    <div class="chip-row-soft">${installedSkills.length ? installedSkills.map((skill) => `<span class="chip">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">None</span>'}</div>
+                                </div>
+                                <div>
+                                    <div class="section-divider">Workspace Skills</div>
+                                    <div class="chip-row-soft">${workspaceSkills.length ? workspaceSkills.map((skill) => `<span class="chip success">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">None</span>'}</div>
                                 </div>
                             </div>
                             <div class="button-row">
@@ -1946,41 +2304,38 @@
                                     Reset
                                 </button>
                             </div>
-                            <p class="helper-text">Stored under <code>~/.openclaw/clawboard/avatars</code>.</p>
-                            <div>
-                                <div class="section-divider">Installed Skills</div>
-                                <div class="tag-row">${installedSkills.length ? installedSkills.map((skill) => `<span class="chip">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">No installed skills</span>'}</div>
-                            </div>
-                            <div>
-                                <div class="section-divider">Workspace Skills</div>
-                                <div class="tag-row">${workspaceSkills.length ? workspaceSkills.map((skill) => `<span class="chip success">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">No workspace skills</span>'}</div>
-                            </div>
                         </div>
-                        <div>
-                            <div class="form-row">
-                                <span class="form-label">Primary</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="agent-${escapeHtml(agent.id)}-primary" class="md-select"></select>
-                                        <div id="agent-${escapeHtml(agent.id)}-primary-meta" class="field-meta"></div>
+                        <div class="agent-route-grid">
+                            <div class="route-card">
+                                <div class="defaults-section-header">
+                                    <h4>Routing</h4>
+                                    <span class="chip">Live</span>
+                                </div>
+                                <div class="form-row">
+                                    <span class="form-label">Primary</span>
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="agent-${escapeHtml(agent.id)}-primary" class="md-select"></select>
+                                            <div id="agent-${escapeHtml(agent.id)}-primary-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-row">
-                                <span class="form-label">Fallback 1</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="agent-${escapeHtml(agent.id)}-fb1" class="md-select"></select>
-                                        <div id="agent-${escapeHtml(agent.id)}-fb1-meta" class="field-meta"></div>
+                                <div class="form-row">
+                                    <span class="form-label">Fallback 1</span>
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="agent-${escapeHtml(agent.id)}-fb1" class="md-select"></select>
+                                            <div id="agent-${escapeHtml(agent.id)}-fb1-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-row">
-                                <span class="form-label">Fallback 2</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="agent-${escapeHtml(agent.id)}-fb2" class="md-select"></select>
-                                        <div id="agent-${escapeHtml(agent.id)}-fb2-meta" class="field-meta"></div>
+                                <div class="form-row">
+                                    <span class="form-label">Fallback 2</span>
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="agent-${escapeHtml(agent.id)}-fb2" class="md-select"></select>
+                                            <div id="agent-${escapeHtml(agent.id)}-fb2-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -2184,7 +2539,7 @@
             document.getElementById('preset-modal-title').textContent = preset ? 'Rename / Edit Preset' : 'Save Preset';
             document.getElementById('preset-modal-subtitle').textContent = preset
                 ? 'Adjust the label or note without turning presets into a management subsystem.'
-                : 'Capture the current defaults and agent routing.';
+                : '';
             document.getElementById('preset-name').value = preset?.name || '';
             document.getElementById('preset-description').value = preset?.description || '';
             document.getElementById('preset-original-name').value = preset?.name || '';
@@ -2241,7 +2596,7 @@
                 <div class="drawer-grid">
                     <div class="info-tile">
                         <h4>Live Diff Summary</h4>
-                        <p>${escapeHtml((preset.liveDiffSummary || []).join(', ') || 'No live diff against current state.')}</p>
+                        <p>${escapeHtml((preset.liveDiffSummary || []).join(', ') || 'Aligned with current state.')}</p>
                     </div>
                     <div class="info-tile">
                         <h4>Impacted Defaults</h4>
@@ -2265,7 +2620,6 @@
             `;
             document.getElementById('drawer-actions').innerHTML = `
                 <button class="btn" onclick="openPresetModal('${escapeJsString(name)}')">Rename / edit note</button>
-                <button class="btn" onclick="openPromptModal('Compare preset', buildPresetPrompt('${escapeJsString(name)}'))">Ask AI to compare preset</button>
                 <button class="btn btn-primary" onclick="applyPreset('${escapeJsString(name)}')">Apply</button>
             `;
             openDrawer();
@@ -2313,7 +2667,6 @@
             document.getElementById('drawer-actions').innerHTML = `
                 <button class="btn" onclick="activateTab('overview')">Open Overview</button>
                 <button class="btn" onclick="activateTab('agents')">Open Agents</button>
-                <button class="btn" onclick="openPromptModal('Optimize model routing', buildModelPrompt('${escapeJsString(modelRef)}'))">Ask AI to optimize routing</button>
             `;
             openDrawer();
         }
@@ -2364,7 +2717,6 @@
             document.getElementById('drawer-actions').innerHTML = `
                 <button class="btn" onclick="toggleCronJob('${escapeJsString(job.id)}')">${job.enabled ? 'Disable' : 'Enable'}</button>
                 <button class="btn" onclick="loadDashboard()">Refresh / inspect</button>
-                <button class="btn" onclick="openPromptModal('Review cron health', buildSingleCronPrompt('${escapeJsString(job.id)}'))">Ask AI to review</button>
                 <button class="btn btn-primary" onclick="runCronJob('${escapeJsString(job.id)}')">Run once</button>
             `;
             openDrawer();
@@ -2454,122 +2806,22 @@
             }
         }
 
-        function buildPresetComparisonPrompt() {
-            const presets = (dashboardData.presets || []).map((preset) => ({
-                name: preset.name,
-                description: preset.description || '',
-                diff: preset.liveDiffSummary || [],
-                impactedAgents: preset.impactedAgents || [],
-                impactedDefaults: preset.impactedDefaults || []
-            }));
-
-            return [
-                'Compare the current Clawboard presets and recommend when each should be applied.',
-                '',
-                'Constraints:',
-                '- Keep recommendations lightweight and operational.',
-                '- Prefer routing clarity over exhaustive diff output.',
-                '- Call out overlap, risk, and obvious consolidation opportunities.',
-                '',
-                'Presets:',
-                JSON.stringify(presets, null, 2)
-            ].join('\n');
+        function openAccountModal() {
+            closeAccountMenu();
+            openModal('account-modal');
         }
 
-        function buildRoutingPrompt() {
-            return [
-                'Review this Clawboard routing snapshot and suggest improvements.',
-                '',
-                'Goals:',
-                '- Reduce overlap between defaults, agents, presets, and cron model choices.',
-                '- Preserve hot-reload friendly operations.',
-                '- Avoid suggesting heavy UI workflows; focus on config and policy changes.',
-                '',
-                'Overview:',
-                JSON.stringify(dashboardData.overview || {}, null, 2),
-                '',
-                'Models:',
-                JSON.stringify((dashboardData.models || []).map((model) => ({
-                    ref: `${model.provider}/${model.modelId}`,
-                    usage: model.usage
-                })), null, 2)
-            ].join('\n');
+        function closeAccountModal() {
+            closeModal('account-modal');
         }
 
-        function buildCronHealthPrompt() {
-            return [
-                'Review cron health from Clawboard and identify which jobs need attention first.',
-                '',
-                'Focus on:',
-                '- recent errors',
-                '- disabled jobs that look accidental',
-                '- model concentration risk',
-                '- delivery risk',
-                '',
-                JSON.stringify(dashboardData.cron || [], null, 2)
-            ].join('\n');
+        function openSettingsModal() {
+            closeAccountMenu();
+            openModal('settings-modal');
         }
 
-        function buildSingleCronPrompt(jobId) {
-            const job = (dashboardData.cron || []).find((entry) => entry.id === jobId);
-            return [
-                'Review this single Clawboard cron job.',
-                '',
-                'Tasks:',
-                '- explain the likely health state',
-                '- summarize delivery and model risk',
-                '- suggest low-risk next steps only',
-                '',
-                JSON.stringify(job || {}, null, 2)
-            ].join('\n');
-        }
-
-        function buildPresetPrompt(name) {
-            const preset = (dashboardData.presets || []).find((entry) => entry.name === name);
-            return [
-                `Compare preset "${name}" against the current Clawboard routing state.`,
-                '',
-                'Tasks:',
-                '- summarize what changes if this preset is applied',
-                '- identify the highest-impact model moves',
-                '- note any likely regressions or redundancies',
-                '',
-                JSON.stringify(preset || {}, null, 2)
-            ].join('\n');
-        }
-
-        function buildModelPrompt(modelRef) {
-            const model = (dashboardData.models || []).find((entry) => `${entry.provider}/${entry.modelId}` === modelRef);
-            return [
-                `Review model routing for "${modelRef}".`,
-                '',
-                'Tasks:',
-                '- evaluate whether this model is placed in the right defaults, agents, presets, and cron roles',
-                '- suggest any consolidation or isolation changes',
-                '- keep recommendations compatible with a lightweight control surface',
-                '',
-                JSON.stringify(model || {}, null, 2)
-            ].join('\n');
-        }
-
-        function openPromptModal(title, text) {
-            document.getElementById('prompt-modal-title').textContent = title;
-            document.getElementById('prompt-modal-text').value = text;
-            openModal('prompt-modal');
-        }
-
-        function closePromptModal() {
-            closeModal('prompt-modal');
-        }
-
-        async function copyPromptText() {
-            const text = document.getElementById('prompt-modal-text').value;
-            try {
-                await navigator.clipboard.writeText(text);
-                showSnackbar('Prompt copied.');
-            } catch {
-                showSnackbar('Clipboard unavailable. Copy manually.');
-            }
+        function closeSettingsModal() {
+            closeModal('settings-modal');
         }
 
         function openDrawer() {
@@ -2601,7 +2853,8 @@
         function closeSurfaces() {
             closeDrawer();
             closeModal('preset-modal');
-            closeModal('prompt-modal');
+            closeModal('account-modal');
+            closeModal('settings-modal');
         }
 
         function readFileAsDataUrl(file) {
