@@ -275,16 +275,36 @@
         }
 
         .status-pill {
-            color: var(--success);
-            background: linear-gradient(180deg, rgba(222, 248, 232, 0.96), rgba(214, 244, 225, 0.92));
-            border-color: rgba(17, 122, 79, 0.14);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 5px 10px;
+            border: 1px solid var(--line);
+            background: var(--surface-strong);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
         }
 
         .status-dot {
-            width: 9px;
-            height: 9px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background: #19a867;
+        }
+        .status-dot.ok { background: var(--success); box-shadow: 0 0 8px var(--success-soft); }
+        .status-dot.error { background: var(--danger); box-shadow: 0 0 8px var(--danger-soft); }
+        .status-dot.warning { background: var(--warning); box-shadow: 0 0 8px var(--warning-soft); }
+        .status-dot.idle { background: var(--text-muted); }
+
+        .is-clickable {
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .is-clickable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px -4px rgba(0,0,0,0.08);
+            border-color: var(--line-strong);
         }
 
         .chip.code {
@@ -314,39 +334,49 @@
             position: sticky;
             top: 78px;
             z-index: 15;
-            padding: 14px 24px 0;
-            background: linear-gradient(180deg, var(--bg) 0%, rgba(0, 0, 0, 0) 100%);
-            backdrop-filter: blur(12px);
+            padding: 24px 24px 0;
+            background: var(--bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--line);
         }
 
         .tabs {
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            gap: 8px;
-            padding: 8px;
-            border: 1px solid var(--line);
-            background: var(--surface);
-            border-radius: 18px;
+            gap: 4px;
             overflow-x: auto;
+            align-items: flex-end;
         }
 
         .tab {
-            border: none;
+            border: 1px solid transparent;
+            border-bottom: none;
             background: transparent;
             color: var(--text-soft);
-            border-radius: 12px;
-            padding: 11px 14px;
-            font-size: 13px;
+            border-radius: 16px 16px 0 0;
+            padding: 16px 32px;
+            font-size: 18px;
             font-weight: 800;
-            letter-spacing: 0.01em;
             cursor: pointer;
             white-space: nowrap;
+            transition: all 0.2s;
+            position: relative;
+            top: 1px;
+        }
+
+        .tab:hover {
+            color: var(--text);
+            background: rgba(15, 94, 247, 0.04);
         }
 
         .tab.active {
-            color: var(--brand);
-            background: rgba(15, 94, 247, 0.1);
+            color: var(--text);
+            background: var(--bg);
+            border-color: var(--line);
+            border-bottom-color: var(--bg);
+            box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.12);
         }
 
         .tab-content {
@@ -912,10 +942,41 @@
             margin: 4px 0 0;
         }
 
-        .preset-stack,
-        .stats-stack {
+        .preset-stack {
             display: grid;
             gap: 12px;
+        }
+
+        .stats-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: 100%;
+        }
+
+        .stats-stack > * {
+            flex: 1;
+        }
+
+        .skill-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--brand);
+            background: rgba(15, 94, 247, 0.08);
+            border: 1px solid rgba(15, 94, 247, 0.15);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px -2px rgba(15, 94, 247, 0.15);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .skill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 94, 247, 0.25);
+            background: var(--brand);
+            color: #fff;
         }
 
         .preset-card {
@@ -1316,11 +1377,7 @@
         </div>
 
         <section id="agents" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h2>Agents</h2>
-                    <p></p>
-                </div>
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
                 <div class="action-cluster">
                     <button class="btn" onclick="openPresetModal()">
                         <span class="material-icons-round">bookmark_add</span>
@@ -1366,18 +1423,6 @@
         </section>
 
         <section id="overview" class="tab-content active">
-            <div class="page-header">
-                <div>
-                    <h2>Overview</h2>
-                    <p></p>
-                </div>
-                <div class="action-cluster">
-                    <button class="btn btn-primary" onclick="applyDefaults()">
-                        <span class="material-icons-round">save</span>
-                        Apply Defaults
-                    </button>
-                </div>
-            </div>
 
             <div class="overview-grid">
                 <div id="defaults-editor"></div>
@@ -1386,25 +1431,16 @@
         </section>
 
         <section id="models" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h2>Models</h2>
-                    <p></p>
-                </div>
-                <div class="action-cluster">
-                    <button class="btn" onclick="loadDashboard()">
-                        <span class="material-icons-round">refresh</span>
-                        Refresh
-                    </button>
-                </div>
-            </div>
-
             <div class="card">
                 <div class="card-header">
                     <div>
                         <h3 class="card-title">Registry View</h3>
                     </div>
                     <div class="button-row">
+                        <button class="btn" onclick="loadDashboard()">
+                            <span class="material-icons-round">refresh</span>
+                            Refresh
+                        </button>
                         <select id="models-view" class="md-select" style="width: auto; min-width: 160px;" onchange="renderModels()">
                             <option value="all">All</option>
                             <option value="in-use">In use</option>
@@ -1421,30 +1457,21 @@
                         </select>
                     </div>
                 </div>
-                <div class="table-shell">
-                    <table id="models-table">
-                        <thead>
-                            <tr>
-                                <th>Model</th>
-                                <th>Provider</th>
-                                <th>Access</th>
-                                <th>Used By</th>
-                                <th>Usage Count</th>
-                                <th>Source</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="table-shell" style="border: none;">
+                    <div class="bar-table-header models-grid-layout" id="models-header">
+                        <div class="sortable-header" onclick="setModelsSort('name')">Model <span></span></div>
+                        <div class="sortable-header" onclick="setModelsSort('provider')">Provider <span></span></div>
+                        <div class="sortable-header" onclick="setModelsSort('access')">Access <span></span></div>
+                        <div class="sortable-header" onclick="setModelsSort('usedBy')">Used By <span></span></div>
+                        <div class="sortable-header" onclick="setModelsSort('usageCount')">Count <span></span></div>
+                    </div>
+                    <div id="models-list" class="bar-list"></div>
                 </div>
             </div>
         </section>
 
         <section id="cron" class="tab-content">
-            <div class="page-header">
-                <div>
-                    <h2>Cron</h2>
-                    <p></p>
-                </div>
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
                 <div class="action-cluster">
                     <button class="btn" onclick="loadDashboard()">
                         <span class="material-icons-round">refresh</span>
@@ -1646,21 +1673,22 @@
         async function bootstrapAuth() {
             showLoading();
             try {
-                // Mock auth
-                sessionUser = 'admin';
-                showAppShell();
-                
-                // Mock some data so UI is not completely empty
-                agentsData = [{id: 'agent-1', name: 'Support', primary: 'gpt-4o', installedSkills: ['search', 'db'], workspaceSkills: ['wiki']}];
-                dashboardData.overview = {presets: {total: 5}, models: {inUse: 3}, cron: {enabled: 1}};
-                
-                // Initialize default
-                document.getElementById('agents-container').innerHTML = '';
-                
-                // Setup fake loadAppData
-                await loadAppData().catch(() => {});
+                const res = await fetch('/api/auth/status');
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to read auth status');
+                }
+
+                if (data.authenticated) {
+                    sessionUser = data.username;
+                    showAppShell();
+                    await loadAppData();
+                } else {
+                    showAuthShell();
+                }
             } catch (err) {
-                console.error(err);
+                document.getElementById('auth-error').textContent = err.message || 'Failed to initialize app.';
+                showAuthShell();
             } finally {
                 hideLoading();
             }
@@ -2161,24 +2189,30 @@
         function renderOverview() {
             const overview = dashboardData.overview || {};
             document.getElementById('defaults-editor').innerHTML = `
+                <div class="metric-strip" style="margin-bottom: 24px;">
+                    <div class="metric-card is-clickable" onclick="activateTab('agents')">
+                        <span>Presets</span>
+                        <strong>${escapeHtml(overview.presets?.total ?? 0)}</strong>
+                    </div>
+                    <div class="metric-card is-clickable" onclick="activateTab('models')">
+                        <span>Models In Use</span>
+                        <strong>${escapeHtml(overview.models?.inUse ?? 0)}</strong>
+                    </div>
+                    <div class="metric-card is-clickable" onclick="activateTab('cron')">
+                        <span>Cron Enabled</span>
+                        <strong>${escapeHtml(overview.cron?.enabled ?? 0)}</strong>
+                    </div>
+                </div>
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="margin-bottom: 20px;">
                         <div>
                             <h3 class="card-title">Default Routing</h3>
                         </div>
-                    </div>
-                    <div class="metric-strip">
-                        <div class="metric-card">
-                            <span>Presets</span>
-                            <strong>${escapeHtml(overview.presets?.total ?? 0)}</strong>
-                        </div>
-                        <div class="metric-card">
-                            <span>Models In Use</span>
-                            <strong>${escapeHtml(overview.models?.inUse ?? 0)}</strong>
-                        </div>
-                        <div class="metric-card">
-                            <span>Cron Enabled</span>
-                            <strong>${escapeHtml(overview.cron?.enabled ?? 0)}</strong>
+                        <div class="action-cluster">
+                            <button class="btn btn-primary" onclick="applyDefaults()">
+                                <span class="material-icons-round">save</span>
+                                Apply Defaults
+                            </button>
                         </div>
                     </div>
                     <div class="defaults-shell">
@@ -2292,12 +2326,12 @@
                         </div>
                     </div>
                     <div class="list-card">
-                        <h3 class="card-title">Model Focus</h3>
+                        <h3 class="card-title">Top Used Models</h3>
                         <div class="summary-list">
                             ${renderSummaryItems((overview.models?.topUsed || []).slice(0, 4).map((model) => ({
                                 label: model,
                                 meta: 'Frequently referenced',
-                                value: 'In rotation'
+                                valueHtml: '<span class="status-pill"><span class="status-dot ok"></span>In rotation</span>'
                             })), 'No model usage data.')}
                         </div>
                     </div>
@@ -2309,7 +2343,7 @@
                                 return {
                                     label,
                                     meta: rest.join(':').trim(),
-                                    value: 'Attention'
+                                    valueHtml: '<span class="status-pill"><span class="status-dot error"></span>Attention</span>'
                                 };
                             }), 'No cron issues detected.')}
                         </div>
@@ -2345,7 +2379,7 @@
                         <span>${escapeHtml(item.meta || '')}</span>
                     </div>
                     <div class="summary-item-value">
-                        <strong>${escapeHtml(item.value || '-')}</strong>
+                        ${item.valueHtml || `<strong>${escapeHtml(item.value || '-')}</strong>`}
                     </div>
                 </div>
             `).join('');
@@ -2399,35 +2433,21 @@
                     <div class="card agent-card">
                         <div class="agent-identity">
                             <div class="agent-avatar-wrap">
-                                <img class="agent-avatar" id="avatar-${escapeHtml(agent.id)}" src="${escapeHtml(agent.avatarUrl)}" alt="${escapeHtml(agent.name)} avatar">
+                                <img class="agent-avatar is-clickable" id="avatar-${escapeHtml(agent.id)}" src="${escapeHtml(agent.avatarUrl)}" alt="${escapeHtml(agent.name)} avatar" onclick="document.getElementById('avatar-input-${escapeHtml(agent.id)}').click()" title="Click to update avatar">
                                 <div>
                                     <div class="agent-name">${escapeHtml(agent.name || agent.id)}</div>
                                     <div class="agent-id">${escapeHtml(agent.id)}</div>
                                 </div>
                             </div>
                             <div class="skills-group" style="margin-top: auto;">
-                                <div class="chip-row-soft">
-                                    ${[...installedSkills, ...workspaceSkills].length ? [...installedSkills, ...workspaceSkills].map((skill) => `<span class="chip" style="font-size: 10px; padding: 2px 6px;">${escapeHtml(skill)}</span>`).join('') : ''}
+                                <div class="chip-row-soft" style="gap: 10px;">
+                                    ${[...installedSkills, ...workspaceSkills].length ? [...installedSkills, ...workspaceSkills].map((skill) => `<span class="skill-btn">${escapeHtml(skill)}</span>`).join('') : ''}
                                 </div>
                             </div>
-                            <div class="button-row">
-                                <input class="hidden" type="file" id="avatar-input-${escapeHtml(agent.id)}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" onchange="handleAvatarSelected('${escapeJsString(agent.id)}', this)">
-                                <button class="btn" onclick="document.getElementById('avatar-input-${escapeHtml(agent.id)}').click()">
-                                    <span class="material-icons-round">upload</span>
-                                    Upload Avatar
-                                </button>
-                                <button class="btn btn-danger" onclick="resetAvatar('${escapeJsString(agent.id)}')" ${agent.hasCustomAvatar ? '' : 'disabled'}>
-                                    <span class="material-icons-round">restart_alt</span>
-                                    Reset
-                                </button>
-                            </div>
+                            <input class="hidden" type="file" id="avatar-input-${escapeHtml(agent.id)}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" onchange="handleAvatarSelected('${escapeJsString(agent.id)}', this)">
                         </div>
                         <div class="agent-route-grid">
                             <div class="route-card">
-                                <div class="defaults-section-header">
-                                    <h4>Routing</h4>
-                                    <span class="chip">Live</span>
-                                </div>
                                 <div class="mini-tab-group" id="agent-${escapeHtml(agent.id)}-tabs">
                                     <button class="mini-tab active" data-panel="primary" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'primary')">Primary</button>
                                     <button class="mini-tab" data-panel="fb1" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'fb1')">Fallback 1</button>
@@ -2486,8 +2506,46 @@
             filter.value = providers.includes(current) ? current : '';
         }
 
+        let currentModelsSort = { column: null, direction: 'asc' };
+
+        function setModelsSort(column) {
+            if (currentModelsSort.column === column) {
+                currentModelsSort.direction = currentModelsSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentModelsSort.column = column;
+                currentModelsSort.direction = 'asc';
+            }
+            renderModels();
+        }
+
+        function getProviderTags(provider) {
+            const nativeProviders = ['openai', 'anthropic', 'google', 'mistral', 'cohere', 'meta', 'x-ai', 'deepseek'];
+            const p = (provider || '').toLowerCase();
+            const isNative = nativeProviders.some(n => p.includes(n));
+            const logoHtml = isNative ? '<span class="material-icons-round" style="font-size: 16px; color: var(--brand);">verified</span>' : '';
+            const typeLabel = isNative ? 'Native' : '3rd-Party';
+            
+            return `
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    ${logoHtml}
+                    <span style="font-weight: 700;">${escapeHtml(provider || '-')}</span>
+                    <span class="chip" style="font-size: 9px; padding: 2px 6px; letter-spacing: 0.04em; text-transform: uppercase;">${typeLabel}</span>
+                </div>
+            `;
+        }
+
+        function getAccessColor(access) {
+            if (!access) return 'var(--text-soft)';
+            let hash = 0;
+            for (let i = 0; i < access.length; i++) {
+                hash = access.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const hue = Math.abs(hash % 360);
+            return `hsl(${hue}, 65%, 45%)`;
+        }
+
         function renderModels() {
-            const tbody = document.querySelector('#models-table tbody');
+            const list = document.getElementById('models-list');
             const models = (dashboardData.models || []).slice();
             const accessFilter = document.getElementById('models-filter-access').value;
             const providerFilter = document.getElementById('models-filter-provider').value;
@@ -2508,35 +2566,75 @@
                 filtered = filtered.filter((model) => model.provider === providerFilter);
             }
 
+            if (currentModelsSort.column) {
+                filtered.sort((a, b) => {
+                    let valA, valB;
+                    const col = currentModelsSort.column;
+                    if (col === 'name') {
+                        valA = (a.modelName || a.modelId || '').toLowerCase();
+                        valB = (b.modelName || b.modelId || '').toLowerCase();
+                    } else if (col === 'provider') {
+                        valA = (a.provider || '').toLowerCase();
+                        valB = (b.provider || '').toLowerCase();
+                    } else if (col === 'access') {
+                        valA = (a.access || '').toLowerCase();
+                        valB = (b.access || '').toLowerCase();
+                    } else if (col === 'usedBy') {
+                        valA = summarizeModelUsage(a.usage || {});
+                        valB = summarizeModelUsage(b.usage || {});
+                    } else if (col === 'usageCount') {
+                        valA = a.usage?.usageCount || 0;
+                        valB = b.usage?.usageCount || 0;
+                    }
+
+                    if (valA < valB) return currentModelsSort.direction === 'asc' ? -1 : 1;
+                    if (valA > valB) return currentModelsSort.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
             if (!filtered.length) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted)">No models match the current view.</td></tr>';
+                list.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 32px;">No models match the current view.</div>';
+                
+                // Reset headers
+                document.querySelectorAll('#models-header .sortable-header span').forEach(el => el.textContent = '');
                 return;
             }
 
-            tbody.innerHTML = filtered.map((model) => {
+            list.innerHTML = filtered.map((model) => {
                 const ref = `${model.provider}/${model.modelId}`;
                 const usage = model.usage || {};
                 const usedBy = summarizeModelUsage(usage);
+                const accessColor = getAccessColor(model.access);
                 return `
-                    <tr class="is-clickable" onclick="openModelDrawer('${escapeJsString(ref)}')">
-                        <td>${escapeHtml(model.modelName || model.modelId)}</td>
-                        <td>${escapeHtml(model.provider || '-')}</td>
-                        <td><span class="chip">${escapeHtml(model.access || '-')}</span></td>
-                        <td>${escapeHtml(usedBy)}</td>
-                        <td>${escapeHtml(usage.usageCount || 0)}</td>
-                        <td>${escapeHtml(model.sourceStatus || '-')}</td>
-                    </tr>
+                    <div class="bar-row is-clickable models-grid-layout" onclick="openModelDrawer('${escapeJsString(ref)}')">
+                        <div><strong style="font-size: 15px;">${escapeHtml(model.modelName || model.modelId)}</strong></div>
+                        <div>${getProviderTags(model.provider)}</div>
+                        <div><span class="chip" style="color: ${accessColor}; border-color: ${accessColor}; background: transparent; font-weight: 800;">${escapeHtml(model.access || '-')}</span></div>
+                        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">${escapeHtml(usedBy)}</div>
+                        <div style="font-weight: 800; font-family: var(--mono); color: var(--text-soft); font-size: 15px;">${escapeHtml(usage.usageCount || 0)}</div>
+                    </div>
                 `;
             }).join('');
+
+            document.querySelectorAll('#models-header .sortable-header span').forEach(el => el.textContent = '');
+            if (currentModelsSort.column) {
+                const map = { name: 0, provider: 1, access: 2, usedBy: 3, usageCount: 4 };
+                const idx = map[currentModelsSort.column];
+                const headers = document.querySelectorAll('#models-header .sortable-header span');
+                if (headers[idx]) {
+                    headers[idx].textContent = currentModelsSort.direction === 'asc' ? ' ↓' : ' ↑';
+                }
+            }
         }
 
         function summarizeModelUsage(usage) {
             const parts = [];
-            if ((usage.defaults || []).length) parts.push(`defaults ${usage.defaults.length}`);
-            if ((usage.agents || []).length) parts.push(`agents ${usage.agents.length}`);
-            if ((usage.presets || []).length) parts.push(`presets ${usage.presets.length}`);
-            if ((usage.cron || []).length) parts.push(`cron ${usage.cron.length}`);
-            return parts.join(', ') || 'unused';
+            if ((usage.defaults || []).length) parts.push(`Defaults (${usage.defaults.length})`);
+            if ((usage.agents || []).length) parts.push(`Agents (${usage.agents.length})`);
+            if ((usage.presets || []).length) parts.push(`Presets (${usage.presets.length})`);
+            if ((usage.cron || []).length) parts.push(`Cron (${usage.cron.length})`);
+            return parts.join(', ') || 'Unused';
         }
 
         function renderCron() {
