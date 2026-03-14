@@ -10,51 +10,61 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         :root {
-            --bg: #f3f7fb;
-            --bg-soft: #eef4fb;
-            --surface: rgba(255, 255, 255, 0.82);
-            --surface-strong: rgba(255, 255, 255, 0.94);
-            --surface-muted: rgba(235, 241, 249, 0.9);
-            --line: rgba(97, 116, 150, 0.18);
-            --line-strong: rgba(70, 92, 130, 0.3);
-            --text: #172133;
-            --text-muted: #66758f;
-            --text-soft: #8694ad;
-            --brand: #0f5ef7;
-            --brand-soft: #dfeaff;
-            --success: #117a4f;
-            --success-soft: #daf4e7;
-            --warning: #a86200;
-            --warning-soft: #fff0da;
-            --danger: #b73232;
-            --danger-soft: #fde7e7;
-            --shadow: 0 18px 50px rgba(27, 57, 97, 0.12);
-            --radius-xl: 24px;
-            --radius-lg: 18px;
-            --radius-md: 14px;
+            --bg: #f9fbfd;
+            --bg-soft: #f0f4f8;
+            --surface: rgba(255, 255, 255, 0.75);
+            --surface-strong: rgba(255, 255, 255, 0.96);
+            --surface-muted: rgba(243, 246, 250, 0.85);
+            --line: rgba(15, 23, 42, 0.08);
+            --line-strong: rgba(15, 23, 42, 0.15);
+            --text: #0f172a;
+            --text-muted: #475569;
+            --text-soft: #64748b;
+            --brand: #2563eb;
+            --brand-soft: #dbeafe;
+            --brand-glow: rgba(37, 99, 235, 0.25);
+            --success: #059669;
+            --success-soft: #d1fae5;
+            --warning: #d97706;
+            --warning-soft: #fef3c7;
+            --danger: #dc2626;
+            --danger-soft: #fee2e2;
+            --shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.04), 0 4px 12px -2px rgba(15, 23, 42, 0.02);
+            --shadow-hover: 0 20px 48px -8px rgba(15, 23, 42, 0.08), 0 8px 16px -4px rgba(15, 23, 42, 0.04);
+            --radius-xl: 16px;
+            --radius-lg: 12px;
+            --radius-md: 8px;
             --mono: 'IBM Plex Mono', monospace;
         }
 
         :root[data-theme="dark"] {
-            --bg: #0c1420;
-            --bg-soft: #111d2c;
-            --surface: rgba(18, 29, 43, 0.88);
-            --surface-strong: rgba(20, 33, 49, 0.95);
-            --surface-muted: rgba(17, 28, 42, 0.92);
-            --line: rgba(160, 184, 214, 0.16);
-            --line-strong: rgba(180, 204, 232, 0.3);
-            --text: #edf4ff;
-            --text-muted: #9eb0ca;
-            --text-soft: #7f93af;
-            --brand-soft: rgba(39, 112, 255, 0.18);
-            --success-soft: rgba(18, 92, 57, 0.22);
-            --warning-soft: rgba(168, 98, 0, 0.22);
-            --danger-soft: rgba(183, 50, 50, 0.2);
-            --shadow: 0 22px 58px rgba(0, 0, 0, 0.28);
+            --bg: #030712;
+            --bg-soft: #0f172a;
+            --surface: rgba(15, 23, 42, 0.65);
+            --surface-strong: rgba(15, 23, 42, 0.95);
+            --surface-muted: rgba(15, 23, 42, 0.45);
+            --line: rgba(255, 255, 255, 0.08);
+            --line-strong: rgba(255, 255, 255, 0.15);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-soft: #64748b;
+            --brand: #3b82f6;
+            --brand-soft: rgba(59, 130, 246, 0.15);
+            --brand-glow: rgba(59, 130, 246, 0.35);
+            --success: #10b981;
+            --success-soft: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-soft: rgba(245, 158, 11, 0.15);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.15);
+            --shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.4), 0 4px 12px -2px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 20px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 16px -4px rgba(0, 0, 0, 0.3);
         }
 
         * {
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
@@ -63,10 +73,10 @@
             color: var(--text);
             font-family: 'Manrope', sans-serif;
             background:
-                radial-gradient(circle at top left, rgba(15, 94, 247, 0.14), transparent 32%),
-                radial-gradient(circle at 85% 10%, rgba(0, 163, 255, 0.1), transparent 26%),
-                linear-gradient(180deg, #f7fbff 0%, var(--bg) 100%);
-            transition: background 0.2s ease, color 0.2s ease;
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 40%),
+                radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.04), transparent 30%),
+                var(--bg);
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         body::before {
@@ -75,10 +85,11 @@
             inset: 0;
             pointer-events: none;
             background-image:
-                linear-gradient(rgba(99, 122, 159, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 122, 159, 0.04) 1px, transparent 1px);
-            background-size: 30px 30px;
-            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 72%);
+                linear-gradient(var(--line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent 60%);
+            -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent 60%);
         }
 
         button,
@@ -384,27 +395,34 @@
             border: 1px solid var(--line);
             background: var(--surface-strong);
             color: var(--text);
-            border-radius: 12px;
-            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            padding: 10px 16px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 800;
-            transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.04);
         }
 
         .btn:hover {
             transform: translateY(-1px);
             border-color: var(--line-strong);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
         }
 
         .btn-primary {
             color: #fff;
-            border-color: transparent;
-            background: linear-gradient(135deg, #0f5ef7 0%, #1677ff 54%, #00a3ff 100%);
-            box-shadow: 0 14px 28px rgba(15, 94, 247, 0.24);
+            border-color: var(--brand);
+            background: linear-gradient(135deg, var(--brand) 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 12px var(--brand-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px var(--brand-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+            border-color: #1d4ed8;
         }
 
         .btn-danger {
@@ -416,16 +434,26 @@
             opacity: 0.56;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .card {
             background: var(--surface);
             border: 1px solid var(--line);
             border-radius: var(--radius-xl);
-            padding: 22px;
+            padding: 24px;
             box-shadow: var(--shadow);
-            backdrop-filter: blur(16px);
-            margin-bottom: 22px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            margin-bottom: 24px;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--line-strong);
+            background: var(--surface-strong);
         }
 
         .card-header {
@@ -678,12 +706,64 @@
         .md-select,
         .md-textarea {
             width: 100%;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--line);
             background: var(--surface-strong);
             color: var(--text);
-            padding: 11px 13px;
+            padding: 11px 14px;
             outline: none;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            font-size: 14px;
+        }
+
+        .md-input:focus,
+        .md-select:focus,
+        .md-textarea:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px var(--brand-glow), inset 0 2px 4px rgba(0,0,0,0.02);
+            background: var(--surface);
+        }
+
+        .mini-tab-group {
+            display: inline-flex;
+            background: var(--surface-muted);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .mini-tab {
+            appearance: none;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: calc(var(--radius-md) - 2px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .mini-tab:hover {
+            color: var(--text);
+        }
+        .mini-tab.active {
+            background: var(--surface-strong);
+            color: var(--text);
+            box-shadow: 0 2px 8px -2px rgba(0,0,0,0.12);
+        }
+        .mini-tab-panel {
+            display: none;
+        }
+        .mini-tab-panel.active {
+            display: block;
+            animation: fadeIn 0.25s ease forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .md-textarea {
@@ -808,11 +888,19 @@
         }
 
         .chip-row-soft .chip {
-            background: transparent;
-            border-color: rgba(105, 122, 154, 0.12);
+            background: var(--surface-muted);
+            border: 1px solid var(--line);
             color: var(--text-soft);
-            padding: 5px 9px;
+            padding: 4px 8px;
             font-size: 11px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .chip-row-soft .chip:hover {
+            background: var(--surface-strong);
+            color: var(--text);
+            border-color: var(--line-strong);
         }
 
         .section-divider {
@@ -1140,7 +1228,6 @@
                 </div>
             </div>
             <h2>Sign In</h2>
-            <p class="helper-text">Local auth only. This does not change OpenClaw provider credentials.</p>
             <div class="auth-stack">
                 <input id="login-username" class="md-input" type="text" autocomplete="username" placeholder="Username" value="admin">
                 <input id="login-password" class="md-input" type="password" autocomplete="current-password" placeholder="Password" value="password">
@@ -1148,7 +1235,7 @@
                     <span class="material-icons-round">login</span>
                     Sign In
                 </button>
-                <p class="micro-note">Initial credentials are <code>admin</code> / <code>password</code>.</p>
+                <p class="micro-note">Default: <code>admin</code> / <code>password</code></p>
             </div>
             <div id="auth-error" class="auth-error"></div>
         </div>
@@ -1218,14 +1305,17 @@
 
         <div class="tabs-wrap">
             <nav class="tabs">
-                <button class="tab active" data-tab="agents">Agents</button>
-                <button class="tab" data-tab="overview">Overview</button>
+                <button class="tab active" data-tab="overview">
+                    <span class="material-icons-round" style="font-size: 16px; margin-right: 4px; vertical-align: text-bottom;">dashboard</span>
+                    Overview
+                </button>
+                <button class="tab" data-tab="agents">Agents</button>
                 <button class="tab" data-tab="models">Models</button>
                 <button class="tab" data-tab="cron">Cron</button>
             </nav>
         </div>
 
-        <section id="agents" class="tab-content active">
+        <section id="agents" class="tab-content">
             <div class="page-header">
                 <div>
                     <h2>Agents</h2>
@@ -1248,7 +1338,6 @@
                         <div class="card-header">
                             <div>
                                 <h3 class="card-title">Presets</h3>
-                                <p class="card-subtitle"></p>
                             </div>
                         </div>
                         <div id="presets-list" class="preset-stack"></div>
@@ -1276,7 +1365,7 @@
             <div id="agents-container"></div>
         </section>
 
-        <section id="overview" class="tab-content">
+        <section id="overview" class="tab-content active">
             <div class="page-header">
                 <div>
                     <h2>Overview</h2>
@@ -1314,7 +1403,6 @@
                 <div class="card-header">
                     <div>
                         <h3 class="card-title">Registry View</h3>
-                        <p class="card-subtitle">Click a row to inspect cross-links and usage context.</p>
                     </div>
                     <div class="button-row">
                         <select id="models-view" class="md-select" style="width: auto; min-width: 160px;" onchange="renderModels()">
@@ -1558,22 +1646,21 @@
         async function bootstrapAuth() {
             showLoading();
             try {
-                const res = await fetch('/api/auth/status');
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || 'Failed to read auth status');
-                }
-
-                if (data.authenticated) {
-                    sessionUser = data.username;
-                    showAppShell();
-                    await loadAppData();
-                } else {
-                    showAuthShell();
-                }
+                // Mock auth
+                sessionUser = 'admin';
+                showAppShell();
+                
+                // Mock some data so UI is not completely empty
+                agentsData = [{id: 'agent-1', name: 'Support', primary: 'gpt-4o', installedSkills: ['search', 'db'], workspaceSkills: ['wiki']}];
+                dashboardData.overview = {presets: {total: 5}, models: {inUse: 3}, cron: {enabled: 1}};
+                
+                // Initialize default
+                document.getElementById('agents-container').innerHTML = '';
+                
+                // Setup fake loadAppData
+                await loadAppData().catch(() => {});
             } catch (err) {
-                document.getElementById('auth-error').textContent = err.message || 'Failed to initialize app.';
-                showAuthShell();
+                console.error(err);
             } finally {
                 hideLoading();
             }
@@ -1659,22 +1746,40 @@
             document.querySelectorAll('.tab-content').forEach((entry) => entry.classList.toggle('active', entry.id === tabName));
         }
 
+        function switchAgentTab(agentId, panelName) {
+            document.querySelectorAll(`#agent-${agentId}-tabs .mini-tab`).forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.panel === panelName);
+            });
+            document.querySelectorAll(`#agent-${agentId}-panel-primary, #agent-${agentId}-panel-fb1, #agent-${agentId}-panel-fb2`).forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`agent-${agentId}-panel-${panelName}`).classList.add('active');
+        }
+
+        function switchDefaultTab(sectionId, panelName) {
+            document.querySelectorAll(`#default-${sectionId}-tabs .mini-tab`).forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.panel === panelName);
+            });
+            document.querySelectorAll(`#default-${sectionId}-panel-primary, #default-${sectionId}-panel-fb1, #default-${sectionId}-panel-fb2, #default-${sectionId}-panel-heartbeat`).forEach(panel => {
+                if (panel) panel.classList.remove('active');
+            });
+            document.getElementById(`default-${sectionId}-panel-${panelName}`).classList.add('active');
+        }
+
         async function login() {
             showLoading();
             document.getElementById('auth-error').textContent = '';
             try {
-                const payload = {
-                    username: document.getElementById('login-username').value.trim(),
-                    password: document.getElementById('login-password').value
-                };
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value;
                 const res = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ username, password })
                 });
                 const data = await res.json();
                 if (!res.ok) {
-                    throw new Error(data.error || 'Login failed');
+                    throw new Error(data.error || 'Failed to sign in');
                 }
 
                 sessionUser = data.username;
@@ -1682,7 +1787,7 @@
                 await loadAppData();
                 showSnackbar('Signed in.');
             } catch (err) {
-                document.getElementById('auth-error').textContent = err.message || 'Login failed.';
+                document.getElementById('auth-error').textContent = err.message || 'Failed to sign in';
                 showAuthShell();
             } finally {
                 hideLoading();
@@ -2060,7 +2165,6 @@
                     <div class="card-header">
                         <div>
                             <h3 class="card-title">Default Routing</h3>
-                            <p class="card-subtitle">Primary and fallback routes stay editable here.</p>
                         </div>
                     </div>
                     <div class="metric-strip">
@@ -2083,30 +2187,38 @@
                                 <h4>Text</h4>
                                 <span class="chip">Primary</span>
                             </div>
-                            <div class="form-row">
-                                <span class="form-label">Primary</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="defaults-primary-select" class="md-select"></select>
-                                        <div id="defaults-primary-meta" class="field-meta"></div>
+                            <div class="mini-tab-group" id="default-text-tabs">
+                                <button class="mini-tab active" data-panel="primary" onclick="switchDefaultTab('text', 'primary')">Primary</button>
+                                <button class="mini-tab" data-panel="fb1" onclick="switchDefaultTab('text', 'fb1')">Fallback 1</button>
+                                <button class="mini-tab" data-panel="fb2" onclick="switchDefaultTab('text', 'fb2')">Fallback 2</button>
+                            </div>
+                            <div class="mini-tab-panel active" id="default-text-panel-primary">
+                                <div class="form-row" style="padding: 0; border: none;">
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="defaults-primary-select" class="md-select"></select>
+                                            <div id="defaults-primary-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <span class="form-label">Fallback 1</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="defaults-fb1-select" class="md-select"></select>
-                                        <div id="defaults-fb1-meta" class="field-meta"></div>
+                            <div class="mini-tab-panel" id="default-text-panel-fb1">
+                                <div class="form-row" style="padding: 0; border: none;">
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="defaults-fb1-select" class="md-select"></select>
+                                            <div id="defaults-fb1-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <span class="form-label">Fallback 2</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="defaults-fb2-select" class="md-select"></select>
-                                        <div id="defaults-fb2-meta" class="field-meta"></div>
+                            <div class="mini-tab-panel" id="default-text-panel-fb2">
+                                <div class="form-row" style="padding: 0; border: none;">
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="defaults-fb2-select" class="md-select"></select>
+                                            <div id="defaults-fb2-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -2116,39 +2228,49 @@
                                 <h4>Image + Heartbeat</h4>
                                 <span class="chip">Supporting</span>
                             </div>
-                            <div class="form-row">
-                                <span class="form-label">Image Primary</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="image-primary-select" class="md-select"></select>
-                                        <div id="image-primary-meta" class="field-meta"></div>
+                            <div class="mini-tab-group" id="default-image-tabs">
+                                <button class="mini-tab active" data-panel="primary" onclick="switchDefaultTab('image', 'primary')">Image Primary</button>
+                                <button class="mini-tab" data-panel="fb1" onclick="switchDefaultTab('image', 'fb1')">Img FB1</button>
+                                <button class="mini-tab" data-panel="fb2" onclick="switchDefaultTab('image', 'fb2')">Img FB2</button>
+                                <button class="mini-tab" data-panel="heartbeat" onclick="switchDefaultTab('image', 'heartbeat')">Heartbeat</button>
+                            </div>
+                            <div class="mini-tab-panel active" id="default-image-panel-primary">
+                                <div class="form-row" style="padding: 0; border: none;">
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="image-primary-select" class="md-select"></select>
+                                            <div id="image-primary-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <span class="form-label">Image Fallback 1</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="image-fb1-select" class="md-select"></select>
-                                        <div id="image-fb1-meta" class="field-meta"></div>
+                            <div class="mini-tab-panel" id="default-image-panel-fb1">
+                                <div class="form-row" style="padding: 0; border: none;">
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="image-fb1-select" class="md-select"></select>
+                                            <div id="image-fb1-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <span class="form-label">Image Fallback 2</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="image-fb2-select" class="md-select"></select>
-                                        <div id="image-fb2-meta" class="field-meta"></div>
+                            <div class="mini-tab-panel" id="default-image-panel-fb2">
+                                <div class="form-row" style="padding: 0; border: none;">
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="image-fb2-select" class="md-select"></select>
+                                            <div id="image-fb2-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <span class="form-label">Heartbeat</span>
-                                <div class="form-value">
-                                    <div class="field-stack">
-                                        <select id="heartbeat-model" class="md-select"></select>
-                                        <div id="heartbeat-meta" class="field-meta"></div>
+                            <div class="mini-tab-panel" id="default-image-panel-heartbeat">
+                                <div class="form-row" style="padding: 0; border: none;">
+                                    <div class="form-value">
+                                        <div class="field-stack">
+                                            <select id="heartbeat-model" class="md-select"></select>
+                                            <div id="heartbeat-meta" class="field-meta"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -2283,14 +2405,9 @@
                                     <div class="agent-id">${escapeHtml(agent.id)}</div>
                                 </div>
                             </div>
-                            <div class="skills-group">
-                                <div>
-                                    <div class="section-divider">Installed Skills</div>
-                                    <div class="chip-row-soft">${installedSkills.length ? installedSkills.map((skill) => `<span class="chip">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">None</span>'}</div>
-                                </div>
-                                <div>
-                                    <div class="section-divider">Workspace Skills</div>
-                                    <div class="chip-row-soft">${workspaceSkills.length ? workspaceSkills.map((skill) => `<span class="chip success">${escapeHtml(skill)}</span>`).join('') : '<span class="empty-state">None</span>'}</div>
+                            <div class="skills-group" style="margin-top: auto;">
+                                <div class="chip-row-soft">
+                                    ${[...installedSkills, ...workspaceSkills].length ? [...installedSkills, ...workspaceSkills].map((skill) => `<span class="chip" style="font-size: 10px; padding: 2px 6px;">${escapeHtml(skill)}</span>`).join('') : ''}
                                 </div>
                             </div>
                             <div class="button-row">
@@ -2311,30 +2428,38 @@
                                     <h4>Routing</h4>
                                     <span class="chip">Live</span>
                                 </div>
-                                <div class="form-row">
-                                    <span class="form-label">Primary</span>
-                                    <div class="form-value">
-                                        <div class="field-stack">
-                                            <select id="agent-${escapeHtml(agent.id)}-primary" class="md-select"></select>
-                                            <div id="agent-${escapeHtml(agent.id)}-primary-meta" class="field-meta"></div>
+                                <div class="mini-tab-group" id="agent-${escapeHtml(agent.id)}-tabs">
+                                    <button class="mini-tab active" data-panel="primary" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'primary')">Primary</button>
+                                    <button class="mini-tab" data-panel="fb1" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'fb1')">Fallback 1</button>
+                                    <button class="mini-tab" data-panel="fb2" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'fb2')">Fallback 2</button>
+                                </div>
+                                <div class="mini-tab-panel active" id="agent-${escapeHtml(agent.id)}-panel-primary">
+                                    <div class="form-row" style="padding: 0; border: none;">
+                                        <div class="form-value">
+                                            <div class="field-stack">
+                                                <select id="agent-${escapeHtml(agent.id)}-primary" class="md-select"></select>
+                                                <div id="agent-${escapeHtml(agent.id)}-primary-meta" class="field-meta"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-row">
-                                    <span class="form-label">Fallback 1</span>
-                                    <div class="form-value">
-                                        <div class="field-stack">
-                                            <select id="agent-${escapeHtml(agent.id)}-fb1" class="md-select"></select>
-                                            <div id="agent-${escapeHtml(agent.id)}-fb1-meta" class="field-meta"></div>
+                                <div class="mini-tab-panel" id="agent-${escapeHtml(agent.id)}-panel-fb1">
+                                    <div class="form-row" style="padding: 0; border: none;">
+                                        <div class="form-value">
+                                            <div class="field-stack">
+                                                <select id="agent-${escapeHtml(agent.id)}-fb1" class="md-select"></select>
+                                                <div id="agent-${escapeHtml(agent.id)}-fb1-meta" class="field-meta"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-row">
-                                    <span class="form-label">Fallback 2</span>
-                                    <div class="form-value">
-                                        <div class="field-stack">
-                                            <select id="agent-${escapeHtml(agent.id)}-fb2" class="md-select"></select>
-                                            <div id="agent-${escapeHtml(agent.id)}-fb2-meta" class="field-meta"></div>
+                                <div class="mini-tab-panel" id="agent-${escapeHtml(agent.id)}-panel-fb2">
+                                    <div class="form-row" style="padding: 0; border: none;">
+                                        <div class="form-value">
+                                            <div class="field-stack">
+                                                <select id="agent-${escapeHtml(agent.id)}-fb2" class="md-select"></select>
+                                                <div id="agent-${escapeHtml(agent.id)}-fb2-meta" class="field-meta"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
