@@ -345,30 +345,38 @@
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            gap: 4px;
+            gap: 6px;
             overflow-x: auto;
+            scrollbar-width: none;
             align-items: flex-end;
         }
 
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
         .tab {
-            border: 1px solid transparent;
+            border: 1px solid var(--line);
             border-bottom: none;
-            background: transparent;
-            color: var(--text-soft);
-            border-radius: 16px 16px 0 0;
-            padding: 16px 32px;
-            font-size: 18px;
+            background: var(--surface-strong);
+            color: var(--text-muted);
+            border-radius: 14px 14px 0 0;
+            padding: 14px 28px;
+            font-size: 17px;
             font-weight: 800;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             position: relative;
             top: 1px;
+            box-shadow: inset 0 -6px 12px rgba(0,0,0,0.03);
+            border-color: var(--line) var(--line) transparent var(--line);
+            letter-spacing: -0.01em;
         }
 
         .tab:hover {
             color: var(--text);
-            background: rgba(15, 94, 247, 0.04);
+            background: var(--bg-soft);
         }
 
         .tab.active {
@@ -376,7 +384,8 @@
             background: var(--bg);
             border-color: var(--line);
             border-bottom-color: var(--bg);
-            box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 -6px 20px -8px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.1);
+            z-index: 2;
         }
 
         .tab-content {
@@ -476,14 +485,18 @@
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             margin-bottom: 24px;
-            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s;
+            transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
+        .card.is-clickable:hover {
             box-shadow: var(--shadow-hover);
             border-color: var(--line-strong);
             background: var(--surface-strong);
+        }
+
+        /* Agent cards should not lift — they are functional objects */
+        .agent-card:hover {
+            box-shadow: none;
         }
 
         .card-header {
@@ -516,7 +529,7 @@
         }
 
         .summary-grid,
-        .overview-grid,
+        .overview-blocks,
         .panel-grid {
             display: grid;
             gap: 16px;
@@ -526,8 +539,47 @@
             grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
         }
 
-        .overview-grid {
-            grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.85fr);
+        .overview-blocks {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .overview-blocks .card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .overview-blocks .overview-stat-card {
+            padding: 20px;
+        }
+
+        .overview-blocks .metric-highlight {
+            font-size: 54px;
+            font-weight: 800;
+            color: var(--success);
+            margin-top: 2px;
+            letter-spacing: -0.06em;
+            line-height: 1;
+            text-shadow: 0 2px 16px var(--success-soft);
+        }
+
+        .overview-stat-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-soft);
+            margin-bottom: 2px;
+        }
+
+        /* Default routing card -- dominant focal block */
+        .card.full-width.routing-card {
+            border: 1px solid var(--line-strong);
+            box-shadow: 0 24px 48px -12px rgba(0,0,0,0.08), 0 8px 20px -6px rgba(0,0,0,0.04);
+            background: var(--surface-strong);
+        }
+
+        :root[data-theme="dark"] .card.full-width.routing-card {
+            box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5), 0 8px 20px -6px rgba(0,0,0,0.3);
         }
 
         .panel-grid {
@@ -674,6 +726,34 @@
             text-align: right;
         }
 
+        .summary-marquee-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(105, 122, 154, 0.12);
+        }
+
+        .summary-marquee-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-marquee-track {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .summary-marquee-text {
+            display: inline-block;
+            min-width: 100%;
+            white-space: nowrap;
+            font-size: 13px;
+            font-weight: 700;
+            transform: translateX(0);
+        }
+
         .quick-link-list,
         .inline-links {
             display: flex;
@@ -759,40 +839,71 @@
             display: inline-flex;
             background: var(--surface-muted);
             border: 1px solid var(--line);
-            border-radius: var(--radius-md);
-            padding: 4px;
-            gap: 4px;
+            border-radius: 999px;
+            padding: 3px;
+            gap: 2px;
             margin-bottom: 12px;
         }
         .mini-tab {
             appearance: none;
             border: none;
             background: transparent;
-            color: var(--text-muted);
+            color: var(--text-soft);
             font-size: 12px;
             font-weight: 700;
-            padding: 6px 12px;
-            border-radius: calc(var(--radius-md) - 2px);
+            padding: 6px 14px;
+            border-radius: 999px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            letter-spacing: 0.01em;
         }
         .mini-tab:hover {
             color: var(--text);
+            background: var(--surface-strong);
         }
         .mini-tab.active {
-            background: var(--surface-strong);
+            background: var(--brand);
+            color: #fff;
+            box-shadow: 0 2px 8px -2px var(--brand-glow);
+        }
+        /* Agent card local switcher (underline style variant) */
+        .agent-tab-group {
+            display: inline-flex;
+            gap: 0;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--line);
+            width: 100%;
+        }
+        .agent-tab-group .mini-tab {
+            border-radius: 0;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            box-shadow: none;
+        }
+        .agent-tab-group .mini-tab:hover {
             color: var(--text);
-            box-shadow: 0 2px 8px -2px rgba(0,0,0,0.12);
+            background: transparent;
+        }
+        .agent-tab-group .mini-tab.active {
+            background: transparent;
+            color: var(--brand);
+            border-bottom-color: var(--brand);
+            box-shadow: none;
         }
         .mini-tab-panel {
             display: none;
         }
         .mini-tab-panel.active {
             display: block;
-            animation: fadeIn 0.25s ease forwards;
+            animation: fadeIn 0.2s ease forwards;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
+            from { opacity: 0; transform: translateY(3px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -809,10 +920,85 @@
         }
 
         .table-shell {
-            overflow: hidden;
-            border: 1px solid var(--line);
-            border-radius: 18px;
+            overflow-x: auto;
+            border-radius: 12px;
             background: var(--surface);
+        }
+
+        .bar-table-header {
+            display: grid;
+            gap: 16px;
+            padding: 0 16px 12px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 12px;
+            color: var(--text-soft);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            align-items: center;
+        }
+
+        .sortable-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            user-select: none;
+            transition: color 0.15s;
+        }
+        
+        .sortable-header:hover {
+            color: var(--text);
+        }
+
+        .bar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bar-row {
+            display: grid;
+            gap: 16px;
+            padding: 11px 16px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            align-items: center;
+            transition: all 0.15s ease;
+        }
+
+        .bar-row.is-clickable:hover {
+            background: var(--surface-strong);
+            border-color: var(--line-strong);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+        }
+        .marquee-text {
+            display: inline-flex;
+            align-items: center;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 100%;
+            vertical-align: bottom;
+        }
+        .bar-row:hover .marquee-text {
+            text-overflow: clip;
+            max-width: unset;
+        }
+
+        .models-grid-layout {
+            grid-template-columns: minmax(160px, 2fr) minmax(120px, 1.2fr) minmax(140px, 1fr) minmax(100px, 0.8fr) minmax(130px, 1.2fr) 60px;
+        }
+
+        .cron-grid-layout {
+            grid-template-columns: minmax(180px, 2fr) minmax(120px, 1.2fr) minmax(130px, 1.2fr) minmax(130px, 1.2fr) 48px minmax(160px, 1.5fr) 90px;
         }
 
         table {
@@ -850,48 +1036,77 @@
         }
 
         .agent-card {
-            display: grid;
-            grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
-            gap: 20px;
-            margin-bottom: 18px;
+            display: flex;
+            flex-direction: row;
+            gap: 0;
+            margin-bottom: 16px;
+            overflow: hidden;
         }
 
         .agent-identity {
-            display: grid;
+            display: flex;
+            flex-direction: column;
             gap: 12px;
             align-content: start;
+            flex: 0 0 228px;
+            border-right: 1px solid var(--line);
+            padding: 20px;
+            background: var(--surface-muted);
+            border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+            position: relative;
+        }
+
+        /* Accent bar on left edge of agent identity panel */
+        .agent-identity::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 16px;
+            bottom: 16px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: linear-gradient(180deg, var(--brand) 0%, rgba(59,130,246,0.3) 100%);
         }
 
         .agent-avatar-wrap {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
         .agent-avatar {
-            width: 78px;
-            height: 78px;
-            border-radius: 24px;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
             object-fit: cover;
-            border: 1px solid var(--line);
+            border: 2px solid var(--line-strong);
             background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .agent-name {
-            font-size: 19px;
+            font-size: 17px;
             font-weight: 800;
             letter-spacing: -0.03em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .agent-id {
-            color: var(--text-muted);
+            color: var(--text-soft);
             font-family: var(--mono);
-            font-size: 12px;
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .agent-route-grid {
-            display: grid;
-            gap: 14px;
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         .route-card {
@@ -962,21 +1177,29 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 6px 14px;
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--brand);
-            background: rgba(15, 94, 247, 0.08);
-            border: 1px solid rgba(15, 94, 247, 0.15);
-            border-radius: 12px;
-            box-shadow: 0 4px 12px -2px rgba(15, 94, 247, 0.15);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 5px 11px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-soft);
+            background: var(--surface-strong);
+            border: 1px solid var(--line-strong);
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            transition: all 0.15s ease;
+            cursor: default;
         }
         .skill-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(15, 94, 247, 0.25);
-            background: var(--brand);
-            color: #fff;
+            color: var(--text);
+            border-color: var(--brand);
+            background: var(--brand-soft);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .skills-chip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 6px;
+            padding-top: 4px;
         }
 
         .preset-card {
@@ -1237,7 +1460,7 @@
         }
 
         @media (max-width: 960px) {
-            .overview-grid,
+            .overview-blocks,
             .panel-grid,
             .agent-card {
                 grid-template-columns: 1fr;
@@ -1315,10 +1538,9 @@
             </div>
             <div class="top-bar-actions">
                 <div class="status-pill">
-                    <span class="status-dot"></span>
+                    <span class="status-dot ok"></span>
                     Hot reload enabled
                 </div>
-                <div class="chip" id="theme-chip">Auto</div>
                 <div class="menu-shell">
                     <button class="btn menu-trigger" id="account-menu-trigger" onclick="toggleAccountMenu(event)">
                         <span class="menu-trigger-label">
@@ -1337,21 +1559,6 @@
                             </button>
                             <button class="menu-item" onclick="openSettingsModal()">
                                 <span class="menu-item-label"><span class="material-icons-round">settings</span>Settings</span>
-                            </button>
-                        </div>
-                        <div class="menu-section">
-                            <p class="menu-heading">Theme</p>
-                            <button class="menu-item" data-theme-option="light" onclick="setThemeMode('light')">
-                                <span class="menu-item-label"><span class="material-icons-round">light_mode</span>Light</span>
-                                <span class="material-icons-round">check</span>
-                            </button>
-                            <button class="menu-item" data-theme-option="dark" onclick="setThemeMode('dark')">
-                                <span class="menu-item-label"><span class="material-icons-round">dark_mode</span>Dark</span>
-                                <span class="material-icons-round">check</span>
-                            </button>
-                            <button class="menu-item" data-theme-option="auto" onclick="setThemeMode('auto')">
-                                <span class="menu-item-label"><span class="material-icons-round">contrast</span>Auto</span>
-                                <span class="material-icons-round">check</span>
                             </button>
                         </div>
                         <div class="menu-section">
@@ -1377,57 +1584,35 @@
         </div>
 
         <section id="agents" class="tab-content">
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-                <div class="action-cluster">
-                    <button class="btn" onclick="openPresetModal()">
-                        <span class="material-icons-round">bookmark_add</span>
-                        Save as Preset
-                    </button>
-                    <button class="btn btn-primary" onclick="applyAgents()">
-                        <span class="material-icons-round">sync</span>
-                        Apply Agents
-                    </button>
-                </div>
-            </div>
-
-            <div class="panel-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <div>
-                                <h3 class="card-title">Presets</h3>
-                            </div>
-                        </div>
-                        <div id="presets-list" class="preset-stack"></div>
-                    </div>
-
-                <div class="stats-stack">
-                    <div class="stat-card">
-                        <h3>Agents</h3>
-                        <strong id="agents-count">0</strong>
-                        <p class="helper-text"></p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Presets</h3>
-                        <strong id="presets-count">0</strong>
-                        <p class="helper-text"></p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Selectable Models</h3>
-                        <strong id="model-options-count">0</strong>
-                        <p class="helper-text"></p>
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Presets</h3>
                     </div>
                 </div>
+                <div id="presets-list" class="preset-stack"></div>
             </div>
 
-            <div id="agents-container"></div>
+            <div class="card" style="background: transparent; border: none; padding: 0;">
+                <div class="card-header" style="margin-bottom: 16px; padding: 0;">
+                    <div></div>
+                    <div class="action-cluster">
+                        <button class="btn" onclick="openPresetModal()">
+                            <span class="material-icons-round">bookmark_add</span>
+                            Save Current As Preset
+                        </button>
+                        <button class="btn btn-primary" onclick="applyAgents()">
+                            <span class="material-icons-round">sync</span>
+                            Apply Agents
+                        </button>
+                    </div>
+                </div>
+                <div id="agents-container" style="display: flex; flex-direction: column; gap: 16px;"></div>
+            </div>
         </section>
 
         <section id="overview" class="tab-content active">
-
-            <div class="overview-grid">
-                <div id="defaults-editor"></div>
-                <div id="overview-sidecards"></div>
-            </div>
+            <div class="overview-blocks" id="overview-content"></div>
         </section>
 
         <section id="models" class="tab-content">
@@ -1460,6 +1645,7 @@
                 <div class="table-shell" style="border: none;">
                     <div class="bar-table-header models-grid-layout" id="models-header">
                         <div class="sortable-header" onclick="setModelsSort('name')">Model <span></span></div>
+                        <div class="sortable-header" onclick="setModelsSort('alias')">Alias <span></span></div>
                         <div class="sortable-header" onclick="setModelsSort('provider')">Provider <span></span></div>
                         <div class="sortable-header" onclick="setModelsSort('access')">Access <span></span></div>
                         <div class="sortable-header" onclick="setModelsSort('usedBy')">Used By <span></span></div>
@@ -1480,23 +1666,17 @@
                 </div>
             </div>
             <div class="card">
-                <div class="table-shell">
-                    <table id="cron-table">
-                        <thead>
-                            <tr>
-                                <th>Enabled</th>
-                                <th>Name</th>
-                                <th>Schedule</th>
-                                <th>Next Run</th>
-                                <th>Last Run</th>
-                                <th>Last Status</th>
-                                <th>Target</th>
-                                <th>Model</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="table-shell" style="border: none;">
+                    <div class="bar-table-header cron-grid-layout" id="cron-header">
+                        <div class="sortable-header" onclick="setCronSort('name')">Name <span></span></div>
+                        <div class="sortable-header" onclick="setCronSort('schedule')">Schedule <span></span></div>
+                        <div class="sortable-header" onclick="setCronSort('nextRun')">Next Run <span></span></div>
+                        <div class="sortable-header" onclick="setCronSort('lastRun')">Last Run <span></span></div>
+                        <div class="sortable-header" onclick="setCronSort('status')" title="Status">Status <span></span></div>
+                        <div class="sortable-header" onclick="setCronSort('binding')">Binding <span></span></div>
+                        <div style="text-align: right;">Actions</div>
+                    </div>
+                    <div id="cron-list" class="bar-list"></div>
                 </div>
             </div>
         </section>
@@ -1753,8 +1933,10 @@
 
         function updateThemeUi() {
             const label = themeMode.charAt(0).toUpperCase() + themeMode.slice(1);
-            document.getElementById('theme-chip').textContent = label;
-            document.getElementById('settings-theme-chip').textContent = label;
+            const themeChip = document.getElementById('theme-chip');
+            const settingsThemeChip = document.getElementById('settings-theme-chip');
+            if (themeChip) themeChip.textContent = label;
+            if (settingsThemeChip) settingsThemeChip.textContent = label;
             document.querySelectorAll('[data-theme-option]').forEach((item) => {
                 item.classList.toggle('active', item.dataset.themeOption === themeMode);
             });
@@ -1778,7 +1960,7 @@
             document.querySelectorAll(`#agent-${agentId}-tabs .mini-tab`).forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.panel === panelName);
             });
-            document.querySelectorAll(`#agent-${agentId}-panel-primary, #agent-${agentId}-panel-fb1, #agent-${agentId}-panel-fb2`).forEach(panel => {
+            document.querySelectorAll(`#agent-${agentId}-panel-models, #agent-${agentId}-panel-skills`).forEach(panel => {
                 panel.classList.remove('active');
             });
             document.getElementById(`agent-${agentId}-panel-${panelName}`).classList.add('active');
@@ -1916,7 +2098,8 @@
                 hydrateModelCatalog({ options: [], providers: [], litellmOnly: [] });
                 showSnackbar('Model options unavailable. Saved refs remain selectable.');
             } finally {
-                document.getElementById('model-options-count').textContent = String(modelCatalog.options.length);
+                const modelOptionsCount = document.getElementById('model-options-count');
+                if (modelOptionsCount) modelOptionsCount.textContent = String(modelCatalog.options.length);
             }
         }
 
@@ -2122,21 +2305,16 @@
                 return;
             }
 
+            if (metaId.startsWith('agent-')) {
+                meta.innerHTML = '';
+                return;
+            }
+
             const option = getModelOption(value);
             const chips = [];
 
             if (option?.provider) {
                 chips.push(`<span class="chip">${escapeHtml(option.provider)}</span>`);
-            }
-
-            if (option?.sourceStatus === MODEL_SOURCE_LABELS.OPENCLAW_ONLY) {
-                chips.push('<span class="chip warning">openclaw-only</span>');
-            } else if (option?.sourceStatus === MODEL_SOURCE_LABELS.OPENCLAW_AND_LITELLM) {
-                chips.push('<span class="chip success">openclaw+litellm</span>');
-            } else if (option?.sourceStatus === MODEL_SOURCE_LABELS.LITELLM_ONLY) {
-                chips.push('<span class="chip">litellm-only</span>');
-            } else {
-                chips.push('<span class="chip">saved ref</span>');
             }
 
             if (option?.upstream) {
@@ -2165,7 +2343,8 @@
                 console.error(err);
                 showSnackbar(err.message || 'Failed to load dashboard');
             } finally {
-                document.getElementById('presets-count').textContent = String((dashboardData.presets || []).length);
+                const presetsCount = document.getElementById('presets-count');
+                if (presetsCount) presetsCount.textContent = String((dashboardData.presets || []).length);
             }
         }
 
@@ -2182,31 +2361,75 @@
                 console.error(err);
                 showSnackbar(err.message || 'Failed to load agents');
             } finally {
-                document.getElementById('agents-count').textContent = String(agentsData.length);
+                const agentsCount = document.getElementById('agents-count');
+                if (agentsCount) agentsCount.textContent = String(agentsData.length);
+                renderCron();
             }
         }
 
         function renderOverview() {
             const overview = dashboardData.overview || {};
-            document.getElementById('defaults-editor').innerHTML = `
-                <div class="metric-strip" style="margin-bottom: 24px;">
-                    <div class="metric-card is-clickable" onclick="activateTab('agents')">
-                        <span>Presets</span>
-                        <strong>${escapeHtml(overview.presets?.total ?? 0)}</strong>
-                    </div>
-                    <div class="metric-card is-clickable" onclick="activateTab('models')">
-                        <span>Models In Use</span>
-                        <strong>${escapeHtml(overview.models?.inUse ?? 0)}</strong>
-                    </div>
-                    <div class="metric-card is-clickable" onclick="activateTab('cron')">
-                        <span>Cron Enabled</span>
-                        <strong>${escapeHtml(overview.cron?.enabled ?? 0)}</strong>
+            const html = `
+                <div class="card is-clickable overview-stat-card" onclick="activateTab('models')" style="margin-bottom:0;">
+                    <div class="overview-stat-label">Models</div>
+                    <div class="metric-highlight">${escapeHtml(overview.models?.inUse ?? 0)}</div>
+                    <div style="font-size:12px; color: var(--text-muted); margin-top: 6px;">in use &mdash; ${escapeHtml(overview.models?.total ?? 0)} registered</div>
+                    <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-top:14px; margin-bottom:6px;">Top Models Used</div>
+                    <div class="summary-list">
+                        ${renderMarqueeSummaryItems((overview.models?.topUsed || []).slice(0, 3), 'No model usage data.')}
                     </div>
                 </div>
-                <div class="card">
+
+                <div class="card is-clickable overview-stat-card" onclick="activateTab('agents')" style="margin-bottom:0;">
+                    <div class="overview-stat-label">Presets</div>
+                    <div class="metric-highlight">${escapeHtml(overview.presets?.total ?? 0)}</div>
+                    <div style="font-size:12px; color: var(--text-muted); margin-top: 6px;">saved routing snapshots</div>
+                    <div class="summary-list" style="margin-top: 14px;">
+                        ${renderSummaryItems((dashboardData.presets || []).slice(0, 3).map((preset) => ({
+                            label: preset.name,
+                            meta: preset.description || '',
+                            value: (preset.liveDiffSummary || []).length ? `${(preset.liveDiffSummary || []).length} diff` : 'In sync'
+                        })), 'No presets saved.')}
+                    </div>
+                </div>
+
+                <div class="card is-clickable overview-stat-card" onclick="activateTab('cron')" style="margin-bottom:0;">
+                    <div class="overview-stat-label">Cron</div>
+                    <div class="metric-highlight">${escapeHtml(overview.cron?.enabled ?? 0)}</div>
+                    <div style="font-size:12px; color: var(--text-muted); margin-top: 6px;">enabled &mdash; ${escapeHtml(overview.cron?.total ?? 0)} total</div>
+                    <div class="summary-list" style="margin-top: 14px;">
+                        ${renderSummaryItems(getCronAttentionItems().map((item) => {
+                            const [label, ...rest] = item.split(':');
+                            return {
+                                label,
+                                meta: rest.join(':').trim(),
+                                valueHtml: '<span class="status-dot warning" style="display:inline-block;"></span>'
+                            };
+                        }), 'No issues detected.')}
+                    </div>
+                </div>
+
+                ${(() => {
+                    const installedSkills = overview.skills?.installed || [];
+                    if (!installedSkills.length) return '';
+                    return `
+                    <div class="card full-width" style="margin-bottom:0;">
+                        <div class="card-header" style="margin-bottom:14px; align-items:flex-end;">
+                            <div>
+                                <h3 class="card-title" style="margin-bottom:4px;">Installed Skills</h3>
+                                <div style="font-size:12px; color:var(--text-muted);">${installedSkills.length} globally installed skills</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                            ${installedSkills.map(skill => `<span class="skill-btn" onclick="openSkillDrawer('${escapeJsString(skill)}', null)">${escapeHtml(skill)}</span>`).join('')}
+                        </div>
+                    </div>`;
+                })()}
+
+                <div class="card full-width routing-card">
                     <div class="card-header" style="margin-bottom: 20px;">
                         <div>
-                            <h3 class="card-title">Default Routing</h3>
+                            <h3 class="card-title">Default Models</h3>
                         </div>
                         <div class="action-cluster">
                             <button class="btn btn-primary" onclick="applyDefaults()">
@@ -2312,44 +2535,7 @@
                     </div>
                 </div>
             `;
-
-            document.getElementById('overview-sidecards').innerHTML = `
-                <div class="stats-stack">
-                    <div class="list-card">
-                        <h3 class="card-title">Presets</h3>
-                        <div class="summary-list">
-                            ${renderSummaryItems((dashboardData.presets || []).slice(0, 4).map((preset) => ({
-                                label: preset.name,
-                                meta: preset.description || 'Saved state',
-                                value: (preset.liveDiffSummary || []).slice(0, 2).join(', ') || 'No diff'
-                            })), 'No presets saved.')}
-                        </div>
-                    </div>
-                    <div class="list-card">
-                        <h3 class="card-title">Top Used Models</h3>
-                        <div class="summary-list">
-                            ${renderSummaryItems((overview.models?.topUsed || []).slice(0, 4).map((model) => ({
-                                label: model,
-                                meta: 'Frequently referenced',
-                                valueHtml: '<span class="status-pill"><span class="status-dot ok"></span>In rotation</span>'
-                            })), 'No model usage data.')}
-                        </div>
-                    </div>
-                    <div class="list-card">
-                        <h3 class="card-title">Cron</h3>
-                        <div class="summary-list">
-                            ${renderSummaryItems(getCronAttentionItems().map((item) => {
-                                const [label, ...rest] = item.split(':');
-                                return {
-                                    label,
-                                    meta: rest.join(':').trim(),
-                                    valueHtml: '<span class="status-pill"><span class="status-dot error"></span>Attention</span>'
-                                };
-                            }), 'No cron issues detected.')}
-                        </div>
-                    </div>
-                </div>
-            `;
+            document.getElementById('overview-content').innerHTML = html;
 
             setModelSelect('defaults-primary-select', defaultsData.model?.primary || '', false, 'defaults-primary-meta');
             setModelSelect('defaults-fb1-select', defaultsData.model?.fallbacks?.[0] || '', true, 'defaults-fb1-meta');
@@ -2385,6 +2571,21 @@
             `).join('');
         }
 
+        function renderMarqueeSummaryItems(items, fallbackText) {
+            if (!items || items.length === 0) {
+                return `<p class="empty-state">${escapeHtml(fallbackText)}</p>`;
+            }
+
+            return items.map((item) => `
+                <div class="summary-marquee-row">
+                    <span class="status-dot ok" style="display:inline-block;"></span>
+                    <div class="summary-marquee-track" onmouseenter="if(this.firstElementChild.scrollWidth > this.clientWidth) { this.firstElementChild.style.transition = 'transform 2s linear'; this.firstElementChild.style.transform = 'translateX(calc(' + this.clientWidth + 'px - ' + this.firstElementChild.scrollWidth + 'px - 10px))'; }" onmouseleave="this.firstElementChild.style.transition = 'transform 0.45s ease'; this.firstElementChild.style.transform = 'translateX(0)';">
+                        <span class="summary-marquee-text" title="${escapeHtml(item)}">${escapeHtml(item)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function getCronAttentionItems() {
             return (dashboardData.cron || [])
                 .filter((job) => job.status === 'error' || !job.enabled)
@@ -2413,6 +2614,7 @@
                     <div class="button-row">
                         <button class="btn" onclick="openPresetDrawer('${escapeJsString(preset.name)}')">View details</button>
                         <button class="btn" onclick="openPresetModal('${escapeJsString(preset.name)}')">Rename / edit note</button>
+                        <button class="btn btn-danger" style="color: var(--danger); border-color: var(--danger-soft); background: var(--danger-soft);" onclick="deletePreset('${escapeJsString(preset.name)}')">Delete</button>
                         <button class="btn btn-primary" onclick="applyPreset('${escapeJsString(preset.name)}')">Apply</button>
                     </div>
                 </div>
@@ -2429,60 +2631,71 @@
             container.innerHTML = agentsData.map((agent) => {
                 const installedSkills = Array.isArray(agent.installedSkills) ? agent.installedSkills : [];
                 const workspaceSkills = Array.isArray(agent.workspaceSkills) ? agent.workspaceSkills : [];
+                const fallbacks = agent.fallbacks || [];
+                const allSkills = [...installedSkills, ...workspaceSkills];
+                
                 return `
-                    <div class="card agent-card">
+                    <div class="card agent-card" style="padding: 0;">
                         <div class="agent-identity">
                             <div class="agent-avatar-wrap">
                                 <img class="agent-avatar is-clickable" id="avatar-${escapeHtml(agent.id)}" src="${escapeHtml(agent.avatarUrl)}" alt="${escapeHtml(agent.name)} avatar" onclick="document.getElementById('avatar-input-${escapeHtml(agent.id)}').click()" title="Click to update avatar">
-                                <div>
+                                <div style="min-width: 0; flex: 1;">
                                     <div class="agent-name">${escapeHtml(agent.name || agent.id)}</div>
                                     <div class="agent-id">${escapeHtml(agent.id)}</div>
                                 </div>
                             </div>
-                            <div class="skills-group" style="margin-top: auto;">
-                                <div class="chip-row-soft" style="gap: 10px;">
-                                    ${[...installedSkills, ...workspaceSkills].length ? [...installedSkills, ...workspaceSkills].map((skill) => `<span class="skill-btn">${escapeHtml(skill)}</span>`).join('') : ''}
-                                </div>
-                            </div>
+                            <input class="md-input agent-desc" type="text" placeholder="Add a short description" value="${escapeHtml(agent.description || '')}" style="width: 100%; font-size: 12px; background: transparent; padding: 6px 8px; border-color: transparent; margin-top: 4px;" onfocus="this.style.borderColor='var(--brand)'; this.style.background='var(--surface)';" onblur="this.style.borderColor='transparent'; this.style.background='transparent';" onchange="updateAgentDescription('${escapeJsString(agent.id)}', this.value)">
                             <input class="hidden" type="file" id="avatar-input-${escapeHtml(agent.id)}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" onchange="handleAvatarSelected('${escapeJsString(agent.id)}', this)">
                         </div>
+                        
                         <div class="agent-route-grid">
-                            <div class="route-card">
-                                <div class="mini-tab-group" id="agent-${escapeHtml(agent.id)}-tabs">
-                                    <button class="mini-tab active" data-panel="primary" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'primary')">Primary</button>
-                                    <button class="mini-tab" data-panel="fb1" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'fb1')">Fallback 1</button>
-                                    <button class="mini-tab" data-panel="fb2" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'fb2')">Fallback 2</button>
-                                </div>
-                                <div class="mini-tab-panel active" id="agent-${escapeHtml(agent.id)}-panel-primary">
-                                    <div class="form-row" style="padding: 0; border: none;">
-                                        <div class="form-value">
+                            <div class="agent-tab-group" id="agent-${escapeHtml(agent.id)}-tabs">
+                                <button class="mini-tab active" data-panel="models" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'models')">Models</button>
+                                <button class="mini-tab" data-panel="skills" onclick="switchAgentTab('${escapeJsString(agent.id)}', 'skills')">Skills (${workspaceSkills.length})</button>
+                            </div>
+                            
+                            <div class="mini-tab-panel active" id="agent-${escapeHtml(agent.id)}-panel-models">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span style="width: 72px; font-size: 11px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0;">Default</span>
+                                        <div style="flex: 1;">
                                             <div class="field-stack">
-                                                <select id="agent-${escapeHtml(agent.id)}-primary" class="md-select"></select>
+                                                <select id="agent-${escapeHtml(agent.id)}-primary" class="md-select" style="font-size: 13px;"></select>
                                                 <div id="agent-${escapeHtml(agent.id)}-primary-meta" class="field-meta"></div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="mini-tab-panel" id="agent-${escapeHtml(agent.id)}-panel-fb1">
-                                    <div class="form-row" style="padding: 0; border: none;">
-                                        <div class="form-value">
-                                            <div class="field-stack">
-                                                <select id="agent-${escapeHtml(agent.id)}-fb1" class="md-select"></select>
-                                                <div id="agent-${escapeHtml(agent.id)}-fb1-meta" class="field-meta"></div>
+                                    
+                                    <div id="agent-${escapeHtml(agent.id)}-fallbacks-container" style="display: flex; flex-direction: column; gap: 8px;">
+                                        ${fallbacks.map((fb, idx) => `
+                                            <div class="fallback-row" style="display: flex; align-items: center; gap: 10px;">
+                                                <span style="width: 72px; flex-shrink: 0; display: flex; align-items: center; gap: 5px;">
+                                                    <span style="width: 20px; height: 20px; border-radius: 50%; background: var(--surface-muted); border: 1px solid var(--line); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--text-soft);">${idx + 1}</span>
+                                                    <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">FB</span>
+                                                </span>
+                                                <div style="flex: 1; display: flex; gap: 8px; align-items: flex-start;">
+                                                    <div class="field-stack" style="flex: 1;">
+                                                        <select id="agent-${escapeHtml(agent.id)}-fb${idx}" class="md-select fallback-select" style="font-size: 13px;" data-index="${idx}"></select>
+                                                        <div id="agent-${escapeHtml(agent.id)}-fb${idx}-meta" class="field-meta"></div>
+                                                    </div>
+                                                    <button class="btn" style="padding: 8px; color: var(--text-soft); flex-shrink: 0;" onclick="removeAgentFallback('${escapeJsString(agent.id)}', ${idx})" title="Remove">
+                                                        <span class="material-icons-round" style="font-size: 16px;">close</span>
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
+                                        `).join('')}
+                                    </div>
+                                    
+                                    <div style="margin-left: 82px; margin-top: 2px;">
+                                        <button class="btn" style="font-size: 12px; padding: 7px 12px; color: var(--text-soft);" onclick="addAgentFallback('${escapeJsString(agent.id)}')">
+                                            <span class="material-icons-round" style="font-size: 14px;">add</span> Add fallback
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="mini-tab-panel" id="agent-${escapeHtml(agent.id)}-panel-fb2">
-                                    <div class="form-row" style="padding: 0; border: none;">
-                                        <div class="form-value">
-                                            <div class="field-stack">
-                                                <select id="agent-${escapeHtml(agent.id)}-fb2" class="md-select"></select>
-                                                <div id="agent-${escapeHtml(agent.id)}-fb2-meta" class="field-meta"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>
+                            
+                            <div class="mini-tab-panel" id="agent-${escapeHtml(agent.id)}-panel-skills">
+                                ${workspaceSkills.length ? `<div class="skills-chip-grid">${workspaceSkills.map((skill) => `<span class="skill-btn" onclick="openSkillDrawer('${escapeJsString(skill)}', '${escapeJsString(agent.id)}')">${escapeHtml(skill)}</span>`).join('')}</div>` : '<span style="color: var(--text-muted); font-size: 13px;">No workspace skills</span>'}
                             </div>
                         </div>
                     </div>
@@ -2491,8 +2704,10 @@
 
             agentsData.forEach((agent) => {
                 setModelSelect(`agent-${agent.id}-primary`, agent.primary || '', false, `agent-${agent.id}-primary-meta`);
-                setModelSelect(`agent-${agent.id}-fb1`, agent.fallbacks?.[0] || '', true, `agent-${agent.id}-fb1-meta`);
-                setModelSelect(`agent-${agent.id}-fb2`, agent.fallbacks?.[1] || '', true, `agent-${agent.id}-fb2-meta`);
+                const fallbacks = agent.fallbacks || [];
+                fallbacks.forEach((fb, idx) => {
+                    setModelSelect(`agent-${agent.id}-fb${idx}`, fb || '', true, `agent-${agent.id}-fb${idx}-meta`);
+                });
             });
         }
 
@@ -2519,17 +2734,9 @@
         }
 
         function getProviderTags(provider) {
-            const nativeProviders = ['openai', 'anthropic', 'google', 'mistral', 'cohere', 'meta', 'x-ai', 'deepseek'];
-            const p = (provider || '').toLowerCase();
-            const isNative = nativeProviders.some(n => p.includes(n));
-            const logoHtml = isNative ? '<span class="material-icons-round" style="font-size: 16px; color: var(--brand);">verified</span>' : '';
-            const typeLabel = isNative ? 'Native' : '3rd-Party';
-            
             return `
                 <div style="display: flex; align-items: center; gap: 6px;">
-                    ${logoHtml}
                     <span style="font-weight: 700;">${escapeHtml(provider || '-')}</span>
-                    <span class="chip" style="font-size: 9px; padding: 2px 6px; letter-spacing: 0.04em; text-transform: uppercase;">${typeLabel}</span>
                 </div>
             `;
         }
@@ -2573,6 +2780,9 @@
                     if (col === 'name') {
                         valA = (a.modelName || a.modelId || '').toLowerCase();
                         valB = (b.modelName || b.modelId || '').toLowerCase();
+                    } else if (col === 'alias') {
+                        valA = (a.alias || a.modelId || '').toLowerCase();
+                        valB = (b.alias || b.modelId || '').toLowerCase();
                     } else if (col === 'provider') {
                         valA = (a.provider || '').toLowerCase();
                         valB = (b.provider || '').toLowerCase();
@@ -2601,25 +2811,36 @@
                 return;
             }
 
-            list.innerHTML = filtered.map((model) => {
+            window._filteredModels = filtered;
+
+            list.innerHTML = filtered.map((model, idx) => {
                 const ref = `${model.provider}/${model.modelId}`;
                 const usage = model.usage || {};
-                const usedBy = summarizeModelUsage(usage);
                 const accessColor = getAccessColor(model.access);
                 return `
-                    <div class="bar-row is-clickable models-grid-layout" onclick="openModelDrawer('${escapeJsString(ref)}')">
-                        <div><strong style="font-size: 15px;">${escapeHtml(model.modelName || model.modelId)}</strong></div>
-                        <div>${getProviderTags(model.provider)}</div>
-                        <div><span class="chip" style="color: ${accessColor}; border-color: ${accessColor}; background: transparent; font-weight: 800;">${escapeHtml(model.access || '-')}</span></div>
-                        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">${escapeHtml(usedBy)}</div>
-                        <div style="font-weight: 800; font-family: var(--mono); color: var(--text-soft); font-size: 15px;">${escapeHtml(usage.usageCount || 0)}</div>
+                    <div class="bar-row is-clickable models-grid-layout" data-idx="${idx}" onclick="openModelDrawerByIndex(${idx})">
+                        <div class="marquee-container" onmouseenter="if(this.firstElementChild.scrollWidth > this.clientWidth) { this.firstElementChild.style.transition = 'transform 2s linear'; this.firstElementChild.style.transform = 'translateX(calc(' + this.clientWidth + 'px - ' + this.firstElementChild.scrollWidth + 'px - 10px))'; }" onmouseleave="this.firstElementChild.style.transition = 'transform 0.5s ease'; this.firstElementChild.style.transform = 'translateX(0)';">
+                            <strong class="marquee-text" style="font-size: 14px; font-weight: 700;">
+                                ${escapeHtml(model.modelName || model.modelId)}
+                                ${(() => {
+                                    const p = (model.provider || '').toLowerCase();
+                                    const isNative = ['openai', 'anthropic', 'google', 'mistral', 'cohere', 'meta', 'x-ai', 'deepseek'].some(n => p.includes(n));
+                                    return isNative ? '<span class="material-icons-round" style="font-size: 14px; color: var(--brand); margin-left: 5px; flex-shrink: 0; vertical-align: middle;">verified</span>' : '';
+                                })()}
+                            </strong>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(model.alias || model.modelId || '')}">${escapeHtml(model.alias || model.modelId || '—')}</div>
+                        <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); font-family: var(--mono);">${escapeHtml(model.provider || '-')}</div>
+                        <div><span class="chip" style="color: ${accessColor}; border-color: ${accessColor}22; background: ${accessColor}12; font-weight: 800; padding: 3px 8px; font-size: 11px;">${escapeHtml(model.access || '-')}</span></div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${renderUsedByChips(usage)}</div>
+                        <div style="font-weight: 800; font-family: var(--mono); color: var(--text-soft); font-size: 14px;">${escapeHtml(String(usage.usageCount || 0))}</div>
                     </div>
                 `;
             }).join('');
 
             document.querySelectorAll('#models-header .sortable-header span').forEach(el => el.textContent = '');
             if (currentModelsSort.column) {
-                const map = { name: 0, provider: 1, access: 2, usedBy: 3, usageCount: 4 };
+                const map = { name: 0, alias: 1, provider: 2, access: 3, usedBy: 4, usageCount: 5 };
                 const idx = map[currentModelsSort.column];
                 const headers = document.querySelectorAll('#models-header .sortable-header span');
                 if (headers[idx]) {
@@ -2637,40 +2858,188 @@
             return parts.join(', ') || 'Unused';
         }
 
+        function renderUsedByChips(usage) {
+            const chips = [];
+            if ((usage.defaults || []).length) chips.push(`<span style="display:inline-flex;align-items:center;gap:3px;background:var(--brand-soft);color:var(--brand);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:800;margin-right:3px;">D${usage.defaults.length}</span>`);
+            if ((usage.agents || []).length) chips.push(`<span style="display:inline-flex;align-items:center;gap:3px;background:var(--success-soft);color:var(--success);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:800;margin-right:3px;">A${usage.agents.length}</span>`);
+            if ((usage.presets || []).length) chips.push(`<span style="display:inline-flex;align-items:center;gap:3px;background:var(--warning-soft);color:var(--warning);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:800;margin-right:3px;">P${usage.presets.length}</span>`);
+            if ((usage.cron || []).length) chips.push(`<span style="display:inline-flex;align-items:center;gap:3px;background:var(--surface-muted);color:var(--text-muted);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:800;margin-right:3px;">C${usage.cron.length}</span>`);
+            return chips.length ? chips.join('') : '<span style="color:var(--text-soft);font-size:11px;">Unused</span>';
+        }
+
+        let currentCronSort = { column: null, direction: 'asc' };
+
+        function setCronSort(col) {
+            if (currentCronSort.column === col) {
+                currentCronSort.direction = currentCronSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentCronSort.column = col;
+                currentCronSort.direction = 'asc';
+            }
+            renderCron();
+        }
+
+
+        function cronToHuman(raw) {
+            if (!raw) return null;
+            const r = raw.trim();
+            // Named shorthand
+            if (r === '@hourly') return 'Every hour';
+            if (r === '@daily' || r === '@midnight') return 'Every day at midnight';
+            if (r === '@weekly') return 'Every Sunday at midnight';
+            if (r === '@monthly') return 'On the 1st of every month at midnight';
+            if (r === '@yearly' || r === '@annually') return 'Once a year on Jan 1st';
+            // Human-label patterns like "Every 2 hours"
+            if (/^Every\s/i.test(r)) return null; // already human
+            const parts = r.split(/\s+/);
+            if (parts.length < 5) return null;
+            const [min, hour, dom, month, dow] = parts;
+            const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            const dayMap = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
+            const pad = (n) => String(n).padStart(2, '0');
+            const timeStr = (h, m) => {
+                const hv = parseInt(h, 10), mv = parseInt(m, 10);
+                if (isNaN(hv) || isNaN(mv)) return null;
+                return `${pad(hv)}:${pad(mv)}`;
+            };
+            const t = (hour !== '*' && min !== '*') ? timeStr(hour, min) : null;
+            const atT = t ? ` at ${t}` : '';
+            // Every N hours: */N * * * * or 0 */N * * *
+            if (min === '0' && hour.startsWith('*/')) {
+                const n = parseInt(hour.slice(2), 10);
+                return `Every ${n} hour${n > 1 ? 's' : ''}`;
+            }
+            if (min.startsWith('*/') && hour === '*') {
+                const n = parseInt(min.slice(2), 10);
+                return `Every ${n} minute${n > 1 ? 's' : ''}`;
+            }
+            // Every day at time
+            if (dom === '*' && month === '*' && dow === '*' && t) {
+                return `Every day${atT}`;
+            }
+            // Every N days: dom step
+            if (dom.startsWith('*/') && month === '*' && dow === '*' && t) {
+                const n = parseInt(dom.slice(2), 10);
+                return `Every ${n} days${atT}`;
+            }
+            // Specific weekday
+            if (dom === '*' && month === '*' && t) {
+                const normalizedDow = dow.toUpperCase();
+                if (/^\d$/.test(dow)) {
+                    const d = parseInt(dow, 10);
+                    return `Every ${days[d] || 'weekday'}${atT}`;
+                }
+                if (dayMap[normalizedDow] !== undefined) {
+                    return `Every ${days[dayMap[normalizedDow]]}${atT}`;
+                }
+            }
+            // Specific day of month
+            if (/^\d+$/.test(dom) && month === '*' && dow === '*' && t) {
+                return `Monthly on day ${dom}${atT}`;
+            }
+            return null;
+        }
+
+        function formatSchedule(label, raw) {
+            if (!label && !raw) return '-';
+            const actualRaw = raw || label;
+            const secondary = label && label !== raw ? label : actualRaw;
+            const human = cronToHuman(actualRaw);
+            let html = '';
+            if (human) {
+                html += `<div style="font-size: 13px; color: var(--text); font-weight: 700; line-height: 1.3;">${escapeHtml(human)}</div>`;
+                html += `<div style="font-family: var(--mono); font-size: 10px; color: var(--text-soft); margin-top: 2px; opacity: 0.7;">${escapeHtml(secondary)}</div>`;
+                return html;
+            }
+            html += `<div style="font-size: 13px; color: var(--text); font-weight: 700; line-height: 1.3;">${escapeHtml(secondary)}</div>`;
+            if (secondary !== actualRaw) {
+                html += `<div style="font-family: var(--mono); font-size: 10px; color: var(--text-soft); margin-top: 2px; opacity: 0.7;">${escapeHtml(actualRaw)}</div>`;
+            }
+            return html;
+        }
+
         function renderCron() {
-            const tbody = document.querySelector('#cron-table tbody');
-            const jobs = dashboardData.cron || [];
+            const list = document.getElementById('cron-list');
+            const jobs = (dashboardData.cron || []).slice();
+
+            if (currentCronSort.column) {
+                jobs.sort((a, b) => {
+                    let valA, valB;
+                    const col = currentCronSort.column;
+                    if (col === 'enabled') { valA = a.enabled ? 1 : 0; valB = b.enabled ? 1 : 0; }
+                    else if (col === 'name') { valA = (a.name || a.id || '').toLowerCase(); valB = (b.name || b.id || '').toLowerCase(); }
+                    else if (col === 'schedule') { valA = a.scheduleLabel || a.schedule || ''; valB = b.scheduleLabel || b.schedule || ''; }
+                    else if (col === 'nextRun') { valA = a.nextRun || a.nextRunAtMs || 0; valB = b.nextRun || b.nextRunAtMs || 0; }
+                    else if (col === 'lastRun') { valA = a.lastRun || a.lastRunAtMs || 0; valB = b.lastRun || b.lastRunAtMs || 0; }
+                    else if (col === 'status') { valA = a.status || ''; valB = b.status || ''; }
+                    else if (col === 'binding') { valA = (a.agentId || '') + (a.model || ''); valB = (b.agentId || '') + (b.model || ''); }
+
+                    if (valA < valB) return currentCronSort.direction === 'asc' ? -1 : 1;
+                    if (valA > valB) return currentCronSort.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
 
             if (!jobs.length) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color: var(--text-muted)">No cron jobs available.</td></tr>';
+                list.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 32px;">No cron jobs available.</div>';
+                document.querySelectorAll('#cron-header .sortable-header span').forEach(el => el.textContent = '');
                 return;
             }
 
-            tbody.innerHTML = jobs.map((job) => {
-                const statusClass = job.status === 'error' ? 'status-error' : (job.status === 'ok' ? 'status-ok' : 'status-idle');
+            list.innerHTML = jobs.map((job) => {
+                const isError = job.status === 'error';
+                const statusDotClass = isError ? 'error' : (job.status === 'ok' ? 'ok' : 'idle');
+                const switchIcon = job.enabled ? 'toggle_on' : 'toggle_off';
+                const switchColor = job.enabled ? 'var(--brand)' : 'var(--text-muted)';
+                
+                const agent = agentsData.find(a => a.id === job.agentId);
+                let bindingHtml = '';
+                if (agent) {
+                    bindingHtml = `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <img src="${escapeHtml(agent.avatarUrl)}" alt="Avatar" style="width: 26px; height: 26px; border-radius: 7px; object-fit: cover; border: 1px solid var(--line);">
+                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">${escapeHtml(agent.name || agent.id)}</span>
+                        </div>
+                    `;
+                } else if (job.model) {
+                    bindingHtml = `<span style="font-weight: 700; font-size: 12px; color: var(--text);">${escapeHtml(job.model)}</span>`;
+                } else {
+                    bindingHtml = `<span style="font-size: 12px; color: var(--text-muted);">None</span>`;
+                }
+
                 return `
-                    <tr>
-                        <td><span class="chip ${job.enabled ? 'success' : 'warning'}">${job.enabled ? 'Enabled' : 'Disabled'}</span></td>
-                        <td>
-                            <strong>${escapeHtml(job.name || job.id)}</strong><br>
-                            <span class="helper-text">${escapeHtml(job.agentId || job.id)}</span>
-                        </td>
-                        <td>${escapeHtml(job.scheduleLabel || job.schedule || '-')}</td>
-                        <td>${escapeHtml(formatTimestamp(job.nextRun || job.nextRunAtMs))}</td>
-                        <td>${escapeHtml(formatTimestamp(job.lastRun || job.lastRunAtMs))}</td>
-                        <td class="${statusClass}">${escapeHtml(job.status || 'idle')}</td>
-                        <td>${escapeHtml(job.target || '-')}</td>
-                        <td>${escapeHtml(job.model || '-')}</td>
-                        <td>
-                            <div class="button-row">
-                                <button class="btn" onclick="event.stopPropagation(); openCronDrawer('${escapeJsString(job.id)}')">Inspect</button>
-                                <button class="btn" onclick="event.stopPropagation(); toggleCronJob('${escapeJsString(job.id)}')">${job.enabled ? 'Disable' : 'Enable'}</button>
-                                <button class="btn btn-primary" onclick="event.stopPropagation(); runCronJob('${escapeJsString(job.id)}')">Run once</button>
-                            </div>
-                        </td>
-                    </tr>
+                    <div class="bar-row is-clickable cron-grid-layout" onclick="openCronDrawer('${escapeJsString(job.id)}')">
+                        <div class="marquee-container" onmouseenter="if(this.firstElementChild.scrollWidth > this.clientWidth) { this.firstElementChild.style.transition = 'transform 2s linear'; this.firstElementChild.style.transform = 'translateX(calc(' + this.clientWidth + 'px - ' + this.firstElementChild.scrollWidth + 'px - 10px))'; }" onmouseleave="this.firstElementChild.style.transition = 'transform 0.5s ease'; this.firstElementChild.style.transform = 'translateX(0)';">
+                            <strong class="marquee-text" style="font-size: 15px;" title="${escapeHtml(job.name || job.id)}">${escapeHtml(job.name || job.id)}</strong>
+                        </div>
+                        <div>${formatSchedule(job.scheduleLabel || job.schedule, job.schedule)}</div>
+                        <div style="font-size: 13px; color: var(--text-soft); font-weight: 600;">${escapeHtml(formatTimestamp(job.nextRun || job.nextRunAtMs))}</div>
+                        <div style="font-size: 13px; color: var(--text-soft); font-weight: 600;">${escapeHtml(formatTimestamp(job.lastRun || job.lastRunAtMs))}</div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div class="status-dot ${statusDotClass}" title="${escapeHtml(job.status || 'idle')}" style="margin: 0;"></div>
+                        </div>
+                        <div>${bindingHtml}</div>
+                        <div style="display: flex; gap: 4px; justify-content: flex-end; align-items: center;">
+                            <button class="btn" style="padding: 4px; border: none; background: transparent; box-shadow: none;" onclick="event.stopPropagation(); toggleCronJob('${escapeJsString(job.id)}')">
+                                <span class="material-icons-round" style="color: ${switchColor}; font-size: 28px;">${switchIcon}</span>
+                            </button>
+                            <button class="btn" style="padding: 6px; border: none; background: transparent; box-shadow: none;" onclick="event.stopPropagation(); runCronJob('${escapeJsString(job.id)}')">
+                                <span class="material-icons-round" style="color: var(--brand); font-size: 20px;">bolt</span>
+                            </button>
+                        </div>
+                    </div>
                 `;
             }).join('');
+
+            document.querySelectorAll('#cron-header .sortable-header span').forEach(el => el.textContent = '');
+            if (currentCronSort.column) {
+                const map = { name: 0, schedule: 1, nextRun: 2, lastRun: 3, status: 4, binding: 5 };
+                const idx = map[currentCronSort.column];
+                const headers = document.querySelectorAll('#cron-header .sortable-header span');
+                if (headers[idx]) {
+                    headers[idx].textContent = currentCronSort.direction === 'asc' ? ' ↓' : ' ↑';
+                }
+            }
         }
 
         async function applyDefaults() {
@@ -2711,14 +3080,14 @@
         async function applyAgents() {
             showLoading();
             try {
-                const payload = agentsData.map((agent) => ({
-                    id: agent.id,
-                    primary: document.getElementById(`agent-${agent.id}-primary`).value,
-                    fallbacks: [
-                        document.getElementById(`agent-${agent.id}-fb1`).value,
-                        document.getElementById(`agent-${agent.id}-fb2`).value
-                    ].filter(Boolean)
-                }));
+                const payload = agentsData.map((agent) => {
+                    const fallbackDrops = Array.from(document.querySelectorAll(`#agent-${agent.id}-fallbacks-container .fallback-select`));
+                    return {
+                        id: agent.id,
+                        primary: document.getElementById(`agent-${agent.id}-primary`).value,
+                        fallbacks: fallbackDrops.map(el => el.value).filter(Boolean)
+                    };
+                });
 
                 const res = await apiFetch('/api/agents/apply', {
                     method: 'POST',
@@ -2737,6 +3106,73 @@
             } finally {
                 hideLoading();
             }
+        }
+
+        
+        async function deletePreset(name) {
+            if (!confirm(`Are you sure you want to delete preset "${name}"?`)) return;
+            showLoading();
+            try {
+                const res = await apiFetch(`/api/presets/${encodeURIComponent(name)}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to delete preset');
+                await loadDashboard();
+                showSnackbar(data.message || 'Preset deleted');
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function addAgentFallback(agentId) {
+            const container = document.getElementById(`agent-${agentId}-fallbacks-container`);
+            const fallbackDrops = container.querySelectorAll('.fallback-select');
+            const idx = fallbackDrops.length;
+            
+            const div = document.createElement('div');
+            div.className = 'form-row fallback-row';
+            div.style.padding = '0';
+            div.style.border = 'none';
+            div.style.alignItems = 'center';
+            div.innerHTML = `
+                <label class="fallback-label" style="width: 80px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Fb ${idx + 1}</label>
+                <div class="form-value" style="flex: 1; display: flex; gap: 8px; align-items: flex-start;">
+                    <div class="field-stack" style="flex: 1;">
+                        <select id="agent-${agentId}-fb${idx}" class="md-select fallback-select" data-index="${idx}"></select>
+                        <div id="agent-${agentId}-fb${idx}-meta" class="field-meta"></div>
+                    </div>
+                    <button class="btn" style="padding: 10px; color: var(--text-soft);" onclick="removeAgentFallback('${agentId}', ${idx})" title="Remove">
+                        <span class="material-icons-round" style="font-size: 18px;">close</span>
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+            setModelSelect(`agent-${agentId}-fb${idx}`, '', true, `agent-${agentId}-fb${idx}-meta`);
+            updateFallbackLabels(agentId);
+        }
+
+        function removeAgentFallback(agentId, index) {
+            const selectId = `agent-${agentId}-fb${index}`;
+            const select = document.getElementById(selectId);
+            if (select) {
+                const row = select.closest('.fallback-row');
+                if (row) {
+                    row.remove();
+                    updateFallbackLabels(agentId);
+                }
+            }
+        }
+
+        function updateFallbackLabels(agentId) {
+            const container = document.getElementById(`agent-${agentId}-fallbacks-container`);
+            const rows = container.querySelectorAll('.fallback-row');
+            rows.forEach((row, i) => {
+                const label = row.querySelector('.fallback-label');
+                if (label) {
+                    label.textContent = `Fb ${i + 1}`;
+                }
+            });
         }
 
         async function applyPreset(name) {
@@ -2894,6 +3330,101 @@
             openDrawer();
         }
 
+        function openModelDrawerByIndex(idx) {
+            const target = (window._filteredModels || [])[idx];
+            if (!target) { showSnackbar('Model not found.'); return; }
+            const usage = target.usage || {};
+            document.getElementById('drawer-title').textContent = target.modelName || target.modelId;
+            document.getElementById('drawer-subtitle').textContent = `${target.provider || 'Saved ref'} • ${target.access || 'Unknown access'}${target.alias ? ' • ' + target.alias : ''}`;
+            document.getElementById('drawer-body').innerHTML = `
+                <div class="drawer-grid">
+                    <div class="info-tile">
+                        <h4>Alias</h4>
+                        <p>${escapeHtml(target.alias || target.modelId || '—')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Usage Count</h4>
+                        <p>${escapeHtml(String(usage.usageCount || 0))}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Defaults</h4>
+                        <p>${escapeHtml((usage.defaults || []).join(', ') || 'Not used by defaults.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Agents</h4>
+                        <p>${escapeHtml((usage.agents || []).join(', ') || 'Not used by agents.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Presets</h4>
+                        <p>${escapeHtml((usage.presets || []).join(', ') || 'Not used by presets.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Cron</h4>
+                        <p>${escapeHtml((usage.cron || []).join(', ') || 'Not used by cron.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Context</h4>
+                        <p>${escapeHtml(`Context ${target.contextWindow || '-'} | Max tokens ${target.maxTokens || '-'}`)}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('drawer-actions').innerHTML = `
+                <button class="btn" onclick="activateTab('overview')">Open Overview</button>
+                <button class="btn" onclick="activateTab('agents')">Open Agents</button>
+            `;
+            openDrawer();
+        }
+
+        function openModelDrawer(modelRef) {
+            const [provider, ...rest] = modelRef.split('/');
+            const target = (dashboardData.models || []).find((entry) => `${entry.provider}/${entry.modelId}` === modelRef || (!provider && entry.modelId === modelRef) || `${entry.provider}/${rest.join('/')}` === modelRef);
+            if (!target) {
+                showSnackbar('Model not found.');
+                return;
+            }
+            const usage = target.usage || {};
+
+            document.getElementById('drawer-title').textContent = target.modelName || target.modelId;
+            document.getElementById('drawer-subtitle').textContent = `${target.provider || 'Saved ref'} • ${target.access || 'Unknown access'}`;
+            document.getElementById('drawer-body').innerHTML = `
+                <div class="drawer-grid">
+                    <div class="info-tile">
+                        <h4>Alias</h4>
+                        <p>${escapeHtml(target.alias || target.modelId || '—')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Usage Count</h4>
+                        <p>${escapeHtml(String(usage.usageCount || 0))}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Defaults</h4>
+                        <p>${escapeHtml((usage.defaults || []).join(', ') || 'Not used by defaults.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Agents</h4>
+                        <p>${escapeHtml((usage.agents || []).join(', ') || 'Not used by agents.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Presets</h4>
+                        <p>${escapeHtml((usage.presets || []).join(', ') || 'Not used by presets.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Cron</h4>
+                        <p>${escapeHtml((usage.cron || []).join(', ') || 'Not used by cron.')}</p>
+                    </div>
+                    <div class="info-tile">
+                        <h4>Context</h4>
+                        <p>${escapeHtml(`Context ${target.contextWindow || '-'} | Max tokens ${target.maxTokens || '-'}`)}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('drawer-actions').innerHTML = `
+                <button class="btn" onclick="activateTab('overview')">Open Overview</button>
+                <button class="btn" onclick="activateTab('agents')">Open Agents</button>
+            `;
+            openDrawer();
+        }
+
         function openCronDrawer(jobId) {
             const job = (dashboardData.cron || []).find((entry) => entry.id === jobId);
             if (!job) {
@@ -2944,6 +3475,38 @@
             `;
             openDrawer();
         }
+
+        async function openSkillDrawer(skillName, agentId) {
+            showLoading();
+            try {
+                const query = agentId ? `?agentId=${encodeURIComponent(agentId)}` : '';
+                const res = await apiFetch(`/api/skills/${encodeURIComponent(skillName)}${query}`);
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to load skill details');
+                }
+
+                document.getElementById('drawer-title').textContent = data.name || skillName;
+                document.getElementById('drawer-subtitle').textContent = data.scope === 'workspace' ? 'Workspace Skill' : 'Installed Skill';
+                document.getElementById('drawer-body').innerHTML = `
+                    <div class="drawer-grid">
+                        <div class="info-tile" style="grid-column: 1 / -1;">
+                            <h4>SKILL.md</h4>
+                            <pre>${escapeHtml(data.content || 'No SKILL.md content available.')}</pre>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('drawer-actions').innerHTML = data.path
+                    ? `<button class="btn" onclick="navigator.clipboard.writeText('${escapeJsString(data.path)}'); showSnackbar('Skill path copied');">Copy path</button>`
+                    : '';
+                openDrawer();
+            } catch (err) {
+                showSnackbar(`Error: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
 
         async function toggleCronJob(jobId) {
             showLoading();

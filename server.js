@@ -48,6 +48,7 @@ const getCronJobsPath = () => path.join(getOpenClawDir(), 'cron', 'jobs.json');
 const getCronRunsDir = () => path.join(getOpenClawDir(), 'cron', 'runs');
 const getAuthPath = () => path.join(getClawboardDir(), 'auth.json');
 const getAvatarDir = () => path.join(getClawboardDir(), 'avatars');
+const getMountedGlobalSkillsDir = () => '/opt/openclaw-skills';
 
 const hostToContainerPath = (hostPath) => {
     const homeDir = os.homedir();
@@ -61,6 +62,15 @@ const normalizeFallbacks = (fallbacks = []) => [
 ].filter(Boolean);
 
 const dedupe = (values = []) => Array.from(new Set(values.filter(Boolean)));
+
+const pathExists = async (targetPath) => {
+    try {
+        await fs.access(targetPath);
+        return true;
+    } catch {
+        return false;
+    }
+};
 
 const parseModelRef = (value = '') => {
     if (!value || !value.includes('/')) {
@@ -779,6 +789,61 @@ const formatCronJob = async (job) => {
     };
 };
 
+const getGlobalInstalledSkills = (config = {}) => Object.keys(config.skills?.entries || {}).sort();
+
+const resolveWorkspaceSkillDocPath = async (config, agentId, skillName) => {
+    if (!agentId) {
+        return null;
+    }
+
+    const agent = (config.agents?.list || []).find((entry) => entry.id === agentId);
+    const workspace = agent?.workspace;
+    if (!workspace) {
+        return null;
+    }
+
+    const candidate = path.join(hostToContainerPath(workspace), 'skills', skillName, 'SKILL.md');
+    return (await pathExists(candidate)) ? candidate : null;
+};
+
+const resolveGlobalSkillDocPath = async (skillName) => {
+    const candidates = [
+        path.join(getMountedGlobalSkillsDir(), skillName, 'SKILL.md'),
+        path.join(getOpenClawDir(), 'skills', skillName, 'SKILL.md'),
+        path.join(getOpenClawDir(), 'workspace', 'skills', skillName, 'SKILL.md')
+    ];
+
+    for (const candidate of candidates) {
+        if (await pathExists(candidate)) {
+            return candidate;
+        }
+    }
+
+    return null;
+};
+
+const readSkillDetail = async (config, skillName, agentId) => {
+    const workspaceDocPath = await resolveWorkspaceSkillDocPath(config, agentId, skillName);
+    const globalDocPath = await resolveGlobalSkillDocPath(skillName);
+    const docPath = workspaceDocPath || globalDocPath;
+
+    if (!docPath) {
+        return {
+            name: skillName,
+            scope: workspaceDocPath ? 'workspace' : 'global',
+            path: null,
+            content: 'No SKILL.md found for this skill in the current runtime.'
+        };
+    }
+
+    return {
+        name: skillName,
+        scope: workspaceDocPath ? 'workspace' : 'global',
+        path: docPath,
+        content: await fs.readFile(docPath, 'utf8')
+    };
+};
+
 const getWorkspaceSkills = async (agentsList) => {
     const workspaceSkills = {};
 
@@ -920,7 +985,7 @@ app.get('/api/agents', async (req, res) => {
     try {
         const config = await readConfig();
         const agentsList = config.agents?.list || [];
-        const installedSkills = config.skills?.entries ? Object.keys(config.skills.entries).sort() : [];
+        const installedSkills = getGlobalInstalledSkills(config);
         const workspaceSkills = await getWorkspaceSkills(agentsList);
 
         const agents = await Promise.all(agentsList.map(async (agent) => {
@@ -1364,6 +1429,9 @@ app.get('/api/dashboard', async (req, res) => {
                     enabled: enrichedCronJobs.filter((job) => job.enabled).length,
                     healthy: healthyCron,
                     attention: errorCron
+                },
+                skills: {
+                    installed: getGlobalInstalledSkills(config)
                 }
             },
             defaults: {
@@ -1385,9 +1453,21 @@ app.get('/api/skills', async (req, res) => {
     try {
         const config = await readConfig();
         const agentsList = config.agents?.list || [];
-        const installed = config.skills?.entries ? Object.keys(config.skills.entries).sort() : [];
+        const installed = getGlobalInstalledSkills(config);
         const workspace = await getWorkspaceSkills(agentsList);
         res.json({ installed, workspace });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/skills/:skillName', async (req, res) => {
+    try {
+        const config = await readConfig();
+        const skillName = req.params.skillName;
+        const agentId = req.query.agentId ? String(req.query.agentId) : '';
+        const detail = await readSkillDetail(config, skillName, agentId);
+        res.json(detail);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

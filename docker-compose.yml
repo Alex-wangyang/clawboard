@@ -6,6 +6,7 @@ services:
       - "8080:8080"
     volumes:
       - ~/.openclaw:/root/.openclaw
+      - /opt/homebrew/lib/node_modules/openclaw/skills:/opt/openclaw-skills:ro
     environment:
       - GATEWAY_URL=http://host.docker.internal:18789
       - GATEWAY_TOKEN=e0a883035eb1c104fb654a987dcee30817edb6bdfb2eee18
