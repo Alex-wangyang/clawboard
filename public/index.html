@@ -1976,6 +1976,16 @@
             document.getElementById(`default-${sectionId}-panel-${panelName}`).classList.add('active');
         }
 
+        function switchOverviewSkillsTab(panelName) {
+            document.querySelectorAll('#overview-skills-tabs .mini-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.panel === panelName);
+            });
+            document.querySelectorAll('#overview-skills-panel-installed, #overview-skills-panel-builtin').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`overview-skills-panel-${panelName}`).classList.add('active');
+        }
+
         async function login() {
             showLoading();
             document.getElementById('auth-error').textContent = '';
@@ -2411,17 +2421,41 @@
 
                 ${(() => {
                     const installedSkills = overview.skills?.installed || [];
-                    if (!installedSkills.length) return '';
+                    const builtInSkills = overview.skills?.builtIn || [];
+                    if (!installedSkills.length && !builtInSkills.length) return '';
                     return `
                     <div class="card full-width" style="margin-bottom:0;">
                         <div class="card-header" style="margin-bottom:14px; align-items:flex-end;">
                             <div>
-                                <h3 class="card-title" style="margin-bottom:4px;">Installed Skills</h3>
-                                <div style="font-size:12px; color:var(--text-muted);">${installedSkills.length} globally installed skills</div>
+                                <h3 class="card-title" style="margin-bottom:4px;">Global Skills</h3>
+                                <div style="font-size:12px; color:var(--text-muted);">Installed and built-in runtime skills</div>
                             </div>
                         </div>
-                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                            ${installedSkills.map(skill => `<span class="skill-btn" onclick="openSkillDrawer('${escapeJsString(skill)}', null)">${escapeHtml(skill)}</span>`).join('')}
+                        <div class="mini-tab-group" id="overview-skills-tabs" style="margin-bottom:14px; width:max-content;">
+                            <button class="mini-tab active" data-panel="installed" onclick="switchOverviewSkillsTab('installed')">Installed (${installedSkills.length})</button>
+                            <button class="mini-tab" data-panel="builtin" onclick="switchOverviewSkillsTab('builtin')">Built-in (${builtInSkills.length})</button>
+                        </div>
+                        <div class="mini-tab-panel active" id="overview-skills-panel-installed">
+                            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                ${installedSkills.map(skill => `<span class="skill-btn" onclick="openSkillDrawer('${escapeJsString(skill)}', null, 'installed')">${escapeHtml(skill)}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="mini-tab-panel" id="overview-skills-panel-builtin">
+                            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                ${builtInSkills.map(skill => {
+                                    const bg = skill.status?.tone === 'ok'
+                                        ? 'rgba(22,163,74,0.12)'
+                                        : skill.status?.tone === 'warn'
+                                            ? 'rgba(245,158,11,0.14)'
+                                            : 'rgba(148,163,184,0.18)';
+                                    const fg = skill.status?.tone === 'ok'
+                                        ? '#15803d'
+                                        : skill.status?.tone === 'warn'
+                                            ? '#b45309'
+                                            : 'var(--text-soft)';
+                                    return `<span class="skill-btn" style="background:${bg}; color:${fg}; border-color:transparent;" onclick="openSkillDrawer('${escapeJsString(skill.name)}', null, 'built-in')">${escapeHtml(skill.name)}</span>`;
+                                }).join('')}
+                            </div>
                         </div>
                     </div>`;
                 })()}
@@ -2695,7 +2729,7 @@
                             </div>
                             
                             <div class="mini-tab-panel" id="agent-${escapeHtml(agent.id)}-panel-skills">
-                                ${workspaceSkills.length ? `<div class="skills-chip-grid">${workspaceSkills.map((skill) => `<span class="skill-btn" onclick="openSkillDrawer('${escapeJsString(skill)}', '${escapeJsString(agent.id)}')">${escapeHtml(skill)}</span>`).join('')}</div>` : '<span style="color: var(--text-muted); font-size: 13px;">No workspace skills</span>'}
+                                ${workspaceSkills.length ? `<div class="skills-chip-grid">${workspaceSkills.map((skill) => `<span class="skill-btn" onclick="openSkillDrawer('${escapeJsString(skill)}', '${escapeJsString(agent.id)}', 'workspace')">${escapeHtml(skill)}</span>`).join('')}</div>` : '<span style="color: var(--text-muted); font-size: 13px;">No workspace skills</span>'}
                             </div>
                         </div>
                     </div>
@@ -3476,10 +3510,13 @@
             openDrawer();
         }
 
-        async function openSkillDrawer(skillName, agentId) {
+        async function openSkillDrawer(skillName, agentId, scope = '') {
             showLoading();
             try {
-                const query = agentId ? `?agentId=${encodeURIComponent(agentId)}` : '';
+                const params = new URLSearchParams();
+                if (agentId) params.set('agentId', agentId);
+                if (scope) params.set('scope', scope);
+                const query = params.toString() ? `?${params.toString()}` : '';
                 const res = await apiFetch(`/api/skills/${encodeURIComponent(skillName)}${query}`);
                 const data = await res.json();
                 if (!res.ok) {
@@ -3487,10 +3524,14 @@
                 }
 
                 document.getElementById('drawer-title').textContent = data.name || skillName;
-                document.getElementById('drawer-subtitle').textContent = data.scope === 'workspace' ? 'Workspace Skill' : 'Installed Skill';
+                document.getElementById('drawer-subtitle').textContent = data.scope === 'workspace' ? 'Workspace Skill' : data.scope === 'built-in' ? 'Built-in Skill' : 'Installed Skill';
+                const statusLine = data.status?.label
+                    ? `<div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Status: ${escapeHtml(data.status.label)}</div>`
+                    : '';
                 document.getElementById('drawer-body').innerHTML = `
                     <div class="drawer-grid">
                         <div class="info-tile" style="grid-column: 1 / -1;">
+                            ${statusLine}
                             <h4>SKILL.md</h4>
                             <pre>${escapeHtml(data.content || 'No SKILL.md content available.')}</pre>
                         </div>

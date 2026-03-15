@@ -1,15 +1,18 @@
 services:
   clawboard:
     build: .
-    container_name: clawboard
+    container_name: clawboard-dev
     ports:
       - "${CLAWBOARD_PORT:-3180}:8080"
     volumes:
+      - ./:/app
+      - /app/node_modules
       - ${OPENCLAW_HOME}:/root/.openclaw
       - ${OPENCLAW_BUILTIN_SKILLS_DIR}:/opt/openclaw-skills:ro
     environment:
       HOST_HOME: ${HOST_HOME}
       OPENCLAW_HOME: ${OPENCLAW_HOME}
+    command: ["node", "--watch", "server.js"]
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"

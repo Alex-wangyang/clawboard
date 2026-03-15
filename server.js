@@ -52,8 +52,12 @@ const getMountedGlobalSkillsDir = () => '/opt/openclaw-skills';
 
 const hostToContainerPath = (hostPath) => {
     const homeDir = os.homedir();
-    const hostHome = process.env.HOST_HOME || '/Users/alexwang';
-    return hostPath.startsWith(hostHome) ? hostPath.replace(hostHome, homeDir) : hostPath;
+    const configuredOpenClawHome = process.env.OPENCLAW_HOME || '';
+    const inferredHostHome = configuredOpenClawHome.endsWith('/.openclaw')
+        ? configuredOpenClawHome.replace(/\/\.openclaw$/, '')
+        : '';
+    const hostHome = process.env.HOST_HOME || inferredHostHome;
+    return hostHome && hostPath.startsWith(hostHome) ? hostPath.replace(hostHome, homeDir) : hostPath;
 };
 
 const normalizeFallbacks = (fallbacks = []) => [
@@ -789,7 +793,57 @@ const formatCronJob = async (job) => {
     };
 };
 
-const getGlobalInstalledSkills = (config = {}) => Object.keys(config.skills?.entries || {}).sort();
+const listSkillDirs = async (baseDir) => {
+    try {
+        const entries = await fs.readdir(baseDir, { withFileTypes: true });
+        return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
+    } catch {
+        return [];
+    }
+};
+
+const getCustomInstalledSkills = async () => listSkillDirs(path.join(getOpenClawDir(), 'skills'));
+const getBuiltInSkills = async () => listSkillDirs(getMountedGlobalSkillsDir());
+
+const parseSkillDocHints = async (docPath) => {
+    if (!(await pathExists(docPath))) {
+        return { needsConfig: false, title: '', description: '' };
+    }
+
+    const content = await fs.readFile(docPath, 'utf8');
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const descMatch = content.match(/^description:\s+(.+)$/m);
+    const needsConfig = /primaryEnv\s*:|\benv\s*:|GOOGLE_|OPENAI_|API_KEY|requires\s*:/i.test(content);
+
+    return {
+        needsConfig,
+        title: titleMatch?.[1]?.trim() || '',
+        description: descMatch?.[1]?.trim() || ''
+    };
+};
+
+const getBuiltInSkillEntries = async (config = {}) => {
+    const names = await getBuiltInSkills();
+    const configured = new Set(Object.keys(config.skills?.entries || {}));
+
+    return Promise.all(names.map(async (name) => {
+        const docPath = path.join(getMountedGlobalSkillsDir(), name, 'SKILL.md');
+        const hints = await parseSkillDocHints(docPath);
+        const status = configured.has(name)
+            ? { tone: 'ok', label: 'Configured' }
+            : hints.needsConfig
+                ? { tone: 'warn', label: 'Needs config' }
+                : { tone: 'ok', label: 'Ready' };
+
+        return {
+            name,
+            title: hints.title || name,
+            description: hints.description || '',
+            path: docPath,
+            status
+        };
+    }));
+};
 
 const resolveWorkspaceSkillDocPath = async (config, agentId, skillName) => {
     if (!agentId) {
@@ -806,12 +860,15 @@ const resolveWorkspaceSkillDocPath = async (config, agentId, skillName) => {
     return (await pathExists(candidate)) ? candidate : null;
 };
 
-const resolveGlobalSkillDocPath = async (skillName) => {
-    const candidates = [
-        path.join(getMountedGlobalSkillsDir(), skillName, 'SKILL.md'),
-        path.join(getOpenClawDir(), 'skills', skillName, 'SKILL.md'),
-        path.join(getOpenClawDir(), 'workspace', 'skills', skillName, 'SKILL.md')
-    ];
+const resolveGlobalSkillDocPath = async (skillName, preferredScope = '') => {
+    const installedCandidate = path.join(getOpenClawDir(), 'skills', skillName, 'SKILL.md');
+    const builtInCandidate = path.join(getMountedGlobalSkillsDir(), skillName, 'SKILL.md');
+    const workspaceFallback = path.join(getOpenClawDir(), 'workspace', 'skills', skillName, 'SKILL.md');
+    const candidates = preferredScope === 'built-in'
+        ? [builtInCandidate, installedCandidate, workspaceFallback]
+        : preferredScope === 'installed'
+            ? [installedCandidate, builtInCandidate, workspaceFallback]
+            : [installedCandidate, builtInCandidate, workspaceFallback];
 
     for (const candidate of candidates) {
         if (await pathExists(candidate)) {
@@ -822,10 +879,10 @@ const resolveGlobalSkillDocPath = async (skillName) => {
     return null;
 };
 
-const readSkillDetail = async (config, skillName, agentId) => {
+const readSkillDetail = async (config, skillName, agentId, preferredScope = '') => {
     const workspaceDocPath = await resolveWorkspaceSkillDocPath(config, agentId, skillName);
-    const globalDocPath = await resolveGlobalSkillDocPath(skillName);
-    const docPath = workspaceDocPath || globalDocPath;
+    const globalDocPath = await resolveGlobalSkillDocPath(skillName, preferredScope);
+    const docPath = preferredScope === 'workspace' ? workspaceDocPath : (workspaceDocPath || globalDocPath);
 
     if (!docPath) {
         return {
@@ -836,10 +893,18 @@ const readSkillDetail = async (config, skillName, agentId) => {
         };
     }
 
+    const scope = workspaceDocPath ? 'workspace' : (docPath.includes('/.openclaw/skills/') ? 'installed' : 'built-in');
+    let status = null;
+    if (scope === 'built-in') {
+        const builtIn = await getBuiltInSkillEntries(config);
+        status = builtIn.find((entry) => entry.name === skillName)?.status || null;
+    }
+
     return {
         name: skillName,
-        scope: workspaceDocPath ? 'workspace' : 'global',
+        scope,
         path: docPath,
+        status,
         content: await fs.readFile(docPath, 'utf8')
     };
 };
@@ -985,7 +1050,7 @@ app.get('/api/agents', async (req, res) => {
     try {
         const config = await readConfig();
         const agentsList = config.agents?.list || [];
-        const installedSkills = getGlobalInstalledSkills(config);
+        const installedSkills = await getCustomInstalledSkills();
         const workspaceSkills = await getWorkspaceSkills(agentsList);
 
         const agents = await Promise.all(agentsList.map(async (agent) => {
@@ -1374,7 +1439,8 @@ app.post('/api/cron/:jobId/run', async (req, res) => {
 
 app.get('/api/dashboard', async (req, res) => {
     try {
-        const [config, presets, cronData] = await Promise.all([readConfig(), readPresets(), readCronJobs()]);
+        const [config, presets, cronData, installedSkills] = await Promise.all([readConfig(), readPresets(), readCronJobs(), getCustomInstalledSkills()]);
+        const builtInSkills = await getBuiltInSkillEntries(config);
         const catalog = await buildModelCatalog(config, presets);
         const cronJobs = cronData.jobs || [];
         const references = buildReferences(config, presets, cronJobs);
@@ -1431,7 +1497,8 @@ app.get('/api/dashboard', async (req, res) => {
                     attention: errorCron
                 },
                 skills: {
-                    installed: getGlobalInstalledSkills(config)
+                    installed: installedSkills,
+                    builtIn: builtInSkills
                 }
             },
             defaults: {
@@ -1453,9 +1520,12 @@ app.get('/api/skills', async (req, res) => {
     try {
         const config = await readConfig();
         const agentsList = config.agents?.list || [];
-        const installed = getGlobalInstalledSkills(config);
-        const workspace = await getWorkspaceSkills(agentsList);
-        res.json({ installed, workspace });
+        const [installed, workspace, builtIn] = await Promise.all([
+            getCustomInstalledSkills(),
+            getWorkspaceSkills(agentsList),
+            getBuiltInSkillEntries(config)
+        ]);
+        res.json({ installed, workspace, builtIn });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -1466,7 +1536,8 @@ app.get('/api/skills/:skillName', async (req, res) => {
         const config = await readConfig();
         const skillName = req.params.skillName;
         const agentId = req.query.agentId ? String(req.query.agentId) : '';
-        const detail = await readSkillDetail(config, skillName, agentId);
+        const scope = req.query.scope ? String(req.query.scope) : '';
+        const detail = await readSkillDetail(config, skillName, agentId, scope);
         res.json(detail);
     } catch (error) {
         res.status(500).json({ error: error.message });

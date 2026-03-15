@@ -1,7 +1,7 @@
 {
   "name": "clawboard",
-  "version": "1.0.0",
-  "description": "Clawboard Agent Config Web UI",
+  "version": "0.1.0",
+  "description": "A local control surface for OpenClaw",
   "main": "server.js",
   "type": "module",
   "scripts": {
