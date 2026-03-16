@@ -28,6 +28,18 @@ That means:
 
 ![Clawboard Overview](docs/screenshots/overview.jpg)
 
+### Agents
+
+![Clawboard Agents](docs/screenshots/agents.jpg)
+
+### Models
+
+![Clawboard Models](docs/screenshots/models.jpg)
+
+### Cron
+
+![Clawboard Cron](docs/screenshots/cron.jpg)
+
 ## Features
 - Local auth gate for the UI
 - Overview for defaults, presets, cron, and global skills
