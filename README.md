@@ -22,6 +22,12 @@ That means:
 - the app reads and writes runtime data from your local OpenClaw installation
 - some features depend on your existing OpenClaw config, cron state, skills, and agent setup
 
+## Screenshots
+
+### Overview
+
+![Clawboard Overview](docs/screenshots/overview.jpg)
+
 ## Features
 - Local auth gate for the UI
 - Overview for defaults, presets, cron, and global skills
