@@ -921,9 +921,16 @@ const getWorkspaceSkills = async (agentsList) => {
         }
 
         try {
-            const containerPath = hostToContainerPath(workspace);
-            const skillsPath = path.join(containerPath, 'skills');
-            await fs.access(skillsPath);
+            // In docker-compose setups the OpenClaw home + workspaces are mounted into the
+            // container at the same absolute path, so we can usually read them directly.
+            // hostToContainerPath() is only needed when a host path must be translated.
+            const directSkillsPath = path.join(workspace, 'skills');
+            const mappedSkillsPath = path.join(hostToContainerPath(workspace), 'skills');
+
+            const skillsPath = (await pathExists(directSkillsPath))
+                ? directSkillsPath
+                : mappedSkillsPath;
+
             const entries = await fs.readdir(skillsPath, { withFileTypes: true });
             workspaceSkills[agent.id] = entries
                 .filter((entry) => entry.isDirectory())
@@ -1445,6 +1452,8 @@ app.get('/api/dashboard', async (req, res) => {
         const cronJobs = cronData.jobs || [];
         const references = buildReferences(config, presets, cronJobs);
 
+        const aliases = config?.meta?.modelAliases || {};
+
         const models = catalog.options.map((option) => {
             const usage = references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] };
             const usageCount = usage.defaults.length + usage.agents.length + usage.presets.length + usage.cron.length;
@@ -1452,6 +1461,7 @@ app.get('/api/dashboard', async (req, res) => {
                 provider: option.provider,
                 modelId: option.modelId,
                 modelName: option.modelName,
+                alias: aliases[option.value] || '',
                 access: option.access,
                 upstream: option.upstream,
                 docsUrl: option.docsUrl,
@@ -1550,10 +1560,13 @@ app.get('/api/models', async (req, res) => {
         const catalog = await buildModelCatalog(config, presets);
         const references = buildReferences(config, presets, cronData.jobs || []);
 
+        const aliases = config?.meta?.modelAliases || {};
+
         const models = catalog.options.map((option) => ({
             provider: option.provider,
             modelId: option.modelId,
             modelName: option.modelName,
+            alias: aliases[option.value] || '',
             access: option.access,
             upstream: option.upstream,
             docsUrl: option.docsUrl,

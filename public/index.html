@@ -3006,7 +3006,7 @@
                     else if (col === 'nextRun') { valA = a.nextRun || a.nextRunAtMs || 0; valB = b.nextRun || b.nextRunAtMs || 0; }
                     else if (col === 'lastRun') { valA = a.lastRun || a.lastRunAtMs || 0; valB = b.lastRun || b.lastRunAtMs || 0; }
                     else if (col === 'status') { valA = a.status || ''; valB = b.status || ''; }
-                    else if (col === 'binding') { valA = (a.agentId || '') + (a.model || ''); valB = (b.agentId || '') + (b.model || ''); }
+                    else if (col === 'binding') { valA = (a.agentId || '') + (a.delivery?.channel || '') + (a.model || ''); valB = (b.agentId || '') + (b.delivery?.channel || '') + (b.model || ''); }
 
                     if (valA < valB) return currentCronSort.direction === 'asc' ? -1 : 1;
                     if (valA > valB) return currentCronSort.direction === 'asc' ? 1 : -1;
@@ -3027,16 +3027,30 @@
                 const switchColor = job.enabled ? 'var(--brand)' : 'var(--text-muted)';
                 
                 const agent = agentsData.find(a => a.id === job.agentId);
+                const channel = job.delivery?.channel || '';
+                const modelRef = job.model || job.payload?.model || '';
+
                 let bindingHtml = '';
                 if (agent) {
                     bindingHtml = `
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <img src="${escapeHtml(agent.avatarUrl)}" alt="Avatar" style="width: 26px; height: 26px; border-radius: 7px; object-fit: cover; border: 1px solid var(--line);">
-                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">${escapeHtml(agent.name || agent.id)}</span>
+                        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                            <img src="${escapeHtml(agent.avatarUrl)}" alt="Avatar" style="width: 26px; height: 26px; border-radius: 7px; object-fit: cover; border: 1px solid var(--line); flex-shrink: 0;">
+                            <div style="min-width: 0;">
+                                <div style="font-weight: 800; font-size: 13px; color: var(--text); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(agent.name || agent.id)}</div>
+                                <div style="display:flex; gap:6px; align-items:center; margin-top: 2px;">
+                                    <span class="chip" style="font-size:10px; padding:2px 6px; opacity: 0.95;">${escapeHtml(channel || 'no-channel')}</span>
+                                    <span style="font-family: var(--mono); font-size: 10px; color: var(--text-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(modelRef || 'no-model')}</span>
+                                </div>
+                            </div>
                         </div>
                     `;
-                } else if (job.model) {
-                    bindingHtml = `<span style="font-weight: 700; font-size: 12px; color: var(--text);">${escapeHtml(job.model)}</span>`;
+                } else if (modelRef || channel) {
+                    bindingHtml = `
+                        <div style="display:flex; gap:8px; align-items:center; min-width:0;">
+                            <span class="chip" style="font-size:10px; padding:2px 6px;">${escapeHtml(channel || 'no-channel')}</span>
+                            <span style="font-family: var(--mono); font-size: 11px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(modelRef || 'no-model')}</span>
+                        </div>
+                    `;
                 } else {
                     bindingHtml = `<span style="font-size: 12px; color: var(--text-muted);">None</span>`;
                 }
