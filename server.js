@@ -921,11 +921,20 @@ const getWorkspaceSkills = async (agentsList) => {
         }
 
         try {
-            // In docker-compose setups the OpenClaw home + workspaces are mounted into the
-            // container at the same absolute path, so we can usually read them directly.
-            // hostToContainerPath() is only needed when a host path must be translated.
+            // Workspace paths in openclaw.json are host paths. In docker, the host home is
+            // mounted at HOST_HOME (e.g. /host-home), so we must translate.
+            // In non-docker / dev, the workspace path is directly readable.
             const directSkillsPath = path.join(workspace, 'skills');
-            const mappedSkillsPath = path.join(hostToContainerPath(workspace), 'skills');
+
+            let translatedWorkspace = hostToContainerPath(workspace);
+            const hostHome = process.env.HOST_HOME || '';
+            if (hostHome && workspace.startsWith(hostHome)) {
+                translatedWorkspace = workspace;
+            } else if (hostHome && workspace.startsWith('/Users/')) {
+                translatedWorkspace = path.join(hostHome, workspace.replace(/^\/Users\//, ''));
+            }
+
+            const mappedSkillsPath = path.join(translatedWorkspace, 'skills');
 
             const skillsPath = (await pathExists(directSkillsPath))
                 ? directSkillsPath
