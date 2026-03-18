@@ -926,15 +926,16 @@ const getWorkspaceSkills = async (agentsList) => {
             // In non-docker / dev, the workspace path is directly readable.
             const directSkillsPath = path.join(workspace, 'skills');
 
-            let translatedWorkspace = hostToContainerPath(workspace);
-            const hostHome = process.env.HOST_HOME || '';
-            if (hostHome && workspace.startsWith(hostHome)) {
-                translatedWorkspace = workspace;
-            } else if (hostHome && workspace.startsWith('/Users/')) {
-                translatedWorkspace = path.join(hostHome, workspace.replace(/^\/Users\//, ''));
-            }
+            // Docker stable setup mounts ~/.openclaw directly into /root/.openclaw.
+            // When openclaw.json contains host paths (e.g. /Users/alexwang/.openclaw/workspace),
+            // we should rebase them into /root/.openclaw.
+            const openclawRoot = getOpenClawDir();
+            const hostOpenclawRoot = path.join('/Users', process.env.HOST_OPENCLAW_USER || 'alexwang', '.openclaw');
+            const rebasedWorkspace = workspace.startsWith(hostOpenclawRoot)
+                ? path.join(openclawRoot, path.relative(hostOpenclawRoot, workspace))
+                : workspace;
 
-            const mappedSkillsPath = path.join(translatedWorkspace, 'skills');
+            const mappedSkillsPath = path.join(rebasedWorkspace, 'skills');
 
             const skillsPath = (await pathExists(directSkillsPath))
                 ? directSkillsPath
