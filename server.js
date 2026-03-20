@@ -6,6 +6,8 @@ import crypto from 'crypto';
 import cors from 'cors';
 import JSON5 from 'json5';
 import { pathToFileURL } from 'url';
+import http from 'http';
+import https from 'https';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -954,6 +956,121 @@ const getWorkspaceSkills = async (agentsList) => {
     return workspaceSkills;
 };
 
+// Connectivity check cache: { providerId: { status, latencyMs, checkedAt, error } }
+const connectivityCache = new Map();
+const CONNECTIVITY_CACHE_TTL_MS = 60 * 1000;
+const CONNECTIVITY_PROBE_TIMEOUT_MS = 5 * 1000;
+
+const resolveProviderBaseUrl = (config, providerId) => {
+    const provider = config.models?.providers?.[providerId];
+    return provider?.baseUrl || null;
+};
+
+const probeConnectivity = async (baseUrl) => {
+    if (!baseUrl) {
+        return { status: 'unknown', latencyMs: null, error: 'No baseUrl configured' };
+    }
+
+    try {
+        const url = new URL(baseUrl);
+        let probeUrl = baseUrl;
+
+        // For OpenAI-style URLs ending with /v1, replace with /health
+        if (baseUrl.endsWith('/v1')) {
+            probeUrl = baseUrl.replace(/\/v1$/, '/health');
+        }
+
+        const probeUrlObj = new URL(probeUrl);
+        const protocol = probeUrlObj.protocol === 'https:' ? https : http;
+
+        return await new Promise((resolve) => {
+            const startTime = Date.now();
+            let req;
+            let resolved = false;
+
+            const onDone = (result) => {
+                if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timeoutId);
+                    if (req) {
+                        req.destroy();
+                    }
+                    resolve(result);
+                }
+            };
+
+            const timeoutId = setTimeout(() => {
+                const latencyMs = Date.now() - startTime;
+                onDone({ status: 'slow', latencyMs, error: 'Request timeout' });
+            }, CONNECTIVITY_PROBE_TIMEOUT_MS);
+
+            req = protocol.get(
+                probeUrl,
+                {
+                    timeout: CONNECTIVITY_PROBE_TIMEOUT_MS,
+                    method: 'GET'
+                },
+                (res) => {
+                    const latencyMs = Date.now() - startTime;
+
+                    if (res.statusCode === 200 || (res.statusCode >= 200 && res.statusCode < 300)) {
+                        onDone({ status: 'ok', latencyMs });
+                    } else if (res.statusCode >= 500) {
+                        onDone({ status: 'error', latencyMs, error: `Server error: ${res.statusCode}` });
+                    } else {
+                        onDone({ status: 'error', latencyMs, error: `Health check failed: ${res.statusCode}` });
+                    }
+                    res.on('data', () => {});
+                }
+            );
+
+            req.on('error', (error) => {
+                const latencyMs = Date.now() - startTime;
+                onDone({ status: 'error', latencyMs, error: error.message || 'Connection failed' });
+            });
+
+            req.on('timeout', () => {
+                const latencyMs = Date.now() - startTime;
+                onDone({ status: 'slow', latencyMs, error: 'Request timeout' });
+            });
+        });
+    } catch (error) {
+        return { status: 'error', latencyMs: null, error: error.message || 'Invalid baseUrl' };
+    }
+};
+
+const checkProviderConnectivity = async (config, providerId) => {
+    const cacheKey = providerId;
+    const cached = connectivityCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.checkedAtMs < CONNECTIVITY_CACHE_TTL_MS) {
+        return {
+            status: cached.status,
+            latencyMs: cached.latencyMs,
+            error: cached.error,
+            checkedAt: new Date(cached.checkedAtMs).toISOString()
+        };
+    }
+
+    const baseUrl = resolveProviderBaseUrl(config, providerId);
+    const result = await probeConnectivity(baseUrl);
+    const checkedAtMs = Date.now();
+
+    const cacheEntry = {
+        ...result,
+        checkedAtMs
+    };
+
+    connectivityCache.set(cacheKey, cacheEntry);
+
+    return {
+        status: result.status,
+        latencyMs: result.latencyMs,
+        error: result.error,
+        checkedAt: new Date(checkedAtMs).toISOString()
+    };
+};
+
 const requireAuth = async (req, res, next) => {
     try {
         const authConfig = await readAuthConfig();
@@ -1464,9 +1581,21 @@ app.get('/api/dashboard', async (req, res) => {
 
         const aliases = config?.meta?.modelAliases || {};
 
+        // Check connectivity for all providers concurrently
+        const providerConnectivity = new Map();
+        const uniqueProviders = [...new Set(catalog.options.map((opt) => opt.provider))];
+        const connectivityResults = await Promise.all(
+            uniqueProviders.map((providerId) => checkProviderConnectivity(config, providerId))
+        );
+        uniqueProviders.forEach((providerId, index) => {
+            providerConnectivity.set(providerId, connectivityResults[index]);
+        });
+
         const models = catalog.options.map((option) => {
             const usage = references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] };
             const usageCount = usage.defaults.length + usage.agents.length + usage.presets.length + usage.cron.length;
+            const connStatus = providerConnectivity.get(option.provider) || { status: 'unknown' };
+
             return {
                 provider: option.provider,
                 modelId: option.modelId,
@@ -1479,6 +1608,17 @@ app.get('/api/dashboard', async (req, res) => {
                 maxTokens: option.maxTokens,
                 reasoning: option.reasoning,
                 sourceStatus: option.sources.includes('litellm') ? 'openclaw+litellm' : 'openclaw-only',
+                limits: {
+                    contextWindow: option.contextWindow,
+                    maxOutputTokens: option.maxTokens
+                },
+                conn: {
+                    status: connStatus.status,
+                    latencyMs: connStatus.latencyMs,
+                    checkedAt: connStatus.checkedAt,
+                    error: connStatus.error || undefined,
+                    scope: 'provider'
+                },
                 usage: {
                     ...usage,
                     usageCount
@@ -1572,24 +1712,48 @@ app.get('/api/models', async (req, res) => {
 
         const aliases = config?.meta?.modelAliases || {};
 
-        const models = catalog.options.map((option) => ({
-            provider: option.provider,
-            modelId: option.modelId,
-            modelName: option.modelName,
-            alias: aliases[option.value] || '',
-            access: option.access,
-            upstream: option.upstream,
-            docsUrl: option.docsUrl,
-            contextWindow: option.contextWindow,
-            maxTokens: option.maxTokens,
-            reasoning: option.reasoning,
-            sourceStatus: option.sources.includes('litellm') ? 'openclaw+litellm' : 'openclaw-only',
-            usage: {
-                ...(references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] }),
-                usageCount: Object.values(references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] })
-                    .reduce((sum, entries) => sum + entries.length, 0)
-            }
-        }));
+        // Check connectivity for all providers concurrently
+        const providerConnectivity = new Map();
+        const uniqueProviders = [...new Set(catalog.options.map((opt) => opt.provider))];
+        const connectivityResults = await Promise.all(
+            uniqueProviders.map((providerId) => checkProviderConnectivity(config, providerId))
+        );
+        uniqueProviders.forEach((providerId, index) => {
+            providerConnectivity.set(providerId, connectivityResults[index]);
+        });
+
+        const models = catalog.options.map((option) => {
+            const connStatus = providerConnectivity.get(option.provider) || { status: 'unknown' };
+            return {
+                provider: option.provider,
+                modelId: option.modelId,
+                modelName: option.modelName,
+                alias: aliases[option.value] || '',
+                access: option.access,
+                upstream: option.upstream,
+                docsUrl: option.docsUrl,
+                contextWindow: option.contextWindow,
+                maxTokens: option.maxTokens,
+                reasoning: option.reasoning,
+                sourceStatus: option.sources.includes('litellm') ? 'openclaw+litellm' : 'openclaw-only',
+                limits: {
+                    contextWindow: option.contextWindow,
+                    maxOutputTokens: option.maxTokens
+                },
+                conn: {
+                    status: connStatus.status,
+                    latencyMs: connStatus.latencyMs,
+                    checkedAt: connStatus.checkedAt,
+                    error: connStatus.error || undefined,
+                    scope: 'provider'
+                },
+                usage: {
+                    ...(references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] }),
+                    usageCount: Object.values(references.get(option.value) || { defaults: [], agents: [], presets: [], cron: [] })
+                        .reduce((sum, entries) => sum + entries.length, 0)
+                }
+            };
+        });
 
         res.json({
             models,
