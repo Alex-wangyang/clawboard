@@ -614,6 +614,17 @@ const buildModelCatalog = async (config, presets = {}) => {
     };
 };
 
+const resolveAliasToModelRef = (config, alias) => {
+    if (!alias) return null;
+    const models = config?.agents?.defaults?.models || {};
+    for (const [modelRef, modelConfig] of Object.entries(models)) {
+        if (modelConfig?.alias === alias) {
+            return modelRef;
+        }
+    }
+    return null;
+};
+
 const buildReferences = (config, presets = {}, cronJobs = []) => {
     const refs = new Map();
 
@@ -673,7 +684,11 @@ const buildReferences = (config, presets = {}, cronJobs = []) => {
         });
     });
 
-    cronJobs.forEach((job) => addRef(job.payload?.model || '', 'cron', job.name || job.id));
+    cronJobs.forEach((job) => {
+        const modelAlias = job.payload?.model || job.model || '';
+        const modelRef = resolveAliasToModelRef(config, modelAlias) || modelAlias;
+        addRef(modelRef, 'cron', job.name || job.id);
+    });
 
     return refs;
 };
@@ -1579,7 +1594,8 @@ app.get('/api/dashboard', async (req, res) => {
         const cronJobs = cronData.jobs || [];
         const references = buildReferences(config, presets, cronJobs);
 
-        const aliases = config?.meta?.modelAliases || {};
+        const modelAliases = config?.agents?.defaults?.models || {};
+        const getAlias = (modelRef) => modelAliases[modelRef]?.alias || '';
 
         // Check connectivity for all providers concurrently
         const providerConnectivity = new Map();
@@ -1600,7 +1616,7 @@ app.get('/api/dashboard', async (req, res) => {
                 provider: option.provider,
                 modelId: option.modelId,
                 modelName: option.modelName,
-                alias: aliases[option.value] || '',
+                alias: getAlias(option.value),
                 access: option.access,
                 upstream: option.upstream,
                 docsUrl: option.docsUrl,
@@ -1710,7 +1726,8 @@ app.get('/api/models', async (req, res) => {
         const catalog = await buildModelCatalog(config, presets);
         const references = buildReferences(config, presets, cronData.jobs || []);
 
-        const aliases = config?.meta?.modelAliases || {};
+        const modelAliases = config?.agents?.defaults?.models || {};
+        const getAlias = (modelRef) => modelAliases[modelRef]?.alias || '';
 
         // Check connectivity for all providers concurrently
         const providerConnectivity = new Map();
@@ -1728,7 +1745,7 @@ app.get('/api/models', async (req, res) => {
                 provider: option.provider,
                 modelId: option.modelId,
                 modelName: option.modelName,
-                alias: aliases[option.value] || '',
+                alias: getAlias(option.value),
                 access: option.access,
                 upstream: option.upstream,
                 docsUrl: option.docsUrl,
